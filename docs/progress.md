@@ -25,6 +25,13 @@ _Last updated: 2026-11-19 (session 1)_
 - Enquiry brief form (#enquire): server action with zod, honeypot + timing trap, attached build, POPIA consent. Delivers by email via Resend once `ENQUIRY_TO` and `RESEND_API_KEY` are set on Vercel; until then visitors get an honest 'not connected yet' message with a copy button.
 - Tested on live site at 1440 and 390: no console errors.
 
+## Built (session 2, continued)
+- Home now: film → test rig → What we build (4 drawing sheets) → How a commission works (12-week scrubber, EXAMPLE timeline) → Design yours → FAQ (6) → Enquire.
+- Static type pages: /toy-haulers, /gooseneck-fifth-wheel-trailers, /off-road-trailers, /modifications-and-upgrades (drawings, who it's for, how we build it, rules, FAQ, JSON-LD).
+- /faq: full towing-law FAQ from the NRTR + WC 2026 fees, FAQPage JSON-LD. Sitemap, robots, footer.
+- Checked live at 1440 and 390: no console errors, no overflow, all routes 200, unknown routes 404.
+- Not built on purpose: Builds/portfolio (needs Justin's real builds; no invented clients).
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
