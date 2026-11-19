@@ -353,6 +353,7 @@
 }
 
 /* sub-labels on a selected (ink) button follow the button colour */
-[aria-pressed="true"] small {
+.seg [aria-pressed="true"] small,
+.loads [aria-pressed="true"] small {
   color: inherit;
 }
