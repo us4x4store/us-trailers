@@ -7,16 +7,17 @@ export default function Nav() {
       <a className="skip" href="#main">
         Skip to content
       </a>
-      <a href="#top" className={styles.wm} aria-label="US Trailers, home">
+      <a href="/" className={styles.wm} aria-label="US Trailers, home">
         US·TRAILERS
         <i aria-hidden="true" />
       </a>
       <nav className={styles.links} aria-label="Main">
-        <a href="#film">The build</a>
-        <a href="#drive">Tow it</a>
-        <a href="#design">Design yours</a>
+        <a href="/#film">The build</a>
+        <a href="/#types">Trailers</a>
+        <a href="/#design">Design yours</a>
+        <a href="/faq">Towing laws</a>
       </nav>
-      <a href="#enquire" className={styles.wa}>
+      <a href="/#enquire" className={styles.wa}>
         Start your drawing
       </a>
     </header>

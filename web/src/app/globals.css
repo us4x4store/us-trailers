@@ -83,3 +83,36 @@ h3 {
   padding: 3px 6px;
   white-space: nowrap;
 }
+
+/* drafting drawings: keep lettering readable when the sheet shrinks on phones */
+@media (max-width: 760px) {
+  .drw text:not(.drw-keep) {
+    font-size: 26px;
+  }
+}
+.drw-legend {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font: 500 12px/1.4 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.drw-legend li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.drw-legend b {
+  width: 22px;
+  height: 22px;
+  border: 1.3px solid var(--red);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  flex: none;
+}

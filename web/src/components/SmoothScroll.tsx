@@ -18,9 +18,11 @@ export default function SmoothScroll() {
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
     const onAnchor = (e: MouseEvent) => {
-      const a = (e.target as HTMLElement).closest("a[href^='#']") as HTMLAnchorElement | null;
+      const a = (e.target as HTMLElement).closest("a[href*='#']") as HTMLAnchorElement | null;
       if (!a) return;
-      const el = document.querySelector(a.getAttribute("href")!);
+      const url = new URL(a.href, location.href);
+      if (url.pathname !== location.pathname || !url.hash) return;
+      const el = document.querySelector(url.hash);
       if (!el) return;
       e.preventDefault();
       lenis.scrollTo(el as HTMLElement, { duration: 1.6 });
