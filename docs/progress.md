@@ -41,6 +41,12 @@ _Last updated: 2026-11-19 (session 1)_
 - Live Lighthouse mobile after review 2: home 96/100/100/100, /toy-haulers 96/100/100/100.
 - Still open from review 2 (needs Justin): privacy responsible party, contact details, real photos.
 
+## Round 3 (session 2)
+- 'Can I tow it?' checker (src/content/towrules.ts, reg 99/151/292-293), on home and /faq; verified on 6 known cases and in the browser.
+- Trailer sheets draw themselves on scroll (RevealDrawing); static with reduced motion.
+- Designer: day/dusk/night with LEDs and awning work light (luminance 193 -> 151 -> 40; tail lights read red).
+- Live Lighthouse mobile home: 92-95 performance over three runs, 100 a11y/BP/SEO; /faq 99.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
