@@ -1,0 +1,442 @@
+<title>US Trailers Directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Big+Shoulders+Display:wght@600;800;900&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&display=swap">
+<style>
+/* Layout: a presentation sheet. Neutral, theme-aware wrapper; each direction is its own fixed visual world shown in live desktop + phone frames. */
+:root{
+  --bg:#F3F4F2; --fg:#16181A; --muted:#5E6461; --line:#D5D8D4; --card:#FFFFFF; --accent:#1F3B73;
+  --ui:"Geist",ui-sans-serif,system-ui,sans-serif; --mono:"Geist Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121413;--fg:#E8EAE7;--muted:#9AA19D;--line:#2A2E2C;--card:#1A1D1C;--accent:#8FA9E0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121413;--fg:#E8EAE7;--muted:#9AA19D;--line:#2A2E2C;--card:#1A1D1C;--accent:#8FA9E0;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--ui);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;padding-block:40px 64px;display:grid;gap:56px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.kicker{font:500 12px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.intro{display:grid;gap:18px;max-width:760px}
+.intro h1{font:600 clamp(30px,5vw,48px)/1.05 var(--ui);letter-spacing:-.02em}
+.intro p{margin:0;color:var(--muted);max-width:65ch}
+.pos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.pos div{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:6px}
+.pos p{margin:0;color:var(--fg);font-size:17px;line-height:1.45}
+.dir{display:grid;gap:22px;border-top:1px solid var(--line);padding-top:32px}
+.dir-head{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:baseline}
+.num{font:600 15px var(--mono);color:var(--accent)}
+.dir-head h2{font:600 clamp(24px,3.6vw,34px)/1.1 var(--ui);letter-spacing:-.015em}
+.dir-head p{grid-column:2;margin:0;color:var(--muted);max-width:68ch}
+.try{grid-column:2;margin:4px 0 0;font:500 13px var(--mono);color:var(--fg)}
+.frames{display:flex;gap:20px;align-items:flex-start}
+.frame{position:relative;overflow:hidden;border-radius:10px;border:1px solid var(--line);background:#000}
+.frame.desk{flex:1;min-width:0}
+.frame.phone{flex:0 0 260px;border-radius:30px;border-width:6px;border-color:#1b1d1f}
+.screen{position:absolute;left:0;top:0;transform-origin:0 0;container-type:inline-size;overflow:hidden}
+.flabel{font:500 11px var(--mono);color:var(--muted);margin-top:6px;letter-spacing:.04em}
+.fcol{display:grid;min-width:0}
+.fcol.desk{flex:1}
+.fcol.phone{flex:0 0 260px}
+.spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.spec>div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sw span{aspect-ratio:1;border-radius:4px;border:1px solid rgba(127,127,127,.25)}
+.swn{display:grid;gap:2px;font:12px/1.4 var(--mono);color:var(--muted)}
+.typ{display:grid;gap:4px}
+.typ small{font:12px var(--mono);color:var(--muted)}
+.wmbox{display:grid;place-items:center;min-height:110px;border-radius:6px;padding:12px}
+.rec{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px;display:grid;gap:12px;max-width:820px}
+.rec h2{font:600 24px/1.2 var(--ui)}
+.rec p{margin:0;max-width:68ch}
+.rec .reply{font:500 14px var(--mono);color:var(--accent)}
+.note{font-size:13px;color:var(--muted);margin:0}
+@media (max-width:760px){
+  .frames{flex-direction:column;align-items:stretch}
+  .fcol.phone{flex:none;width:min(240px,70%);justify-self:center;margin:0 auto}
+  .dir-head{grid-template-columns:1fr}.dir-head p,.try{grid-column:1}
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- Shared hero scaffolding ---------- */
+.hero{position:relative;width:100%;height:100%;overflow:hidden}
+.hero button,.hero input{font:inherit}
+.hero svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* ---------- Direction 1: Drawing Office ---------- */
+.d1{--paper:#E6EAE5;--grid:#CDD5D0;--ink:#1F3B73;--graphite:#22262A;--galv:#A7AFB2;--red:#B8352A;
+  background:var(--paper);color:var(--graphite);font-family:"IBM Plex Mono",ui-monospace,monospace;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:40px 40px;display:grid;grid-template-columns:420px 1fr;grid-template-rows:auto 1fr auto;padding:28px 44px 30px;gap:0 40px}
+.d1 .nav{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--graphite);padding-bottom:14px;font-size:13px}
+.d1 .wm{font-family:Archivo,sans-serif;font-weight:800;font-stretch:125%;font-size:21px;letter-spacing:.02em;display:grid;gap:3px}
+.d1 .wm i{display:block;height:7px;border:1.5px solid var(--ink);border-top:0;position:relative}
+.d1 .wm i::after{content:"6 200";position:absolute;left:50%;top:-1px;transform:translateX(-50%);background:var(--paper);padding:0 4px;font:500 8px "IBM Plex Mono",monospace;color:var(--ink);letter-spacing:.1em}
+.d1 .links{display:flex;gap:26px;text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.d1 .wa{border:1.5px solid var(--graphite);padding:8px 14px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.d1 .burger{display:none}
+.d1 .copy{align-self:center;display:grid;gap:22px}
+.d1 .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.d1 h3{font-family:Archivo,sans-serif;font-weight:800;font-stretch:112%;font-size:72px;line-height:.92;letter-spacing:-.02em;color:var(--graphite)}
+.d1 h3 em{font-style:normal;color:var(--ink)}
+.d1 .lede{font-size:15px;line-height:1.6;max-width:36ch;margin:0}
+.d1 .ctas{display:flex;gap:18px;align-items:center;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.d1 .btn{background:var(--ink);color:#F3F5F2;border:0;padding:16px 22px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.d1 .art{align-self:center;position:relative}
+.d1 .scrub{grid-column:2;display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.d1 .scrub input{flex:1;accent-color:#1F3B73}
+.d1 .tb{position:absolute;right:44px;top:92px;display:grid;grid-template-columns:auto auto;border:1.5px solid var(--graphite);font-size:10px;letter-spacing:.06em;text-transform:uppercase;background:var(--paper)}
+.d1 .tb span{padding:5px 9px;border-right:1px solid var(--graphite);border-bottom:1px solid var(--graphite)}
+.d1 .tb span:nth-child(2n){border-right:0}.d1 .tb span:nth-last-child(-n+2){border-bottom:0}
+.d1 .tb b{font-weight:500;color:var(--ink)}
+.d1 .pt{stroke:var(--graphite);stroke-width:1.4;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--draw,1));fill:var(--f,none);fill-opacity:var(--fill,1);stroke-linejoin:round}
+.d1 .cl{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;stroke-dasharray:6 4 1 4;fill:none;opacity:calc(1 - var(--fill,1)*.75)}
+.d1 .dim{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;fill:none}
+.d1 .dimt{fill:var(--ink);font:500 11px "IBM Plex Mono",monospace;letter-spacing:.08em}
+.d1 .callout{fill:var(--red);font:500 10px "IBM Plex Mono",monospace;letter-spacing:.06em;opacity:calc(1 - var(--fill,1)*.6)}
+@container (max-width:600px){
+  .d1{grid-template-columns:1fr;grid-template-rows:auto auto auto auto 1fr;padding:22px 20px 26px;gap:0;background-size:24px 24px}
+  .d1 .links{display:none}.d1 .wa{display:none}
+  .d1 .burger{display:flex;gap:10px;align-items:center;font-size:11px;letter-spacing:.1em}
+  .d1 .burger b{display:grid;gap:4px}.d1 .burger b i{display:block;width:20px;height:1.5px;background:var(--graphite)}
+  .d1 .wm{font-size:16px}
+  .d1 .copy{gap:14px;padding-top:22px}
+  .d1 h3{font-size:46px}
+  .d1 .lede{font-size:13.5px}
+  .d1 .ctas{flex-direction:column;align-items:stretch;text-align:center;gap:10px}
+  .d1 .btn{padding:17px}
+  .d1 .art{margin-top:16px}
+  .d1 .scrub{grid-column:1;margin-top:12px}
+  .d1 .tb{position:static;margin-top:18px;grid-row:5;align-self:end}
+}
+
+/* ---------- Direction 2: Night Shift ---------- */
+.d2{--mill:#111315;--gun:#1E2327;--zinc:#8E979C;--arc:#E8F0F3;--amber:#F2A33A;
+  background:radial-gradient(120% 90% at 70% 60%,#1F262B 0%,var(--mill) 60%);color:var(--arc);font-family:Geist,sans-serif;
+  display:grid;grid-template-rows:auto 1fr;padding:26px 44px}
+.d2 .nav{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#B9C2C6}
+.d2 .wm{font:900 26px/1 "Big Shoulders Display",sans-serif;letter-spacing:.04em;color:var(--arc);display:flex;align-items:center;gap:6px}
+.d2 .wm s{text-decoration:none;color:var(--amber);font-weight:600}
+.d2 .links{display:flex;gap:28px}
+.d2 .wa{background:var(--arc);color:var(--mill);padding:9px 15px;border-radius:2px;font-weight:600;font-size:12px}
+.d2 .burger{display:none}
+.d2 .stage{position:relative;display:grid;grid-template-columns:1fr;align-content:center}
+.d2 h3{font:900 150px/.82 "Big Shoulders Display",sans-serif;text-transform:uppercase;letter-spacing:-.005em;color:var(--arc);position:absolute;left:0;top:40px;z-index:0;max-width:9ch}
+.d2 h3 span{color:transparent;-webkit-text-stroke:1.5px #4B555B}
+.d2 .art{position:relative;z-index:1;margin:150px 0 0 100px;width:820px;cursor:crosshair;touch-action:none}
+.d2 .side{position:absolute;right:0;bottom:44px;width:300px;display:grid;gap:16px;z-index:2}
+.d2 .lede{margin:0;color:#B9C2C6;font-size:15px;line-height:1.55}
+.d2 .btn{background:var(--amber);color:#1a1205;border:0;padding:15px 20px;font-weight:600;font-size:14px;border-radius:2px;cursor:pointer;justify-self:start}
+.d2 .hold{position:absolute;left:0;bottom:44px;z-index:2;display:flex;gap:10px;align-items:center;font:500 12px "Geist Mono",monospace;color:#B9C2C6;letter-spacing:.06em;text-transform:uppercase}
+.d2 .hold button{background:transparent;color:var(--arc);border:1px solid #4B555B;border-radius:999px;padding:9px 14px;cursor:pointer;font:500 12px "Geist Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.d2 .hold button[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.d2 .xl{font:500 11px "Geist Mono",monospace;fill:var(--arc);letter-spacing:.04em}
+.d2 .xlb{fill:var(--amber)}
+@container (max-width:600px){
+  .d2{padding:22px 20px}
+  .d2 .links,.d2 .wa{display:none}
+  .d2 .burger{display:grid;gap:5px}.d2 .burger i{display:block;width:22px;height:2px;background:var(--arc)}
+  .d2 .wm{font-size:22px}
+  .d2 .stage{align-content:start;padding-top:40px}
+  .d2 h3{position:static;font-size:88px;max-width:none}
+  .d2 .art{margin:22px -20px 0 -6px;width:auto}
+  .d2 .side{position:static;width:auto;margin-top:20px}
+  .d2 .btn{justify-self:stretch;text-align:center;padding:17px}
+  .d2 .hold{position:static;margin-top:16px}
+}
+
+/* ---------- Direction 3: Tankwa Hours ---------- */
+.d3{--sky1:#2C2F57;--sky2:#C98E6E;--land:#3B3A33;--ridge:#262741;--body:#DCD3C2;--shade:#9C927F;--trim:#2A2B2E;--glow:0;--stars:.25;--txt:#F4EEE3;
+  color:var(--txt);font-family:"Hanken Grotesk",sans-serif;display:grid;grid-template-rows:auto 1fr;padding:26px 44px;position:relative}
+.d3[data-mode="day"]{--sky1:#7FA6C9;--sky2:#E9DDC4;--land:#A88F6A;--ridge:#8C8A86;--body:#ECE7DD;--shade:#B9B1A2;--glow:0;--stars:0;--txt:#1E2230}
+.d3[data-mode="night"]{--sky1:#070914;--sky2:#1B2140;--land:#0E0F14;--ridge:#12152A;--body:#4A4C55;--shade:#2D2F36;--glow:1;--stars:1;--txt:#F4EEE3}
+.d3 .scene{position:absolute;inset:0;z-index:0}
+.d3 .scene svg{width:100%;height:100%}
+.d3 .scene *{transition:fill 1.2s ease,stop-color 1.2s ease,opacity 1.2s ease}
+.d3 .nav{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.d3 .wm{font:400 30px/1 "Instrument Serif",serif;letter-spacing:-.01em}
+.d3 .wm em{font-style:italic}
+.d3 .links{display:flex;gap:28px;opacity:.9}
+.d3 .wa{border:1px solid currentColor;border-radius:999px;padding:8px 15px;font-size:13px}
+.d3 .burger{display:none}
+.d3 .copy{position:relative;z-index:1;align-self:start;margin-top:70px;max-width:560px;display:grid;gap:18px}
+.d3 .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.d3 h3{font:400 76px/.98 "Instrument Serif",serif;letter-spacing:-.015em}
+.d3 h3 em{font-style:italic}
+.d3 .lede{margin:0;font-size:16px;line-height:1.55;max-width:42ch;opacity:.92}
+.d3 .btn{justify-self:start;background:var(--txt);color:var(--sky1);border:0;border-radius:999px;padding:14px 22px;font-weight:600;font-size:14px;cursor:pointer;transition:background 1.2s,color 1.2s}
+.d3 .modes{position:absolute;z-index:2;right:44px;bottom:36px;display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(10,12,22,.45);backdrop-filter:blur(6px)}
+.d3 .modes button{border:0;background:transparent;color:#F4EEE3;padding:9px 16px;border-radius:999px;font:500 13px "Hanken Grotesk",sans-serif;cursor:pointer}
+.d3 .modes button[aria-pressed="true"]{background:#F4EEE3;color:#151A33}
+.d3 .coord{position:absolute;z-index:1;left:44px;bottom:40px;font:500 11px "Hanken Grotesk",sans-serif;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+@container (max-width:600px){
+  .d3{padding:22px 20px}
+  .d3 .links,.d3 .wa{display:none}
+  .d3 .burger{display:grid;gap:6px}.d3 .burger i{display:block;width:22px;height:1.5px;background:currentColor}
+  .d3 .wm{font-size:26px}
+  .d3 .copy{margin-top:36px;gap:14px}
+  .d3 h3{font-size:50px}
+  .d3 .lede{font-size:14.5px}
+  .d3 .btn{justify-self:stretch;text-align:center;padding:16px}
+  .d3 .modes{left:20px;right:20px;bottom:24px;justify-content:space-between}
+  .d3 .modes button{flex:1}
+  .d3 .coord{left:20px;bottom:86px}
+}
+@media (prefers-reduced-motion:reduce){.d3 .scene *{transition:none}}
+</style>
+
+<div class="wrap">
+  <section class="intro">
+    <span class="kicker">US Trailers · Creative direction · Decision 1 of 3</span>
+    <h1>Three ways US Trailers could look, feel and move</h1>
+    <p>Each direction below is live, not a picture. The big frame is the home page on a laptop and the small one is the same page on a phone. Try the interaction in each one, then reply in chat with 1, 2 or 3.</p>
+    <div class="pos">
+      <div><span class="kicker">Positioning</span><p>For South Africans who tow something that matters, US Trailers designs and builds one trailer at a time in Cape Town, engineered around your vehicle, your licence code and your load.</p></div>
+      <div><span class="kicker">The one feeling</span><p>"This is being drawn for me, by people who care about every millimetre and every weld."</p></div>
+    </div>
+  </section>
+
+  <!-- 1 -->
+  <section class="dir" id="d1">
+    <div class="dir-head">
+      <span class="num">1</span><h2>Drawing Office</h2>
+      <p>The site is the drawing board. Drafting paper, Prussian-blue ink and real dimensions in millimetres. Every trailer starts as a sketch and becomes steel in front of you. It feels exact, calm and personal, the opposite of a dealer catalogue.</p>
+      <p class="try">Try it: drag the Sketch → Steel slider.</p>
+    </div>
+    <div class="frames">
+      <div class="fcol desk"><div class="frame desk" data-w="1280" data-h="800"><div class="screen" data-tpl="d1"></div></div><span class="flabel">Laptop · 1280 × 800</span></div>
+      <div class="fcol phone"><div class="frame phone" data-w="390" data-h="844"><div class="screen" data-tpl="d1"></div></div><span class="flabel">Phone · 390 × 844</span></div>
+    </div>
+    <div class="spec">
+      <div><span class="kicker">Palette</span>
+        <div class="sw"><span style="background:#E6EAE5"></span><span style="background:#1F3B73"></span><span style="background:#22262A"></span><span style="background:#A7AFB2"></span><span style="background:#B8352A"></span></div>
+        <div class="swn"><span>Drafting paper #E6EAE5 · Prussian ink #1F3B73</span><span>Graphite #22262A · Galvanised #A7AFB2</span><span>Revision red #B8352A (callouts only)</span></div></div>
+      <div><span class="kicker">Type</span>
+        <div class="typ"><span style="font:800 30px/1 Archivo,sans-serif;font-stretch:112%">Archivo Expanded</span><small>Headlines. Width shifts with scroll.</small></div>
+        <div class="typ"><span style="font:500 16px 'IBM Plex Mono',monospace">IBM Plex Mono 6 200 mm</span><small>Body, specs and dimensions.</small></div></div>
+      <div><span class="kicker">Wordmark</span>
+        <div class="wmbox" style="background:#E6EAE5;color:#22262A"><div style="display:grid;gap:5px;text-align:center"><span style="font:800 26px Archivo,sans-serif;font-stretch:125%;letter-spacing:.02em">US·TRAILERS</span><span style="height:8px;border:1.5px solid #1F3B73;border-top:0"></span><span style="font:500 9px 'IBM Plex Mono',monospace;letter-spacing:.16em;color:#1F3B73">DRAWN &amp; BUILT · CAPE TOWN</span></div></div></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="dir" id="d2">
+    <div class="dir-head">
+      <span class="num">2</span><h2>Night Shift</h2>
+      <p>The workshop after hours. Gunmetal, zinc and the glow of a welding arc. Huge industrial type, and a trailer you can see straight through: the paint gives way to the galvanised frame, the welds and the wiring. It sells build quality by showing what other builders hide.</p>
+      <p class="try">Try it: move over the trailer (or drag on a phone). Press and hold to widen the X-ray.</p>
+    </div>
+    <div class="frames">
+      <div class="fcol desk"><div class="frame desk" data-w="1280" data-h="800"><div class="screen" data-tpl="d2"></div></div><span class="flabel">Laptop · 1280 × 800</span></div>
+      <div class="fcol phone"><div class="frame phone" data-w="390" data-h="844"><div class="screen" data-tpl="d2"></div></div><span class="flabel">Phone · 390 × 844</span></div>
+    </div>
+    <div class="spec">
+      <div><span class="kicker">Palette</span>
+        <div class="sw"><span style="background:#111315"></span><span style="background:#1E2327"></span><span style="background:#8E979C"></span><span style="background:#E8F0F3"></span><span style="background:#F2A33A"></span></div>
+        <div class="swn"><span>Mill scale #111315 · Gunmetal #1E2327</span><span>Zinc #8E979C · Arc white #E8F0F3</span><span>Weld amber #F2A33A (light and action only)</span></div></div>
+      <div><span class="kicker">Type</span>
+        <div class="typ"><span style="font:900 34px/1 'Big Shoulders Display',sans-serif;text-transform:uppercase">Big Shoulders</span><small>Headlines, stencil-plate scale.</small></div>
+        <div class="typ"><span style="font:500 16px Geist,sans-serif">Geist · Geist Mono for specs</span><small>Body and interface.</small></div></div>
+      <div><span class="kicker">Wordmark</span>
+        <div class="wmbox" style="background:#111315;color:#E8F0F3"><span style="font:900 38px/1 'Big Shoulders Display',sans-serif;letter-spacing:.04em">US<span style="color:#F2A33A;font-weight:600">/</span>TRAILERS</span></div></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="dir" id="d3">
+    <div class="dir-head">
+      <span class="num">3</span><h2>Tankwa Hours</h2>
+      <p>The trailer where it belongs: out in the Karoo. A quiet editorial serif, open sky and real light. Switch between day, dusk and night, and at night the trailer's LEDs come on under the stars. It sells the life the trailer makes possible, and feels like a commission rather than a purchase.</p>
+      <p class="try">Try it: switch Day, Dusk and Night.</p>
+    </div>
+    <div class="frames">
+      <div class="fcol desk"><div class="frame desk" data-w="1280" data-h="800"><div class="screen" data-tpl="d3"></div></div><span class="flabel">Laptop · 1280 × 800</span></div>
+      <div class="fcol phone"><div class="frame phone" data-w="390" data-h="844"><div class="screen" data-tpl="d3"></div></div><span class="flabel">Phone · 390 × 844</span></div>
+    </div>
+    <div class="spec">
+      <div><span class="kicker">Palette</span>
+        <div class="sw"><span style="background:#151A33"></span><span style="background:#6B5B8A"></span><span style="background:#D9C3A0"></span><span style="background:#6E7D5B"></span><span style="background:#FFD9A0"></span></div>
+        <div class="swn"><span>Karoo night #151A33 · Dusk violet #6B5B8A</span><span>Dust #D9C3A0 · Fynbos sage #6E7D5B</span><span>LED warm #FFD9A0</span></div></div>
+      <div><span class="kicker">Type</span>
+        <div class="typ"><span style="font:400 36px/1 'Instrument Serif',serif">Instrument <em>Serif</em></span><small>Headlines, with italic for one word.</small></div>
+        <div class="typ"><span style="font:500 16px 'Hanken Grotesk',sans-serif">Hanken Grotesk</span><small>Body and interface.</small></div></div>
+      <div><span class="kicker">Wordmark</span>
+        <div class="wmbox" style="background:#151A33;color:#F4EEE3"><div style="display:grid;gap:6px;text-align:center"><span style="font:400 40px/1 'Instrument Serif',serif">US <em>Trailers</em></span><span style="font:500 9px 'Hanken Grotesk',sans-serif;letter-spacing:.2em">33.92° S · 18.42° E · CAPE TOWN</span></div></div></div>
+    </div>
+  </section>
+
+  <section class="rec">
+    <span class="kicker">My recommendation</span>
+    <h2>Go with 1, Drawing Office</h2>
+    <p>Buyers' biggest fears are build quality and paperwork, and a site built like an engineering drawing answers both before they ask: real dimensions, real parts, licence code and weight shown up front. It's the clearest way to say "made only for you", and no trailer builder anywhere looks like it, while dark 3D sites like 2 are common among award winners. It also carries over to the rest of the site: the sketch becomes the part-by-part 3D build, the configurator becomes "your drawing", and the X-ray and night-light ideas from 2 and 3 can still appear inside it.</p>
+    <p class="reply">Reply in chat: 1, 2 or 3 (or "1 with the night lights from 3").</p>
+    <p class="note">These are concept drawings made in code, not photos. Real build photos replace them once you send them. Specs shown are examples.</p>
+  </section>
+</div>
+
+<script>
+(()=>{
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let uid=0;
+const NAV = ['Builds','Design yours','Trailer types','How it works','Workshop'];
+/* Side elevation of a tandem-axle toy hauler. 1 unit = 1 cm. Ground at y=300. */
+const SH = {
+  rack:'M196,8 H584 V15 H196 Z',
+  body:'M150,62 Q150,20 192,20 L620,20 Q630,20 630,30 L630,220 L150,220 Z',
+  nose:'M150,74 L112,132 L112,218 L150,218 Z',
+  door:'M200,62 H270 V210 H200 Z',
+  win:'M482,56 H580 V100 H482 Z',
+  belt:'M150,180 H630 V189 H150 Z',
+  ramp:'M612,26 V214',
+  rail:'M138,220 H640 V232 H138 Z',
+  drawbar:'M150,222 L36,242 L36,252 L150,234 Z',
+  coupler:'M8,238 H38 V254 H8 Z',
+  jockey:'M72,238 V278',
+  guard:'M312,236 C312,214 330,208 360,208 L446,208 C476,208 494,214 494,236',
+};
+const WHEELS=[360,446];
+function d1Svg(){
+  const P=(d,f,extra='')=>`<path class="pt" pathLength="1" d="${d}" style="--f:${f}" ${extra}/>`;
+  const C=(cx,cy,r,f)=>`<circle class="pt" pathLength="1" cx="${cx}" cy="${cy}" r="${r}" style="--f:${f}"/>`;
+  return `<svg viewBox="-10 -30 720 380" role="img" aria-label="Side elevation drawing of a tandem-axle toy hauler, 6 200 mm long, turning from pencil sketch into a finished trailer">
+  <path class="cl" d="M-10,300 H710 M390,-25 V345 M150,-25 V320 M630,-25 V320"/>
+  ${P(SH.rack,'#22262A')}${P(SH.body,'#2C3136')}${P(SH.nose,'#A7AFB2')}${P(SH.door,'#353B41')}${P(SH.win,'#1F3B73')}${P(SH.belt,'#1F3B73')}${P(SH.ramp,'none')}
+  ${P(SH.rail,'#A7AFB2')}${P(SH.drawbar,'#A7AFB2')}${P(SH.coupler,'#22262A')}${P(SH.jockey,'none')}${C(72,286,9,'#22262A')}
+  ${P(SH.guard,'none')}
+  ${WHEELS.map(x=>C(x,263,37,'#1A1D20')+C(x,263,22,'#A7AFB2')+C(x,263,6,'#22262A')).join('')}
+  <path class="pt" pathLength="1" d="M628,190 H633 V206 H628 Z" style="--f:#B8352A"/>
+  <g class="dim"><path d="M8,325 H630 M8,318 V332 M630,318 V332"/><path d="M670,20 V300 M663,20 H677 M663,300 H677"/><path d="M150,-12 H630 M150,-19 V-5 M630,-19 V-5"/></g>
+  <text class="dimt" x="319" y="342" text-anchor="middle">6 200 OVERALL</text>
+  <text class="dimt" x="390" y="-17" text-anchor="middle">4 800 BODY</text>
+  <text class="dimt" x="684" y="164" transform="rotate(90 684 164)" text-anchor="middle">2 800</text>
+  <text class="callout" x="300" y="150">← 50×50 SHS FRAME, GALV.</text>
+  <text class="callout" x="452" y="200" text-anchor="middle">2 × 1 600 KG TORSION AXLES ↓</text>
+  </svg>`;
+}
+function d1(screen,isPhone){
+  screen.innerHTML=`<div class="hero d1">
+   <header class="nav"><span class="wm">US·TRAILERS<i></i></span><nav class="links">${NAV.map(n=>`<span>${n}</span>`).join('')}</nav><span class="wa">WhatsApp us</span><span class="burger">MENU<b><i></i><i></i></b></span></header>
+   <div class="copy"><span class="eyebrow">Bespoke trailers · Cape Town</span><h3>Drawn for you.<br><em>Built once.</em></h3>
+   <p class="lede">Designed around your vehicle, your licence code and your load. Every US Trailer starts as a drawing on our desk and ends as one trailer, for one owner.</p>
+   <div class="ctas"><button class="btn" type="button">Start your drawing</button><span>or see the builds →</span></div></div>
+   <div class="art">${d1Svg()}</div>
+   <label class="scrub"><span>Sketch</span><input type="range" min="0" max="100" value="100" aria-label="Sketch to steel"><span>Steel</span></label>
+   <div class="tb"><span>DWG</span><span><b>UST-001</b></span><span>Type</span><span><b>Toy hauler</b></span><span>Scale</span><span><b>1:40</b></span><span>Drawn for</span><span><b>You</b></span></div>
+  </div>`;
+  const svg=screen.querySelector('svg'), r=screen.querySelector('input');
+  const set=v=>{const p=v/100;svg.style.setProperty('--draw',Math.min(1,p/0.55).toFixed(3));svg.style.setProperty('--fill',Math.max(0,(p-0.5)/0.5).toFixed(3));};
+  r.addEventListener('input',()=>set(+r.value));
+  set(100);
+  if(!reduce){let t0=null;set(0);const io=new IntersectionObserver(es=>{if(es[0].isIntersecting){io.disconnect();const run=t=>{t0??=t;const k=Math.min(1,(t-t0)/2600);const e=1-Math.pow(1-k,3);r.value=Math.round(e*100);set(e*100);if(k<1)requestAnimationFrame(run)};requestAnimationFrame(run)}},{threshold:.3});io.observe(screen);
+    setTimeout(()=>{if(+r.value===0&&!t0){r.value=100;set(100)}},4000);}
+}
+function d2Svg(id){
+  const steel='#2E353B', paint='#3A4249';
+  const studs=[];for(let x=170;x<=610;x+=40)studs.push(`M${x},26 V216`);
+  const welds=[];for(let x=170;x<=610;x+=40){welds.push(`<circle cx="${x}" cy="26" r="3"/><circle cx="${x}" cy="120" r="3"/><circle cx="${x}" cy="216" r="3"/>`)}
+  return `<svg viewBox="-10 -40 720 360" role="img" aria-label="Toy hauler with an X-ray lens that reveals the galvanised frame, welds and wiring under the paint">
+  <defs>
+    <clipPath id="${id}c"><circle id="${id}l" cx="300" cy="140" r="96"/></clipPath>
+    <radialGradient id="${id}g"><stop offset="0" stop-color="#F2A33A" stop-opacity=".35"/><stop offset="1" stop-color="#F2A33A" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${id}p" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4A535B"/><stop offset="1" stop-color="${paint}"/></linearGradient>
+  </defs>
+  <ellipse cx="380" cy="302" rx="360" ry="10" fill="#000" opacity=".5"/>
+  <g>
+   <path d="${SH.rack}" fill="#2A3035"/><path d="${SH.body}" fill="url(#${id}p)"/><path d="${SH.nose}" fill="#59636A"/>
+   <path d="${SH.door}" fill="none" stroke="#252B30" stroke-width="2"/><path d="${SH.win}" fill="#151A1E"/><path d="${SH.belt}" fill="#F2A33A" opacity=".85"/>
+   <path d="${SH.ramp}" stroke="#252B30" stroke-width="2"/><path d="${SH.rail}" fill="#59636A"/><path d="${SH.drawbar}" fill="#59636A"/><path d="${SH.coupler}" fill="#1A1E22"/>
+   <path d="${SH.jockey}" stroke="#59636A" stroke-width="4"/><circle cx="72" cy="286" r="9" fill="#1A1E22"/>
+   <path d="${SH.guard}" fill="none" stroke="#59636A" stroke-width="5"/>
+   ${WHEELS.map(x=>`<circle cx="${x}" cy="263" r="37" fill="#0C0E10"/><circle cx="${x}" cy="263" r="21" fill="#6B757C"/><circle cx="${x}" cy="263" r="6" fill="#1A1E22"/>`).join('')}
+   <rect x="627" y="190" width="5" height="16" fill="#E0402F"/>
+  </g>
+  <g clip-path="url(#${id}c)">
+   <rect x="-20" y="-40" width="740" height="380" fill="#0B0D0F"/>
+   <circle cx="300" cy="140" r="200" fill="url(#${id}g)" class="glow"/>
+   <g stroke="#9AA4A9" stroke-width="3" fill="none"><path d="M150,26 H630 M150,120 H630 M150,216 H630 M150,26 V216 M630,26 V216 M150,70 L112,130 V216"/><path d="${studs.join(' ')}"/></g>
+   <g fill="#F2A33A">${welds.join('')}</g>
+   <path d="${SH.rail}" fill="none" stroke="#C3CCD0" stroke-width="2.5"/><path d="M200,232 V220 M280,232 V220 M520,232 V220 M600,232 V220" stroke="#C3CCD0" stroke-width="2"/>
+   <path d="${SH.drawbar}" fill="none" stroke="#C3CCD0" stroke-width="2.5"/>
+   <path d="M30,246 L150,228 H620 V198" fill="none" stroke="#F2A33A" stroke-width="2" stroke-dasharray="7 5"/>
+   ${WHEELS.map(x=>`<circle cx="${x}" cy="263" r="37" fill="none" stroke="#5A646A" stroke-width="2"/><circle cx="${x}" cy="263" r="17" fill="none" stroke="#C3CCD0" stroke-width="3"/><path d="M${x-30},240 H${x+30}" stroke="#C3CCD0" stroke-width="5"/>`).join('')}
+   <text class="xl" x="160" y="16"><tspan class="xlb">01</tspan> 50×50×3 SHS · hot-dip galvanised</text>
+   <text class="xl" x="160" y="112"><tspan class="xlb">02</tspan> MIG welds, every joint</text>
+   <text class="xl" x="40" y="236"><tspan class="xlb">03</tspan> Sealed LED harness</text>
+   <text class="xl" x="330" y="318"><tspan class="xlb">04</tspan> 2 × 1 600 kg torsion axles</text>
+  </g>
+  <circle id="${id}r" cx="300" cy="140" r="96" fill="none" stroke="#E8F0F3" stroke-width="1.5"/>
+  </svg>`;
+}
+function d2(screen){
+  const id='x'+(uid++);
+  screen.innerHTML=`<div class="hero d2">
+   <header class="nav"><span class="wm">US<s>/</s>TRAILERS</span><nav class="links">${NAV.map(n=>`<span>${n}</span>`).join('')}</nav><span class="wa">WhatsApp the workshop</span><span class="burger"><i></i><i></i><i></i></span></header>
+   <div class="stage">
+    <h3>Look under <span>the paint.</span></h3>
+    <div class="art">${d2Svg(id)}</div>
+    <div class="side"><p class="lede">Hot-dip galvanised frames. A weld on every joint. Wiring you'd be proud to show. Every US Trailer is built once, in Cape Town, for one owner.</p><button class="btn" type="button">Start your build</button></div>
+    <div class="hold"><button type="button" aria-pressed="false">X-ray: off</button><span>Hold on the trailer</span></div>
+   </div></div>`;
+  const svg=screen.querySelector('svg'), lens=svg.getElementById(id+'l'), ring=svg.getElementById(id+'r'), glow=svg.querySelector('.glow'), btn=screen.querySelector('.hold button');
+  let r=96, target=96, full=false, raf=null;
+  const pos=(x,y)=>{[lens,ring].forEach(e=>{e.setAttribute('cx',x);e.setAttribute('cy',y)});glow.setAttribute('cx',x);glow.setAttribute('cy',y)};
+  const anim=()=>{r+= (target-r)*(reduce?1:.18);lens.setAttribute('r',r);ring.setAttribute('r',r);if(Math.abs(target-r)>.5)raf=requestAnimationFrame(anim);else{r=target;lens.setAttribute('r',r);ring.setAttribute('r',r);raf=null}};
+  const setR=v=>{target=v;if(!raf)anim()};
+  const toSvg=e=>{const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())};
+  svg.addEventListener('pointermove',e=>{if(full)return;const p=toSvg(e);pos(p.x,p.y)});
+  svg.addEventListener('pointerdown',e=>{if(full)return;svg.setPointerCapture(e.pointerId);const p=toSvg(e);pos(p.x,p.y);setR(150)});
+  ['pointerup','pointercancel'].forEach(t=>svg.addEventListener(t,()=>{if(!full)setR(96)}));
+  btn.addEventListener('click',()=>{full=!full;btn.setAttribute('aria-pressed',full);btn.textContent=full?'X-ray: on':'X-ray: off';if(full){pos(370,150);setR(480)}else setR(96)});
+}
+function d3Svg(id){
+  const stars=[];let s=7;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
+  for(let i=0;i<120;i++)stars.push(`<circle cx="${(rnd()*1600).toFixed(0)}" cy="${(rnd()*520).toFixed(0)}" r="${(rnd()*1.4+.3).toFixed(2)}"/>`);
+  return `<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <defs>
+   <linearGradient id="${id}s" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--sky1)"/><stop offset=".78" style="stop-color:var(--sky2)"/></linearGradient>
+   <radialGradient id="${id}w"><stop offset="0" stop-color="#FFD9A0" stop-opacity=".9"/><stop offset="1" stop-color="#FFD9A0" stop-opacity="0"/></radialGradient>
+   <linearGradient id="${id}b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--body)"/><stop offset="1" style="stop-color:var(--shade)"/></linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#${id}s)"/>
+  <g fill="#fff" style="opacity:var(--stars)">${stars.join('')}</g>
+  <path d="M0,700 L120,640 L210,662 L330,590 L420,618 L520,560 L610,600 L700,585 L800,540 L905,592 L1010,566 L1120,610 L1240,560 L1360,604 L1480,580 L1600,612 V1000 H0 Z" style="fill:var(--ridge)"/>
+  <path d="M0,760 Q400,730 800,748 T1600,742 V1000 H0 Z" style="fill:var(--land)"/>
+  <g transform="translate(860,640) scale(1.05)">
+   <ellipse cx="390" cy="302" rx="340" ry="12" fill="#000" opacity=".35"/>
+   <path d="M230,108 L380,108 L470,300 L140,300 Z" fill="url(#${id}w)" style="opacity:calc(var(--glow)*.55)"/>
+   <path d="${SH.rack}" style="fill:var(--trim)"/><path d="${SH.body}" fill="url(#${id}b)"/><path d="${SH.nose}" style="fill:var(--shade)"/>
+   <path d="${SH.door}" fill="none" style="stroke:var(--shade)" stroke-width="2"/><path d="${SH.win}" style="fill:var(--trim)"/>
+   <rect x="482" y="56" width="98" height="44" fill="#FFD9A0" style="opacity:calc(var(--glow)*.9)"/>
+   <path d="${SH.belt}" fill="#6E7D5B"/><path d="${SH.rail}" style="fill:var(--trim)"/><path d="${SH.drawbar}" style="fill:var(--trim)"/><path d="${SH.coupler}" style="fill:var(--trim)"/>
+   <path d="${SH.jockey}" style="stroke:var(--trim)" stroke-width="4"/>
+   ${WHEELS.map(x=>`<circle cx="${x}" cy="263" r="37" fill="#14151A"/><circle cx="${x}" cy="263" r="20" style="fill:var(--shade)"/>`).join('')}
+   <rect x="230" y="104" width="150" height="5" fill="#FFE6C2" style="opacity:var(--glow)"/>
+   <circle cx="305" cy="106" r="60" fill="url(#${id}w)" style="opacity:var(--glow)"/>
+   <circle cx="630" cy="198" r="22" fill="#E0402F" style="opacity:calc(var(--glow)*.5)"/>
+   <rect x="627" y="190" width="5" height="16" fill="#E0402F"/>
+  </g>
+  </svg>`;
+}
+function d3(screen){
+  const id='k'+(uid++);
+  screen.innerHTML=`<div class="hero d3" data-mode="dusk">
+   <div class="scene">${d3Svg(id)}</div>
+   <header class="nav"><span class="wm">US <em>Trailers</em></span><nav class="links">${NAV.map(n=>`<span>${n}</span>`).join('')}</nav><span class="wa">WhatsApp us</span><span class="burger"><i></i><i></i></span></header>
+   <div class="copy"><span class="eyebrow">One-off trailers · Cape Town</span><h3>Built for one owner. <em>Lit for every hour.</em></h3>
+   <p class="lede">Toy haulers, off-road campers and goosenecks, commissioned one at a time for the Tankwa, the Cederberg and the long road north.</p>
+   <button class="btn" type="button">Commission yours</button></div>
+   <span class="coord">Tankwa Karoo · 32.3° S</span>
+   <div class="modes" role="group" aria-label="Light">${['Day','Dusk','Night'].map(m=>`<button type="button" data-m="${m.toLowerCase()}" aria-pressed="${m==='Dusk'}">${m}</button>`).join('')}</div>
+  </div>`;
+  const hero=screen.firstElementChild;
+  hero.querySelectorAll('.modes button').forEach(b=>b.addEventListener('click',()=>{hero.dataset.mode=b.dataset.m;hero.querySelectorAll('.modes button').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+}
+const T={d1,d2,d3};
+document.querySelectorAll('.frame').forEach(f=>{
+  const sc=f.querySelector('.screen'),w=+f.dataset.w,h=+f.dataset.h;
+  sc.style.width=w+'px';sc.style.height=h+'px';
+  T[sc.dataset.tpl](sc,w<600);
+  const fit=()=>{const s=f.clientWidth/w;sc.style.transform=`scale(${s})`;f.style.height=(h*s)+'px'};
+  fit();new ResizeObserver(fit).observe(f);
+});
+})();
+</script>
