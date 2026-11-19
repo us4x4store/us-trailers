@@ -32,6 +32,13 @@ _Last updated: 2026-11-19 (session 1)_
 - Checked live at 1440 and 390: no console errors, no overflow, all routes 200, unknown routes 404.
 - Not built on purpose: Builds/portfolio (needs Justin's real builds; no invented clients).
 
+## Polish pass (session 2)
+- Review 1 (docs/review-1.md): no section at 9. Fixed: honest rig numbers (static nose weight by moment balance), sticky 3D + compact price dock on phones, phone menu, film 700svh with 'Custom trailers' H1 + Get a price + Skip, callout avoids text, 12px type minimum + contrast, long copy in proportional face, 44px tap targets, reduced motion in 3D, share images, /faq H1, 404, /privacy (POPIA draft), contact config + WhatsApp button (pending number), SITE_URL setting.
+- Live Lighthouse mobile, home: performance 96, accessibility 100, best practices 100, SEO 100 (was 69 perf). Type pages 98–100.
+- 3D film now starts on first interaction; drawing poster is the first frame.
+- Not testable here: Safari/iPhone and Firefox (only Chromium in this environment).
+- Review 2 (fresh reviewer) running.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.

@@ -50,6 +50,7 @@ const PAGES = ["/", "/toy-haulers", "/gooseneck-fifth-wheel-trailers", "/off-roa
     }
   }
   // internal links resolve
+  if (base.startsWith("https")) { console.log("internal links: skipped on live (checked with curl)"); await browser.close(); return; }
   const ctx = await browser.newContext();
   const bad = [];
   for (const h of links) {
