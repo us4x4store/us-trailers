@@ -72,3 +72,14 @@ h3 {
   background: var(--paper);
   padding: 10px 14px;
 }
+
+/* configurator dimension label (rendered by drei Html, outside CSS modules) */
+.cfg-dim {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  padding: 3px 6px;
+  white-space: nowrap;
+}

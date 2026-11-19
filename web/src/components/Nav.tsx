@@ -14,10 +14,10 @@ export default function Nav() {
       <nav className={styles.links} aria-label="Main">
         <a href="#film">The build</a>
         <a href="#drive">Tow it</a>
-        <a href="#enquire">Start your drawing</a>
+        <a href="#design">Design yours</a>
       </nav>
       <a href="#enquire" className={styles.wa}>
-        Enquire
+        Start your drawing
       </a>
     </header>
   );
