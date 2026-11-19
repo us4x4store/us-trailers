@@ -20,6 +20,11 @@ _Last updated: 2026-11-19 (session 1)_
 - Physics test rig: towed by a kinematic tow ball through a spherical joint, ray-cast suspension per wheel, tar / corrugations / rocks, strappable loads, live nose weight, GVM, licence code and 100 km/h rule.
 - Verified numerically in a live browser (`web/scripts/inspect-film.js`, `web/scripts/test-physics.js`): no console errors; contact points match the road to ~1.5 mm; static sag 51–55 mm; nose weight 8.7% empty, 9.2% loaded; coupler tracks the tow ball exactly.
 
+## Built (session 2)
+- Live configurator (#design): length 3.6–6.0 m, single/tandem, 6 colours, rack, solar; live 3D rebuild, weights, licence, indicative rand range (EXAMPLE pricing in `web/src/trailer/pricing.ts`), shareable `?build=` codes.
+- Enquiry brief form (#enquire): server action with zod, honeypot + timing trap, attached build, POPIA consent. Delivers by email via Resend once `ENQUIRY_TO` and `RESEND_API_KEY` are set on Vercel; until then visitors get an honest 'not connected yet' message with a copy button.
+- Tested on live site at 1440 and 390: no console errors.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
