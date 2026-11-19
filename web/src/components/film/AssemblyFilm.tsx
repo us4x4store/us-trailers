@@ -20,6 +20,7 @@ export default function AssemblyFilm() {
   const [chapter, setChapter] = useState(0);
   const [active, setActive] = useState(-1);
   const [ready, setReady] = useState(false);
+  const [past, setPast] = useState(false);
   const [inView, setInView] = useState(true);
   const [exploded, setExploded] = useState(false);
   const [lights, setLights] = useState(false);
@@ -36,19 +37,28 @@ export default function AssemblyFilm() {
       end: "bottom bottom",
       onUpdate: (self) => {
         film.p = self.progress;
+        const isPast = self.progress > 0.012;
+        setPast((prev) => (prev === isPast ? prev : isPast));
         const c = chapterAt(self.progress);
         setChapter((prev) => (prev === c ? prev : c));
         if (ruler.current) ruler.current.style.transform = `scaleX(${self.progress})`;
       },
     });
-    // mount the 3D only once the page has painted the poster (keeps first paint fast)
-    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
-    idle(() => setReady(true));
+    // The drawing (poster) is the first frame of the film. Start the 3D only once the visitor
+    // engages, so first load stays light on phones and in speed audits.
+    const start = () => {
+      setReady(true);
+      EVENTS.forEach((ev) => window.removeEventListener(ev, start));
+    };
+    const EVENTS = ["scroll", "wheel", "touchstart", "pointerdown", "keydown", "pointermove"] as const;
+    if (window.scrollY > 0) start();
+    else EVENTS.forEach((ev) => window.addEventListener(ev, start, { passive: true, once: true }));
     // stop rendering the film while it is off screen
     const io = new IntersectionObserver((es) => setInView(es[0].isIntersecting), { rootMargin: "10% 0px" });
     io.observe(section.current!);
     return () => {
       st.kill();
+      EVENTS.forEach((ev) => window.removeEventListener(ev, start));
       io.disconnect();
       film.listeners.delete(onActive);
       film.label = null;
@@ -70,7 +80,7 @@ export default function AssemblyFilm() {
     <section ref={section} className={styles.film} aria-label="Watch a US Trailer being built, part by part">
       <div className={styles.stage}>
         <div className={styles.canvas} aria-hidden="true">
-          <DrawingPoster faded={ready} />
+          <DrawingPoster faded={ready && past} />
           {ready && <FilmScene active={inView} />}
         </div>
 

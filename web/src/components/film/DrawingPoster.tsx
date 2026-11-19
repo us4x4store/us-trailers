@@ -13,7 +13,7 @@ export function DrawingPoster({ faded }: { faded: boolean }) {
         width: "88%",
         height: "68%",
         opacity: faded ? 0 : 1,
-        transition: "opacity 1.2s ease 0.8s",
+        transition: "opacity 0.6s ease",
         pointerEvents: "none",
       }}
       role="img"

@@ -9,6 +9,8 @@ import { buildPartGeometry, type BuiltPart } from "@/trailer/geometry";
 import { createMaterials, INK, PAPER } from "@/trailer/materials";
 import { RANGES, chapterAt, clamp01, easeInOut, easeOutCubic, easeSettle, film, partWindows } from "./timeline";
 
+const REDUCED = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 /* ---------------- camera path ---------------- */
 type Key = { dir: [number, number, number]; dist: number; tgt: [number, number, number] };
 /** Camera direction (from target), distance in metres, and look-at target for each chapter. */
@@ -243,7 +245,7 @@ function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObje
       if (k >= 0.98 && !rt.landed) {
         rt.landed = true;
         if (part.weld && sparks.current && film.ps > drawEnd && Math.abs(film.p - film.ps) < 0.03) {
-          sparks.current(tmp.set(...part.anchor), lite ? 40 : 90);
+          if (!REDUCED) sparks.current(tmp.set(...part.anchor), lite ? 40 : 90);
         }
       } else if (k < 0.9) rt.landed = false;
       if (k > 0 && k < 1) active = i;
@@ -277,8 +279,10 @@ function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObje
     cam.setViewOffset(size.width, size.height, -(sc.x - 0.5) * size.width, -(sc.y - 0.5) * size.height, size.width, size.height);
     const fit = aspect < 1 ? Math.min(2.1, 1.05 / aspect) : 1;
     camPos.sub(camTgt).multiplyScalar(fit).add(camTgt);
-    camPos.x += pointer.current.x * 0.5;
-    camPos.y -= pointer.current.y * 0.3;
+    if (!REDUCED) {
+      camPos.x += pointer.current.x * 0.5;
+      camPos.y -= pointer.current.y * 0.3;
+    }
     state.camera.position.lerp(camPos, 1 - Math.exp(-dt * 8));
     look.lerp(camTgt, 1 - Math.exp(-dt * 8));
     state.camera.lookAt(look);

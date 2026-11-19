@@ -136,7 +136,7 @@ export default function ConfigScene({ cfg, active }: { cfg: TrailerConfig; activ
         maxDistance={22}
         maxPolarAngle={Math.PI / 2 - 0.06}
         target={[0, 1.1, 0]}
-        autoRotate={active}
+        autoRotate={active && !(typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches)}
         autoRotateSpeed={0.35}
       />
     </Canvas>
