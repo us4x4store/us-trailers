@@ -20,6 +20,11 @@ _Last updated: 2026-11-19 (session 1)_
 - Physics test rig: towed by a kinematic tow ball through a spherical joint, ray-cast suspension per wheel, tar / corrugations / rocks, strappable loads, live nose weight, GVM, licence code and 100 km/h rule.
 - Verified numerically in a live browser (`web/scripts/inspect-film.js`, `web/scripts/test-physics.js`): no console errors; contact points match the road to ~1.5 mm; static sag 51–55 mm; nose weight 8.7% empty, 9.2% loaded; coupler tracks the tow ball exactly.
 
+## Live
+- https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
+- Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
+- Vercel plugin installed for Claude Code; Vercel MCP still needs sign-in via /mcp.
+
 ## In progress
 - Waiting on Justin: direction choice (decision 1) and answers to batch 1.
 
@@ -28,4 +33,4 @@ _Last updated: 2026-11-19 (session 1)_
 
 ## Blocked
 - **GitHub push**: repo `us4x4store/us-trailers` exists and is connected, but pushes are refused until the Claude GitHub App is installed on it; this session's permission check also blocked a push. Commits are local until then.
-- **Vercel**: a token was saved through the secure form, but the proxy sends no valid token to api.vercel.com ("missing an authentication token"), which now blocks even temporary deploys. Justin needs to re-save a valid token (vercel.com/account/tokens).
+

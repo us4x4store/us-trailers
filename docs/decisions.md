@@ -8,3 +8,4 @@
 | 2026-11-19 | Environment network set to unrestricted. | Research needs dozens of unknown hosts (award sites, competitors, studios); exact-host allowlist isn't workable. |
 | 2026-11-19 | Creative directions shown as one live page (claude.ai artifact) with working interactions in laptop and phone frames, not images. | Respects the no-screenshots rule, opens on his phone, and lets him feel each signature interaction. |
 | 2026-11-19 | Recommended direction 1, Drawing Office. | Answers buyers' fears (quality, paperwork) with visible engineering; distinctive among trailer builders and award sites; leads naturally into the part-by-part 3D build and configurator. |
+| 2026-11-19 | Moved the session to a new `us-trailers` environment instead of the Default one. | A broken saved Vercel key on Default was injected into every Vercel request and blocked login. |
