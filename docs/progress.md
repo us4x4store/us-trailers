@@ -37,7 +37,9 @@ _Last updated: 2026-11-19 (session 1)_
 - Live Lighthouse mobile, home: performance 96, accessibility 100, best practices 100, SEO 100 (was 69 perf). Type pages 98–100.
 - 3D film now starts on first interaction; drawing poster is the first frame.
 - Not testable here: Safari/iPhone and Firefox (only Chromium in this environment).
-- Review 2 (fresh reviewer) running.
+- Review 2 (docs/review-2.md): film ~9 across the board. Fixed: form keeps input + short first step + focus to errors; rig loose-load detection, clamps, reset, thicker colliders, HUD, fits one screen; handover contrast; blueprint process section; type-page sheets + per-type share images; menu dialog.
+- Live Lighthouse mobile after review 2: home 96/100/100/100, /toy-haulers 96/100/100/100.
+- Still open from review 2 (needs Justin): privacy responsible party, contact details, real photos.
 
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
