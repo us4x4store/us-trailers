@@ -157,10 +157,12 @@ export default function TypeDrawing({
   kind,
   progress,
   label,
+  decorative = false,
 }: {
   kind: Kind;
   progress?: number;
   label: string;
+  decorative?: boolean;
 }) {
   const d = PATHS[kind];
   const animated = typeof progress === "number";
@@ -169,8 +171,7 @@ export default function TypeDrawing({
     <>
       <svg
         viewBox="-60 -20 840 380"
-        role="img"
-        aria-label={label}
+        role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative || undefined}
         className="drw"
         style={{
           width: "100%",

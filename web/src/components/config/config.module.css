@@ -307,3 +307,8 @@
     scroll-margin-bottom: 96px;
   }
 }
+
+/* sub-labels on a selected (ink) button follow the button colour */
+[aria-pressed="true"] small {
+  color: inherit;
+}
