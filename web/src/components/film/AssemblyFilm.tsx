@@ -20,6 +20,7 @@ export default function AssemblyFilm() {
   const [chapter, setChapter] = useState(0);
   const [active, setActive] = useState(-1);
   const [ready, setReady] = useState(false);
+  const [inView, setInView] = useState(true);
   const [exploded, setExploded] = useState(false);
   const [lights, setLights] = useState(false);
   const [ramp, setRamp] = useState(false);
@@ -43,8 +44,12 @@ export default function AssemblyFilm() {
     // mount the 3D only once the page has painted the poster (keeps first paint fast)
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
     idle(() => setReady(true));
+    // stop rendering the film while it is off screen
+    const io = new IntersectionObserver((es) => setInView(es[0].isIntersecting), { rootMargin: "10% 0px" });
+    io.observe(section.current!);
     return () => {
       st.kill();
+      io.disconnect();
       film.listeners.delete(onActive);
       film.label = null;
     };
@@ -66,7 +71,7 @@ export default function AssemblyFilm() {
       <div className={styles.stage}>
         <div className={styles.canvas} aria-hidden="true">
           <DrawingPoster faded={ready} />
-          {ready && <FilmScene />}
+          {ready && <FilmScene active={inView} />}
         </div>
 
         {/* headline over the drawing */}

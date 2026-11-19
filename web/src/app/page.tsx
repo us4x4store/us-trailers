@@ -1,4 +1,5 @@
 import AssemblyFilm from "@/components/film/AssemblyFilm";
+import TestDrive from "@/components/drive/TestDrive";
 
 export default function Home() {
   return (
@@ -7,6 +8,7 @@ export default function Home() {
       <div id="film">
         <AssemblyFilm />
       </div>
+      <TestDrive />
     </main>
   );
 }

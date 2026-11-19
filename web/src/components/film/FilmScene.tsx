@@ -392,11 +392,12 @@ function Lights() {
   );
 }
 
-export default function FilmScene() {
+export default function FilmScene({ active = true }: { active?: boolean }) {
   const sparks = useRef<((at: THREE.Vector3, n: number) => void) | null>(null);
   const lite = typeof window !== "undefined" && (window.innerWidth < 760 || (navigator.hardwareConcurrency ?? 8) <= 4);
   return (
     <Canvas
+      frameloop={active ? "always" : "never"}
       shadows={!lite}
       dpr={lite ? [1, 1.5] : [1, 2]}
       camera={{ fov: 32, near: 0.1, far: 140, position: [0.5, 2.4, 14] }}

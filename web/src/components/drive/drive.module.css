@@ -1,0 +1,340 @@
+.drive {
+  position: relative;
+  background: var(--paper);
+  padding: clamp(72px, 10vh, 120px) var(--gutter) 56px;
+  display: grid;
+  gap: 28px;
+}
+.head {
+  display: grid;
+  gap: 14px;
+  max-width: 760px;
+}
+.eyebrow {
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 118%;
+  font-size: clamp(42px, 6vw, 84px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.lede {
+  font: 400 15px/1.6 var(--mono);
+  max-width: 62ch;
+}
+.rig {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 0;
+  border: 1.5px solid var(--graphite);
+  min-height: min(78svh, 760px);
+}
+.viewport {
+  position: relative;
+  min-width: 0;
+  min-height: 420px;
+  background: #e9e2d3;
+  border-right: 1.5px solid var(--graphite);
+}
+.viewport canvas {
+  touch-action: none;
+}
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.views {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  border: 1.5px solid var(--graphite);
+  background: var(--paper);
+}
+.views button,
+.seg button,
+.loads button,
+.strap,
+.clear {
+  font: 500 11px/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  background: var(--paper);
+  border: 0;
+  padding: 11px 13px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.views button + button {
+  border-left: 1px solid var(--graphite);
+}
+.views button[aria-pressed="true"],
+.seg button[aria-pressed="true"],
+.loads button[aria-pressed="true"],
+.strap[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.hint {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  opacity: 0.7;
+}
+.panel {
+  display: grid;
+  align-content: start;
+  gap: 0;
+  min-width: 0;
+}
+.group {
+  border: 0;
+  margin: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--graphite);
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.group legend,
+.legend {
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.group legend {
+  float: left;
+  margin-bottom: 10px;
+}
+.legend output {
+  color: var(--graphite);
+  font-variant-numeric: tabular-nums;
+}
+.seg {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1.5px solid var(--graphite);
+}
+.seg button {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  padding: 10px;
+}
+.seg button + button {
+  border-left: 1px solid var(--graphite);
+}
+.seg small,
+.loads small {
+  font: 400 10px/1.2 var(--mono);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.75;
+}
+.group input[type="range"] {
+  width: 100%;
+  accent-color: #1f3b73;
+  height: 32px;
+}
+.warn {
+  font: 500 11px/1.45 var(--mono);
+  color: var(--red);
+}
+.loads {
+  clear: both;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.loads button {
+  border: 1.5px solid var(--graphite);
+  text-align: left;
+  display: grid;
+  gap: 3px;
+}
+.row {
+  display: flex;
+  gap: 6px;
+}
+.strap,
+.clear {
+  flex: 1;
+  border: 1.5px solid var(--graphite);
+}
+.clear:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.readouts {
+  padding: 14px 16px 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 10px;
+  font-variant-numeric: tabular-nums;
+}
+.stat {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.stat span,
+.meter > span,
+.small {
+  font: 500 10px/1.2 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.stat b {
+  font: 700 22px/1 var(--display);
+  font-stretch: 110%;
+}
+.stat i {
+  font: 400 10px/1 var(--mono);
+  font-style: normal;
+}
+.travel {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  align-items: end;
+}
+.travel .small,
+.travel .unit {
+  grid-column: 1 / -1;
+}
+.unit {
+  font: 400 10px/1 var(--mono);
+  color: var(--graphite);
+  opacity: 0.75;
+}
+.bar {
+  position: relative;
+  height: 64px;
+  border: 1.5px solid var(--graphite);
+  display: grid;
+  align-items: end;
+}
+.bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: 50% 100%;
+}
+.bar em {
+  position: relative;
+  font: 600 11px/1 var(--mono);
+  font-style: normal;
+  color: var(--paper);
+  mix-blend-mode: difference;
+  padding: 4px;
+}
+.meter {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+}
+.meter b {
+  font: 700 20px/1 var(--display);
+  font-stretch: 108%;
+}
+.meter b small {
+  font: 500 12px/1 var(--mono);
+}
+.meter > small {
+  font: 400 11px/1.45 var(--mono);
+}
+.track {
+  position: relative;
+  height: 10px;
+  border: 1.5px solid var(--graphite);
+}
+.band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--ink) 25%, transparent);
+}
+.needle {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 2px;
+  background: var(--graphite);
+  transition: left 0.2s;
+}
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink);
+  transition: width 0.3s;
+}
+.bad b,
+.bad > small {
+  color: var(--red);
+}
+.bad .fill,
+.bad .needle {
+  background: var(--red);
+}
+.legal {
+  grid-column: 1 / -1;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  border-top: 1px solid var(--graphite);
+  padding-top: 12px;
+}
+.legal div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 8px;
+  font: 400 11px/1.4 var(--mono);
+}
+.legal dt {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+.legal dd {
+  margin: 0;
+}
+.foot {
+  font: 400 11px/1.5 var(--mono);
+  opacity: 0.8;
+}
+@media (max-width: 960px) {
+  .rig {
+    grid-template-columns: 1fr;
+  }
+  .viewport {
+    border-right: 0;
+    border-bottom: 1.5px solid var(--graphite);
+    min-height: 0;
+    height: 62svh;
+  }
+}

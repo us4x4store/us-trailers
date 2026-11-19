@@ -110,9 +110,10 @@ export const DIM = {
 const lin = (a: number, b: number, n: number) => Array.from({ length: n }, (_, i) => a + ((b - a) * i) / (n - 1));
 
 export function axlePositions(cfg: TrailerConfig): number[] {
-  // axle group sits behind centre so the coupler carries roughly 7–10% nose weight
+  // axle group sits just behind the centre of mass so the coupler carries ~9% nose weight
+  // (checked live in the test rig: nose kg = gross − Σ wheel suspension forces / g)
   const L = cfg.length;
-  const centre = -L * 0.12;
+  const centre = -L * 0.066;
   return cfg.axles === 2 ? [centre + 0.45, centre - 0.45] : [centre];
 }
 
