@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TYPES } from "@/content/types";
+import { CONTACT, telLink, waLink } from "@/content/contact";
 import styles from "./footer.module.css";
 
 export default function Footer() {
@@ -24,8 +25,17 @@ export default function Footer() {
         <Link href="/#drive">Tow it</Link>
         <Link href="/#design">Design yours</Link>
         <Link href="/faq">Towing laws &amp; FAQ</Link>
-        <Link href="/#enquire">Start your drawing</Link>
+        <Link href="/#enquire">Get a price</Link>
+        <Link href="/privacy">Privacy (POPIA)</Link>
       </nav>
+      {(CONTACT.whatsapp || CONTACT.phone || CONTACT.email) && (
+        <div className={styles.col}>
+          <h2>Talk to us</h2>
+          {waLink() && <a href={waLink()!}>WhatsApp</a>}
+          {telLink() && <a href={telLink()!}>{CONTACT.phone}</a>}
+          {CONTACT.email && <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>}
+        </div>
+      )}
       <p className={styles.small}>© {2026} US Trailers. Concept drawings and example specs shown until build photos are published.</p>
     </footer>
   );

@@ -61,7 +61,7 @@ export default function TestDrive() {
   const payload = r.gross - TARE;
   const over = r.gross > GVM;
   const nosePct = r.gross > 0 ? (r.noseKg / r.gross) * 100 : 0;
-  const noseOk = nosePct >= 6 && nosePct <= 12;
+  const noseOk = !r.ready || (nosePct >= 6 && nosePct <= 12);
   const combo = BAKKIE.gvm + GVM;
 
   return (
@@ -135,6 +135,18 @@ export default function TestDrive() {
                 setKmh(+e.target.value);
               }}
             />
+            {kmh === 0 && (
+              <button
+                type="button"
+                className={styles.go}
+                onClick={() => {
+                  drive.targetKmh = 40;
+                  setKmh(40);
+                }}
+              >
+                Set off at 40 km/h
+              </button>
+            )}
             {kmh > 100 && combo > 3500 && (
               <p className={styles.warn}>
                 Over 100 km/h. A bakkie towing a combined GVM over 3 500 kg is limited to 100 km/h (reg. 293). This combination is {combo.toLocaleString("en-ZA")} kg.
@@ -213,13 +225,22 @@ export default function TestDrive() {
             <div className={`${styles.meter} ${noseOk ? "" : styles.bad}`}>
               <span>Nose weight on the tow ball</span>
               <b>
-                {r.noseKg} kg <small>({nosePct.toFixed(1)}%)</small>
+                {r.ready ? (
+                  <>
+                    {r.noseKg} kg <small>({nosePct.toFixed(1)}%)</small>
+                  </>
+                ) : (
+                  "Weighing…"
+                )}
               </b>
               <div className={styles.track}>
                 <i className={styles.band} style={{ left: "35%", width: "35%" }} />
                 <i className={styles.needle} style={{ left: `${Math.max(0, Math.min(100, (nosePct / 17) * 100))}%` }} />
               </div>
-              <small>Aim for 7–10% of the trailer&apos;s mass. Too little and it sways; too much and the bakkie&apos;s rear squats.</small>
+              <small>
+                Parked, level: worked out from where the mass sits. Live hitch load on this road: {r.liveNoseKg} kg. Aim for 7–10%: too little and it sways, too much and
+                the bakkie&apos;s rear squats.
+              </small>
             </div>
 
             <div className={`${styles.meter} ${over ? styles.bad : ""}`}>

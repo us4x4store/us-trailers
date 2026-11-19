@@ -1,4 +1,5 @@
 import type { Surface } from "./road";
+import { DEFAULT_CONFIG, tareKg } from "@/trailer/model";
 
 export type LoadKind = "quad" | "bike" | "jerry";
 export const LOADS: Record<LoadKind, { label: string; kg: number; size: [number, number, number]; x: number }> = {
@@ -19,18 +20,21 @@ export type Readout = {
   roll: number;
   g: number;
   noseKg: number;
+  liveNoseKg: number;
   gross: number;
+  ready: boolean;
 };
 
 export const drive = {
-  targetKmh: 40,
+  // parked until the visitor sets off; with reduced motion it stays parked
+  targetKmh: 0,
   surface: "gravel" as Surface,
   view: "chase" as "chase" | "wheel" | "side",
   strapped: true,
   water: false,
   loads: [] as { id: number; kind: LoadKind }[],
   nextId: 1,
-  readout: { kmh: 0, travel: [0, 0, 0, 0], pitch: 0, roll: 0, g: 1, noseKg: 0, gross: 0 } as Readout,
+  readout: { kmh: 0, travel: [0, 0, 0, 0], pitch: 0, roll: 0, g: 1, noseKg: 0, liveNoseKg: 0, gross: tareKg(DEFAULT_CONFIG), ready: false } as Readout,
   listeners: new Set<() => void>(),
   emit() {
     this.listeners.forEach((f) => f());

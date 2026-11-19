@@ -129,7 +129,7 @@ export default function Enquire() {
         <label className={styles.check}>
           <input type="checkbox" name="consent" aria-invalid={!!err("consent")} />
           <span>
-            US Trailers may contact me about this enquiry. We keep your details only for your build and never share them (POPIA).
+            US Trailers may contact me about this enquiry. We keep your details only for your build and never share them. <a href="/privacy">Privacy notice (POPIA)</a>.
           </span>
         </label>
         {err("consent") && <p className={styles.error}>{err("consent")}</p>}

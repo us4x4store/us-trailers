@@ -3,6 +3,7 @@ import Link from "next/link";
 import { TYPES, typeBySlug } from "@/content/types";
 import TypeDrawing from "@/components/drawings/TypeDrawing";
 import FaqList, { faqJsonLd } from "@/components/faq/FaqList";
+import { SITE_URL } from "@/content/site";
 import styles from "./type.module.css";
 
 export function typeMetadata(slug: string): Metadata {
@@ -12,7 +13,7 @@ export function typeMetadata(slug: string): Metadata {
     title: t.title,
     description: t.description,
     alternates: { canonical: `/${t.slug}` },
-    openGraph: { title: t.title, description: t.description, url: `/${t.slug}`, locale: "en_ZA", type: "website", siteName: "US Trailers" },
+    openGraph: { title: t.title, description: t.description, url: `/${t.slug}`, locale: "en_ZA", type: "website", siteName: "US Trailers", images: ["/opengraph-image"] },
   };
 }
 
@@ -35,8 +36,8 @@ export default function TypePageView({ slug }: { slug: string }) {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "US Trailers", item: "https://ustrailers.co.za/" },
-        { "@type": "ListItem", position: 2, name: t.short, item: `https://ustrailers.co.za/${t.slug}` },
+        { "@type": "ListItem", position: 1, name: "US Trailers", item: `${SITE_URL}/` },
+        { "@type": "ListItem", position: 2, name: t.short, item: `${SITE_URL}/${t.slug}` },
       ],
     },
   ];
@@ -57,11 +58,17 @@ export default function TypePageView({ slug }: { slug: string }) {
           <p className={styles.lede}>{t.intro}</p>
           <div className={styles.ctas}>
             <Link className={styles.primary} href="/#enquire">
-              Start your drawing
+              Get a price
             </Link>
-            <Link className={styles.secondary} href="/#design">
-              Design one now
-            </Link>
+            {t.slug === "toy-haulers" ? (
+              <Link className={styles.secondary} href="/#design">
+                Design one now
+              </Link>
+            ) : (
+              <Link className={styles.secondary} href="/faq">
+                Read the towing laws
+              </Link>
+            )}
           </div>
         </div>
         <div className={styles.art}>
@@ -112,7 +119,7 @@ export default function TypePageView({ slug }: { slug: string }) {
         <h2 className={styles.closeH}>Commission yours, not one for sale off a floor.</h2>
         <div className={styles.ctas}>
           <Link className={styles.primary} href="/#enquire">
-            Start your drawing
+            Get a price
           </Link>
           <Link className={styles.secondary} href={`/${next.slug}`}>
             Next sheet: {next.short} →

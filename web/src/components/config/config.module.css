@@ -60,7 +60,7 @@
   grid-template-columns: auto auto;
   border: 1.5px solid var(--graphite);
   background: var(--paper);
-  font: 500 11px/1 var(--mono);
+  font: 500 12px/1 var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -69,6 +69,18 @@
 }
 .code span {
   border-right: 1px solid var(--graphite);
+}
+.codeShare {
+  display: none;
+  border: 0;
+  border-left: 1px solid var(--graphite);
+  background: var(--paper);
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  min-height: 36px;
+  cursor: pointer;
 }
 .code b {
   color: var(--ink);
@@ -91,7 +103,7 @@
   width: 100%;
   margin-bottom: 10px;
   padding: 0;
-  font: 600 11px/1 var(--mono);
+  font: 600 12px/1 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink);
@@ -131,8 +143,8 @@
 }
 .seg small,
 .toggles small {
-  font: 400 10px/1.25 var(--mono);
-  opacity: 0.75;
+  font: 400 12px/1.25 var(--mono);
+  color: var(--muted);
 }
 .seg button[aria-pressed="true"],
 .toggles button[aria-pressed="true"] {
@@ -180,7 +192,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ink);
-  font-size: 11px;
+  font-size: 12px;
 }
 .specs dd {
   margin: 0;
@@ -192,7 +204,7 @@
   border-bottom: 1px solid var(--graphite);
 }
 .price span {
-  font: 600 11px/1 var(--mono);
+  font: 600 12px/1 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink);
@@ -203,8 +215,8 @@
   font-variant-numeric: tabular-nums;
 }
 .price small {
-  font: 400 11px/1.4 var(--mono);
-  opacity: 0.8;
+  font: 400 12px/1.4 var(--mono);
+  color: var(--muted);
 }
 .actions {
   display: flex;
@@ -240,10 +252,58 @@
   .board {
     grid-template-columns: 1fr;
   }
+  /* the drawing stays in view while you work the controls underneath it */
   .view {
+    position: sticky;
+    top: 64px;
+    z-index: 2;
     border-right: 0;
     border-bottom: 1.5px solid var(--graphite);
     min-height: 0;
-    height: 56svh;
+    height: 36svh;
+    background: var(--paper);
+  }
+  /* price and send stay under your thumb, in one compact row */
+  .dock {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    background: var(--paper);
+    border-top: 1.5px solid var(--graphite);
+    box-shadow: 0 -8px 16px -12px rgba(34, 38, 42, 0.35);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .dock .price {
+    padding: 10px 0 10px 16px;
+    border-bottom: 0;
+    gap: 4px;
+  }
+  .dock .price b {
+    font-size: 19px;
+  }
+  .dock .price small {
+    display: none;
+  }
+  .dock .actions {
+    padding: 10px 16px 10px 10px;
+  }
+  .dock .send {
+    padding: 0 14px;
+  }
+  .dock .share {
+    display: none;
+  }
+  .codeShare {
+    display: block;
+  }
+  .code {
+    grid-template-columns: auto auto auto;
+  }
+  .panel :is(button, a) {
+    scroll-margin-top: calc(36svh + 80px);
+    scroll-margin-bottom: 96px;
   }
 }

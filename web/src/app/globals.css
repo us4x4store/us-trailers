@@ -8,6 +8,7 @@
   --graphite: #22262a;
   --galv: #a7afb2;
   --red: #b8352a;
+  --muted: #4f5552;
   --dusk: #1a1f36;
   --display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
   --mono: var(--font-plex), ui-monospace, "SFMono-Regular", Menlo, monospace;

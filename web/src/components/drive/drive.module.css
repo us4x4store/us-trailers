@@ -68,7 +68,7 @@
 .loads button,
 .strap,
 .clear {
-  font: 500 11px/1.2 var(--mono);
+  font: 500 12px/1.2 var(--mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--graphite);
@@ -92,11 +92,11 @@
   position: absolute;
   right: 12px;
   bottom: 10px;
-  font: 400 10px/1 var(--mono);
+  font: 400 12px/1 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--graphite);
-  opacity: 0.7;
+  color: var(--muted);
 }
 .panel {
   display: grid;
@@ -115,7 +115,7 @@
 }
 .group legend,
 .legend {
-  font: 600 11px/1 var(--mono);
+  font: 600 12px/1 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink);
@@ -149,18 +149,18 @@
 }
 .seg small,
 .loads small {
-  font: 400 10px/1.2 var(--mono);
+  font: 400 12px/1.2 var(--mono);
   letter-spacing: 0.02em;
   text-transform: none;
-  opacity: 0.75;
+  color: var(--muted);
 }
 .group input[type="range"] {
   width: 100%;
   accent-color: #1f3b73;
-  height: 32px;
+  height: 44px;
 }
 .warn {
-  font: 500 11px/1.45 var(--mono);
+  font: 500 12px/1.45 var(--mono);
   color: var(--red);
 }
 .loads {
@@ -203,7 +203,7 @@
 .stat span,
 .meter > span,
 .small {
-  font: 500 10px/1.2 var(--mono);
+  font: 500 12px/1.2 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);
@@ -213,7 +213,7 @@
   font-stretch: 110%;
 }
 .stat i {
-  font: 400 10px/1 var(--mono);
+  font: 400 12px/1 var(--mono);
   font-style: normal;
 }
 .travel {
@@ -228,9 +228,9 @@
   grid-column: 1 / -1;
 }
 .unit {
-  font: 400 10px/1 var(--mono);
+  font: 400 12px/1 var(--mono);
   color: var(--graphite);
-  opacity: 0.75;
+  color: var(--muted);
 }
 .bar {
   position: relative;
@@ -247,7 +247,7 @@
 }
 .bar em {
   position: relative;
-  font: 600 11px/1 var(--mono);
+  font: 600 12px/1 var(--mono);
   font-style: normal;
   color: var(--paper);
   mix-blend-mode: difference;
@@ -266,7 +266,7 @@
   font: 500 12px/1 var(--mono);
 }
 .meter > small {
-  font: 400 11px/1.45 var(--mono);
+  font: 400 12px/1.45 var(--mono);
 }
 .track {
   position: relative;
@@ -313,7 +313,7 @@
   display: grid;
   grid-template-columns: 96px 1fr;
   gap: 8px;
-  font: 400 11px/1.4 var(--mono);
+  font: 400 12px/1.4 var(--mono);
 }
 .legal dt {
   text-transform: uppercase;
@@ -324,17 +324,30 @@
   margin: 0;
 }
 .foot {
-  font: 400 11px/1.5 var(--mono);
-  opacity: 0.8;
+  font: 400 12px/1.5 var(--mono);
+  color: var(--muted);
 }
 @media (max-width: 960px) {
   .rig {
     grid-template-columns: 1fr;
   }
   .viewport {
+    position: sticky;
+    top: 64px;
+    z-index: 2;
     border-right: 0;
     border-bottom: 1.5px solid var(--graphite);
     min-height: 0;
-    height: 62svh;
+    height: 42svh;
   }
+}
+.go {
+  min-height: 48px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
 }

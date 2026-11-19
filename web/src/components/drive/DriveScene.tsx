@@ -30,6 +30,7 @@ const WHEELS = axlePositions(CFG).flatMap((x) => [
   { x, z: -DIM.trackZ },
 ]);
 const REST = 0.3;
+const AXLE_X = axlePositions(CFG).reduce((a, b) => a + b, 0) / axlePositions(CFG).length;
 const HARD_Y = DIM.railY;
 
 /* ------------------------------------------------------------------ road */
@@ -257,8 +258,27 @@ function Rig({ lite }: { lite: boolean }) {
       });
       const loadKg = drive.loads.reduce((m, l) => m + LOADS[l.kind].kg, 0) + (drive.water ? 80 : 0);
       const gross = TARE + loadKg;
-      s.nose += (gross - wheelN / 9.81 - s.nose) * 0.35;
-      const nose = s.nose;
+      // Static nose weight by moment balance about the axle group: what a scale under the
+      // jockey wheel would read when parked level. Uses the real masses and positions in the sim.
+      const qInv = new THREE.Quaternion(q.x, q.y, q.z, q.w).invert();
+      const bp = b.translation();
+      let m = 0;
+      let mx = 0;
+      const addBody = (rb: { mass(): number; worldCom(): { x: number; y: number; z: number } }) => {
+        const c = rb.worldCom();
+        const local = tmpB.set(c.x - bp.x, c.y - bp.y, c.z - bp.z).applyQuaternion(qInv);
+        m += rb.mass();
+        mx += rb.mass() * local.x;
+      };
+      addBody(b);
+      if (water.current && drive.water) addBody(water.current);
+      world.forEachRigidBody((rb) => {
+        if ((rb.userData as { load?: boolean } | undefined)?.load) addBody(rb);
+      });
+      const comX = mx / Math.max(m, 1);
+      const nose = (gross * (comX - AXLE_X)) / (COUPLER[0] - AXLE_X);
+      // live hitch load from the suspension forces, heavily smoothed (it swings with every bump)
+      s.nose += (gross - wheelN / 9.81 - s.nose) * 0.06;
       drive.readout = {
         kmh: Math.round(Math.hypot(lv.x, lv.z) * 3.6),
         travel,
@@ -266,7 +286,9 @@ function Rig({ lite }: { lite: boolean }) {
         roll: +THREE.MathUtils.radToDeg(e.x).toFixed(1),
         g: +s.g.toFixed(2),
         noseKg: Math.round(nose),
+        liveNoseKg: Math.round(s.nose),
         gross,
+        ready: true,
       };
       drive.emit();
       lastV.current.set(lv.x, lv.y, lv.z);

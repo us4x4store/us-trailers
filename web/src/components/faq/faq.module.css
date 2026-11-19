@@ -79,12 +79,13 @@
   display: grid;
   gap: 10px;
   padding: 0 32px 22px 52px;
-  font: 400 15px/1.65 var(--mono);
-  max-width: 78ch;
+  font: 400 17px/1.6 var(--display);
+  font-stretch: 100%;
+  max-width: 68ch;
 }
 .note {
-  font: 400 11px/1.5 var(--mono);
-  opacity: 0.8;
+  font: 400 12px/1.5 var(--mono);
+  color: var(--muted);
   max-width: 80ch;
 }
 @media (max-width: 760px) {
@@ -93,6 +94,6 @@
   }
   .a {
     padding: 0 0 20px 42px;
-    font-size: 14px;
+    font-size: 16px;
   }
 }

@@ -3,13 +3,15 @@ import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import { SITE_URL } from "@/content/site";
 import "./globals.css";
 
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"], display: "swap" });
 const plex = IBM_Plex_Mono({ variable: "--font-plex", subsets: ["latin"], weight: ["400", "500", "600"], display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ustrailers.co.za"),
+  metadataBase: new URL(SITE_URL),
   title: "US Trailers | Custom trailers built in Cape Town",
   description:
     "Bespoke toy haulers, off-road campers and gooseneck trailers, designed around your vehicle, licence code and load, and built one at a time in Cape Town.",
@@ -26,6 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Nav />
         {children}
         <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );

@@ -17,6 +17,8 @@ export default function AssemblyFilm() {
   const section = useRef<HTMLElement>(null);
   const label = useRef<HTMLDivElement>(null);
   const ruler = useRef<HTMLDivElement>(null);
+  const chapterEl = useRef<HTMLDivElement>(null);
+  const bomEl = useRef<HTMLOListElement>(null);
   const [chapter, setChapter] = useState(0);
   const [active, setActive] = useState(-1);
   const [ready, setReady] = useState(false);
@@ -29,6 +31,7 @@ export default function AssemblyFilm() {
 
   useEffect(() => {
     film.label = label.current;
+    film.avoid = [chapterEl.current, bomEl.current];
     const onActive = () => setActive(film.active);
     film.listeners.add(onActive);
     const st = ScrollTrigger.create({
@@ -86,19 +89,27 @@ export default function AssemblyFilm() {
 
         {/* headline over the drawing */}
         <div className={`${styles.intro} ${isIntro ? styles.show : ""}`}>
-          <p className={styles.eyebrow}>Bespoke trailers · Cape Town</p>
           <h1 className={styles.h1}>
+            <span className={styles.h1k}>Custom trailers, built in Cape Town</span>
             Drawn for you.
             <br />
             <em>Built once.</em>
           </h1>
           <p className={styles.lede}>
-            Designed around your vehicle, your licence code and your load. Scroll, and watch one being built from the first line to the last weld.
+            Toy haulers, goosenecks, off-road trailers and upgrades, designed around your vehicle, your licence code and your load. Scroll, and watch one being built from the first line to the last weld.
           </p>
+          <div className={styles.introCtas}>
+            <a className={styles.ctaInk} href="#enquire">
+              Get a price
+            </a>
+            <a className={styles.skip} href="#drive">
+              Skip the build ↓
+            </a>
+          </div>
         </div>
 
         {/* chapter heading */}
-        <div className={`${styles.chapter} ${!isIntro ? styles.show : ""}`} aria-live="polite">
+        <div ref={chapterEl} className={`${styles.chapter} ${!isIntro ? styles.show : ""}`} aria-live="polite">
           <span className={styles.chn}>{ch.n}</span>
           <h2 className={styles.cht}>{ch.title}</h2>
           <p className={styles.chl}>{ch.line}</p>
@@ -122,7 +133,7 @@ export default function AssemblyFilm() {
         </div>
 
         {/* bill of materials */}
-        <ol className={`${styles.bom} ${!isIntro ? styles.show : ""}`} aria-label="Bill of materials">
+        <ol ref={bomEl} className={`${styles.bom} ${!isIntro ? styles.show : ""}`} aria-label="Bill of materials">
           {parts.map((p, i) => (
             <li key={p.id} className={i <= active ? styles.done : ""} data-active={i === active || undefined}>
               <span>{String(i + 1).padStart(2, "0")}</span>
@@ -189,7 +200,10 @@ export default function AssemblyFilm() {
 
         {isEnd && (
           <div className={styles.end}>
-            <a className={styles.cta} href="#drive">
+            <a className={styles.cta} href="#enquire">
+              Get a price for yours
+            </a>
+            <a className={styles.ctaGhost} href="#drive">
               Now tow it →
             </a>
           </div>

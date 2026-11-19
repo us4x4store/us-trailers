@@ -225,7 +225,7 @@ function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObje
 
       // solid part flies in and settles
       const e = easeSettle(k);
-      const fly = 1 - e;
+      const fly = REDUCED ? 0 : 1 - e;
       const ex = explodeS.current;
       rt.group.position.set(part.from[0] * fly + part.explode[0] * ex, part.from[1] * fly + part.explode[1] * ex, part.from[2] * fly + part.explode[2] * ex);
       rt.solid.visible = k > 0;
@@ -312,10 +312,23 @@ function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObje
         const wantLeft = x > size.width * 0.55 ? x - gap - cw : x + gap;
         const left = Math.min(size.width - pad - cw, Math.max(pad, wantLeft));
         const wantTop = y < size.height * 0.34 ? y + gap : y - gap - chh;
-        const top = Math.min(size.height - 150 - chh, Math.max(80, wantTop));
-        card.style.transform = `translate3d(${(left - x).toFixed(1)}px, ${(top - y).toFixed(1)}px, 0)`;
+        let top = Math.min(size.height - 150 - chh, Math.max(80, wantTop));
+        let leftAdj = left;
+        // keep clear of the chapter text and the parts list
+        for (const el of film.avoid) {
+          if (!el || el.offsetParent === null) continue;
+          const r = el.getBoundingClientRect();
+          if (r.width === 0 || getComputedStyle(el).opacity === "0") continue;
+          const hit = leftAdj < r.right + 8 && leftAdj + cw > r.left - 8 && top < r.bottom + 8 && top + chh > r.top - 8;
+          if (!hit) continue;
+          if (r.width > size.width * 0.5) top = r.bottom + 12; // full-width block (phones): go below it
+          else if (r.left > size.width / 2) leftAdj = Math.max(pad, r.left - 12 - cw); // right column: go left of it
+          else leftAdj = Math.min(size.width - pad - cw, r.right + 12); // left column: go right of it
+        }
+        top = Math.min(size.height - 150 - chh, top);
+        card.style.transform = `translate3d(${(leftAdj - x).toFixed(1)}px, ${(top - y).toFixed(1)}px, 0)`;
         // leader from the part to the nearest point on the card
-        const nx = Math.min(left + cw, Math.max(left, x)) - x;
+        const nx = Math.min(leftAdj + cw, Math.max(leftAdj, x)) - x;
         const ny = Math.min(top + chh, Math.max(top, y)) - y;
         const len = Math.hypot(nx, ny);
         leader.style.width = `${len.toFixed(1)}px`;

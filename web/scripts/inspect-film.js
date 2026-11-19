@@ -14,6 +14,7 @@ const POINTS = [0.02, 0.08, 0.17, 0.29, 0.39, 0.5, 0.62, 0.73, 0.83, 0.96];
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto(url, { waitUntil: "networkidle" });
+  await page.evaluate(() => window.dispatchEvent(new Event("pointerdown")));
   await page.waitForFunction(() => window.__film, null, { timeout: 30000 });
   const total = await page.evaluate(() => document.querySelector("section").offsetHeight - innerHeight);
   const out = [];
@@ -62,7 +63,7 @@ const POINTS = [0.02, 0.08, 0.17, 0.29, 0.39, 0.5, 0.62, 0.73, 0.83, 0.96];
       });
       const obj = { x0: Math.round(Math.max(0, x0)), y0: Math.round(Math.max(0, y0)), x1: Math.round(Math.min(innerWidth, x1)), y1: Math.round(Math.min(innerHeight, y1)) };
       const boxes = {};
-      document.querySelectorAll("section [class]").forEach((el) => {
+      document.querySelector("section").querySelectorAll("[class]").forEach((el) => {
         const names = ["intro", "chapter", "bom", "tb", "controls", "end", "card"];
         const tokens = String(el.className).split(/\s+/);
         const cls = names.find((nm) => tokens.some((t) => t === nm || t.endsWith("__" + nm) || t.endsWith("_" + nm)));
@@ -89,6 +90,7 @@ const POINTS = [0.02, 0.08, 0.17, 0.29, 0.39, 0.5, 0.62, 0.73, 0.83, 0.96];
         coverage: +((n / ((w * h) / 4)) * 100).toFixed(1),
         object: obj,
         overlapsObject: overlapObj.join(" ") || "none",
+        cardOverlap: (() => { const c = boxes.card; if (!c) return "-"; return ["chapter", "bom", "intro"].filter((k) => { const b = boxes[k]; return b && Math.min(b[2], c[2]) - Math.max(b[0], c[0]) > 2 && Math.min(b[3], c[3]) - Math.max(b[1], c[1]) > 2; }).join(",") || "none"; })(),
         cardOff: (() => { const c = boxes.card; return c ? (c[0] < 0 || c[1] < 0 || c[2] > innerWidth || c[3] > innerHeight ? "OFFSCREEN " + c.join(",") : "ok") : "-"; })(),
         boxes,
         avgLum: Math.round(lum / ((w * h) / 4) / 3),

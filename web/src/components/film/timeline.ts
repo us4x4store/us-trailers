@@ -64,6 +64,7 @@ export const film = {
   ramp: false,
   listeners: new Set<() => void>(),
   label: null as HTMLDivElement | null,
+  avoid: [] as (HTMLElement | null)[],
   emit() {
     this.listeners.forEach((f) => f());
   },
