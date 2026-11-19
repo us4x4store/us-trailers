@@ -28,13 +28,19 @@ export default function TestDrive() {
   const [water, setWater] = useState(drive.water);
   const [loads, setLoads] = useState(drive.loads);
   const [r, setR] = useState<Readout>(drive.readout);
+  const [resetKey, setResetKey] = useState(drive.resetKey);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     const io = new IntersectionObserver((es) => es[0].isIntersecting && setMounted(true), { rootMargin: "120% 0px" });
     io.observe(root.current!);
     const vis = new IntersectionObserver((es) => setInView(es[0].isIntersecting), { rootMargin: "0px" });
     vis.observe(root.current!);
-    const f = () => setR(drive.readout);
+    const f = () => {
+      setR(drive.readout);
+      setResetKey(drive.resetKey);
+      setNotice(drive.notice);
+    };
     drive.listeners.add(f);
     return () => {
       io.disconnect();
@@ -72,14 +78,13 @@ export default function TestDrive() {
           Now tow it.
         </h2>
         <p className={styles.lede}>
-          Hitch the trailer to a bakkie and take it down the road. Change the surface, load it up and watch each wheel work. The numbers on the right are worked out live from the
-          forces in the simulation.
+          Hitch the trailer to a bakkie and take it down the road. Change the surface, load it up and watch each wheel work. The numbers are worked out live from the forces in the simulation.
         </p>
       </header>
 
       <div className={styles.rig}>
         <div className={styles.viewport}>
-          {mounted ? <DriveScene surface={surface} active={inView} /> : <div className={styles.placeholder}>Loading the test rig…</div>}
+          {mounted ? <DriveScene surface={surface} active={inView} resetKey={resetKey} /> : <div className={styles.placeholder}>Loading the test rig…</div>}
           <div className={styles.views} role="group" aria-label="Camera">
             {(["chase", "wheel", "side"] as const).map((v) => (
               <button
@@ -96,6 +101,24 @@ export default function TestDrive() {
             ))}
           </div>
           <p className={styles.hint}>Drag to look around</p>
+          <div className={styles.hud} aria-hidden="true">
+            <span>
+              <b>{r.kmh}</b> km/h
+            </span>
+            <span>
+              Nose <b>{r.ready ? `${r.noseKg} kg` : "…"}</b>
+            </span>
+            <span className={styles.hudBars}>
+              {r.travel.map((mm, i) => (
+                <i key={i} style={{ transform: `scaleY(${Math.max(0.04, Math.min(1, (mm + 120) / 250))})` }} />
+              ))}
+            </span>
+          </div>
+          {(notice || (r.loose ?? 0) > 0) && (
+            <p className={styles.notice} role="status">
+              {(r.loose ?? 0) > 0 ? `${r.loose === 1 ? "A load has" : `${r.loose} loads have`} come loose. Strap it down, or unload.` : notice}
+            </p>
+          )}
         </div>
 
         <aside className={styles.panel} aria-label="Test rig controls and readouts">
@@ -189,6 +212,9 @@ export default function TestDrive() {
               </button>
               <button type="button" className={styles.clear} onClick={clear} disabled={!loads.length && !water}>
                 Unload
+              </button>
+              <button type="button" className={styles.clear} onClick={() => drive.reset("")}>
+                Reset rig
               </button>
             </div>
           </fieldset>

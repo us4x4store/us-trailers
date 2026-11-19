@@ -1,7 +1,15 @@
+/* The one blueprint on the page: white lines on Prussian blue, like a cyanotype workshop print. */
 .proc {
-  background: var(--paper);
-  border-top: 1.5px solid var(--graphite);
-  padding: clamp(72px, 10vh, 120px) var(--gutter) 64px;
+  --bp: #1f3b73;
+  --bp-deep: #183062;
+  --bp-line: #e8eef9;
+  --bp-soft: #a9c0ee;
+  --drw-line: var(--bp-line);
+  --drw-ink: var(--bp-soft);
+  --drw-paper: var(--bp);
+  background: var(--bp);
+  color: var(--bp-line);
+  padding: clamp(96px, 14vh, 160px) var(--gutter) clamp(80px, 10vh, 120px);
   display: grid;
   gap: 28px;
 }
@@ -14,7 +22,7 @@
   font: 500 12px/1 var(--mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--bp-soft);
 }
 .title {
   font-family: var(--display);
@@ -29,11 +37,11 @@
   max-width: 62ch;
 }
 .sheet {
-  border: 1.5px solid var(--graphite);
+  border: 1.5px solid var(--bp-line);
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   grid-template-areas: "art now" "scrub scrub";
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(232, 238, 249, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(232, 238, 249, 0.1) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 .art {
@@ -44,8 +52,8 @@
 }
 .now {
   grid-area: now;
-  border-left: 1.5px solid var(--graphite);
-  background: var(--paper);
+  border-left: 1.5px solid var(--bp-line);
+  background: var(--bp-deep);
   padding: 22px 20px;
   display: grid;
   gap: 12px;
@@ -56,7 +64,7 @@
   font: 600 12px/1 var(--mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--red);
+  color: #ffb4a8;
 }
 .now h3 {
   font: 800 clamp(28px, 3vw, 40px)/1 var(--display);
@@ -78,22 +86,22 @@
   font: 600 12px/1.9 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--bp-soft);
 }
 .now dd {
   margin: 0;
 }
 .scrub {
   grid-area: scrub;
-  border-top: 1.5px solid var(--graphite);
-  background: var(--paper);
+  border-top: 1.5px solid var(--bp-line);
+  background: var(--bp-deep);
   padding: 20px 28px 64px;
   position: relative;
 }
 .scrub input {
   width: 100%;
   height: 44px;
-  accent-color: #1f3b73;
+  accent-color: #e8eef9;
   margin: 0;
 }
 .ticks {
@@ -118,12 +126,12 @@
   padding: 8px 6px;
   min-height: 44px;
   cursor: pointer;
-  color: var(--graphite);
-  opacity: 0.55;
+  color: var(--bp-soft);
+  opacity: 0.7;
 }
 .ticks li[data-on] button {
   opacity: 1;
-  color: var(--ink);
+  color: var(--bp-line);
 }
 .ticks i {
   width: 1.5px;
@@ -140,8 +148,8 @@
   transform: translateY(14px);
 }
 .note {
-  font: 400 12px/1.5 var(--mono);
-  color: var(--muted);
+  font: 400 13px/1.5 var(--mono);
+  color: var(--bp-soft);
 }
 @media (max-width: 960px) {
   .sheet {
@@ -150,7 +158,7 @@
   }
   .now {
     border-left: 0;
-    border-top: 1.5px solid var(--graphite);
+    border-top: 1.5px solid var(--bp-line);
   }
   .art {
     padding: 28px 16px 12px;
@@ -160,5 +168,31 @@
   }
   .ticks {
     display: none;
+  }
+}
+.proc :focus-visible {
+  outline-color: #ffffff;
+}
+.scrubLabel {
+  display: none;
+}
+@media (max-width: 960px) {
+  .scrubLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    font: 500 13px/1.3 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bp-soft);
+  }
+  .scrubLabel b {
+    font: 800 20px/1 var(--display);
+    font-stretch: 110%;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--bp-line);
   }
 }

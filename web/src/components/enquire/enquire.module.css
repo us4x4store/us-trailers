@@ -94,11 +94,11 @@
   border-bottom-color: var(--red);
 }
 .hint {
-  font: 400 12px/1.4 var(--mono);
+  font: 400 13px/1.45 var(--mono);
   color: var(--muted);
 }
 .error {
-  font: 500 12px/1.4 var(--mono);
+  font: 500 13px/1.45 var(--mono);
   color: var(--red);
 }
 .build {
@@ -191,4 +191,26 @@
   .sheet a {
     margin-left: 0;
   }
+}
+.more {
+  border: 1.5px solid var(--graphite);
+  border-top: 0;
+}
+.more summary {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+}
+.more .grid {
+  border: 0;
+  border-top: 1px solid var(--graphite);
+}
+.form .grid + .more {
+  margin-top: -18px;
 }

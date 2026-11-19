@@ -23,6 +23,7 @@ export type Readout = {
   liveNoseKg: number;
   gross: number;
   ready: boolean;
+  loose?: number;
 };
 
 export const drive = {
@@ -35,6 +36,18 @@ export const drive = {
   loads: [] as { id: number; kind: LoadKind }[],
   nextId: 1,
   readout: { kmh: 0, travel: [0, 0, 0, 0], pitch: 0, roll: 0, g: 1, noseKg: 0, liveNoseKg: 0, gross: tareKg(DEFAULT_CONFIG), ready: false } as Readout,
+  resetKey: 0,
+  notice: "",
+  /** rebuild the physics world from scratch, keeping the visitor's loads and settings */
+  lastReset: 0,
+  reset(notice = "") {
+    if (Date.now() - this.lastReset < 3000) return;
+    this.lastReset = Date.now();
+    this.resetKey++;
+    this.notice = notice;
+    this.readout = { ...this.readout, ready: false };
+    this.emit();
+  },
   listeners: new Set<() => void>(),
   emit() {
     this.listeners.forEach((f) => f());

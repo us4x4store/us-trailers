@@ -21,9 +21,13 @@ export default function Nav() {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     document.documentElement.style.overflow = "hidden";
+    window.dispatchEvent(new Event("lenis:stop"));
+    document.querySelector<HTMLAnchorElement>("#menu a")?.focus();
     return () => {
       document.removeEventListener("keydown", onKey);
       document.documentElement.style.overflow = "";
+      window.dispatchEvent(new Event("lenis:start"));
+      document.querySelector<HTMLButtonElement>("[aria-controls=menu]")?.focus();
     };
   }, [open]);
 
@@ -55,7 +59,7 @@ export default function Nav() {
           </b>
         </button>
       </div>
-      <div id="menu" className={styles.menu} hidden={!open}>
+      <div id="menu" className={styles.menu} hidden={!open} role="dialog" aria-modal="true" aria-label="Menu">
         <nav aria-label="Menu">
           <p className={styles.mh}>Site</p>
           {LINKS.map((l) => (
@@ -75,6 +79,9 @@ export default function Nav() {
           <a className={styles.menuCta} href="/#enquire" onClick={() => setOpen(false)}>
             Get a price
           </a>
+          <button type="button" className={styles.menuClose} onClick={() => setOpen(false)}>
+            Close menu
+          </button>
         </nav>
       </div>
     </header>

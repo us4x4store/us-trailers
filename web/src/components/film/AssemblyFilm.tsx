@@ -158,7 +158,7 @@ export default function AssemblyFilm() {
           </b>
         </div>
 
-        <div className={styles.controls}>
+        <div className={styles.controls} hidden={!ready}>
           <button
             type="button"
             className={styles.ctl}

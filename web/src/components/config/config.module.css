@@ -79,7 +79,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink);
-  min-height: 36px;
+  min-height: 44px;
+  padding: 0 14px;
   cursor: pointer;
 }
 .code b {
@@ -215,7 +216,7 @@
   font-variant-numeric: tabular-nums;
 }
 .price small {
-  font: 400 12px/1.4 var(--mono);
+  font: 400 13px/1.4 var(--mono);
   color: var(--muted);
 }
 .actions {

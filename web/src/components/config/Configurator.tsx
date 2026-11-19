@@ -136,7 +136,7 @@ export default function Configurator() {
                 disabled={cfg.length > 4.2}
                 onClick={() => update({ axles: 1 })}
               >
-                Single<small>up to 4 200 mm</small>
+                Single<small>{cfg.length > 4.2 ? "Needs a body of 4 200 mm or less" : "up to 4 200 mm"}</small>
               </button>
               <button
                 type="button"
@@ -219,7 +219,7 @@ export default function Configurator() {
 
           <div className={styles.dock}>
             <div className={styles.price}>
-              <span>Indicative price</span>
+              <span>Example price range</span>
               <b>
                 {rand(lo)} – {rand(hi)}
               </b>

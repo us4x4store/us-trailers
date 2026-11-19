@@ -272,26 +272,37 @@ function Rig({ lite }: { lite: boolean }) {
       };
       addBody(b);
       if (water.current && drive.water) addBody(water.current);
+      // a load counts only while it is on the deck; one that has left it is reported as loose
+      let loose = 0;
       world.forEachRigidBody((rb) => {
-        if ((rb.userData as { load?: boolean } | undefined)?.load) addBody(rb);
+        if (!(rb.userData as { load?: boolean } | undefined)?.load) return;
+        const c = rb.translation();
+        const l = tmpB.set(c.x - bp.x, c.y - bp.y, c.z - bp.z).applyQuaternion(qInv);
+        const onDeck = Math.abs(l.x) < CFG.length / 2 + 0.2 && Math.abs(l.z) < DIM.bodyW / 2 + 0.2 && l.y > DIM.floorY - 0.2 && l.y < DIM.roofY + 0.2;
+        if (onDeck) addBody(rb);
+        else loose++;
       });
       const comX = mx / Math.max(m, 1);
       const nose = (gross * (comX - AXLE_X)) / (COUPLER[0] - AXLE_X);
       // live hitch load from the suspension forces, heavily smoothed (it swings with every bump)
       s.nose += (gross - wheelN / 9.81 - s.nose) * 0.06;
       drive.readout = {
-        kmh: Math.round(Math.hypot(lv.x, lv.z) * 3.6),
+        kmh: Math.min(160, Math.round(Math.hypot(lv.x, lv.z) * 3.6)),
         travel,
         pitch: +THREE.MathUtils.radToDeg(e.z).toFixed(1),
         roll: +THREE.MathUtils.radToDeg(e.x).toFixed(1),
-        g: +s.g.toFixed(2),
-        noseKg: Math.round(nose),
-        liveNoseKg: Math.round(s.nose),
+        g: +Math.max(-1, Math.min(4, s.g)).toFixed(2),
+        noseKg: Math.round(Math.max(-gross, Math.min(gross, nose))),
+        liveNoseKg: Math.round(Math.max(-gross, Math.min(gross, s.nose))),
+        loose,
         gross,
         ready: true,
       };
       drive.emit();
       lastV.current.set(lv.x, lv.y, lv.z);
+      // safety net: if the trailer is flung or rolls over (e.g. a phone dropping frames), reset the rig
+      const towV = state.current.v;
+      if (Math.abs(e.x) > 1.0 || Math.abs(e.z) > 0.9 || Math.hypot(lv.x, lv.z) > towV + 12 || !Number.isFinite(bp.y)) drive.reset("The trailer left the road, so we reset the rig.");
     }
   });
 
@@ -310,12 +321,12 @@ function Rig({ lite }: { lite: boolean }) {
       >
         {/* mass model: heavy chassis low down, light body shell above (≈ tare) */}
         <CuboidCollider args={[CFG.length / 2, 0.08, 0.62]} position={[0, DIM.railY, 0]} mass={TARE * 0.5} />
-        <CuboidCollider args={[CFG.length / 2, 0.02, DIM.bodyW / 2]} position={[0, DIM.floorY - 0.02, 0]} mass={TARE * 0.12} />
-        <CuboidCollider args={[CFG.length / 2, (DIM.roofY - DIM.floorY) / 2, 0.02]} position={[0, (DIM.roofY + DIM.floorY) / 2, DIM.bodyW / 2]} mass={TARE * 0.1} />
-        <CuboidCollider args={[CFG.length / 2, (DIM.roofY - DIM.floorY) / 2, 0.02]} position={[0, (DIM.roofY + DIM.floorY) / 2, -DIM.bodyW / 2]} mass={TARE * 0.1} />
-        <CuboidCollider args={[0.02, (DIM.roofY - DIM.floorY) / 2, DIM.bodyW / 2]} position={[CFG.length / 2, (DIM.roofY + DIM.floorY) / 2, 0]} mass={TARE * 0.05} />
-        <CuboidCollider args={[0.03, (DIM.roofY - DIM.floorY) / 2, DIM.bodyW / 2]} position={[-CFG.length / 2, (DIM.roofY + DIM.floorY) / 2, 0]} mass={TARE * 0.06} />
-        <CuboidCollider args={[CFG.length / 2, 0.02, DIM.bodyW / 2]} position={[0, DIM.roofY, 0]} mass={TARE * 0.05} />
+        <CuboidCollider args={[CFG.length / 2, 0.08, DIM.bodyW / 2]} position={[0, DIM.floorY - 0.08, 0]} mass={TARE * 0.12} />
+        <CuboidCollider args={[CFG.length / 2, (DIM.roofY - DIM.floorY) / 2, 0.08]} position={[0, (DIM.roofY + DIM.floorY) / 2, DIM.bodyW / 2 + 0.06]} mass={TARE * 0.1} />
+        <CuboidCollider args={[CFG.length / 2, (DIM.roofY - DIM.floorY) / 2, 0.08]} position={[0, (DIM.roofY + DIM.floorY) / 2, -DIM.bodyW / 2 - 0.06]} mass={TARE * 0.1} />
+        <CuboidCollider args={[0.08, (DIM.roofY - DIM.floorY) / 2, DIM.bodyW / 2]} position={[CFG.length / 2 + 0.06, (DIM.roofY + DIM.floorY) / 2, 0]} mass={TARE * 0.05} />
+        <CuboidCollider args={[0.08, (DIM.roofY - DIM.floorY) / 2, DIM.bodyW / 2]} position={[-CFG.length / 2 - 0.05, (DIM.roofY + DIM.floorY) / 2, 0]} mass={TARE * 0.06} />
+        <CuboidCollider args={[CFG.length / 2, 0.08, DIM.bodyW / 2]} position={[0, DIM.roofY + 0.06, 0]} mass={TARE * 0.05} />
         <CuboidCollider args={[0.65, 0.05, 0.3]} position={[CFG.length / 2 + 0.65, DIM.coupleH + 0.03, 0]} mass={TARE * 0.02} />
         {statics.map((s) => (
           <mesh key={s.key} geometry={s.geo} material={s.mat} castShadow={!lite} receiveShadow={!lite} />
@@ -549,7 +560,7 @@ function CameraRig() {
   return <OrbitControls ref={controls} makeDefault enablePan={false} enableDamping dampingFactor={0.08} minDistance={2.2} maxDistance={22} maxPolarAngle={Math.PI / 2 - 0.04} />;
 }
 
-export default function DriveScene({ surface, active = true }: { surface: Surface; active?: boolean }) {
+export default function DriveScene({ surface, active = true, resetKey = 0 }: { surface: Surface; active?: boolean; resetKey?: number }) {
   const lite = typeof window !== "undefined" && (window.innerWidth < 760 || (navigator.hardwareConcurrency ?? 8) <= 4);
   return (
     <Canvas
@@ -582,7 +593,7 @@ export default function DriveScene({ surface, active = true }: { surface: Surfac
         <Lightformer form="rect" intensity={2.5} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} />
         <Lightformer form="rect" intensity={1.4} color="#ffe2b8" position={[8, 2, -4]} rotation-y={-Math.PI / 2.5} scale={[8, 3, 1]} />
       </Environment>
-      <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60} key={surface} paused={!active}>
+      <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60} key={`${surface}-${resetKey}`} paused={!active}>
         <Road surface={surface} lite={lite} />
         <Rig lite={lite} />
       </Physics>

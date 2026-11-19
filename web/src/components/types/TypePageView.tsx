@@ -13,7 +13,7 @@ export function typeMetadata(slug: string): Metadata {
     title: t.title,
     description: t.description,
     alternates: { canonical: `/${t.slug}` },
-    openGraph: { title: t.title, description: t.description, url: `/${t.slug}`, locale: "en_ZA", type: "website", siteName: "US Trailers", images: ["/opengraph-image"] },
+    openGraph: { title: t.title, description: t.description, url: `/${t.slug}`, locale: "en_ZA", type: "website", siteName: "US Trailers" },
   };
 }
 
@@ -75,6 +75,21 @@ export default function TypePageView({ slug }: { slug: string }) {
           <TypeDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} />
         </div>
       </header>
+
+      <section className={styles.spec} aria-labelledby="spec">
+        <h2 id="spec" className={styles.h2}>
+          Typical specification
+        </h2>
+        <dl>
+          {t.spec.map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className={styles.specNote}>Example ranges. Your drawing sets the real numbers.</p>
+      </section>
 
       <section className={styles.who} aria-labelledby="who">
         <h2 id="who" className={styles.h2}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState, type FormEvent } from "react";
 import { sendEnquiry, type EnquiryState } from "@/app/actions/enquire";
 import { buildStore } from "@/components/config/buildStore";
 import { COLOURS, encodeBuild, priceRange, rand, specs } from "@/trailer/pricing";
@@ -30,7 +30,37 @@ export default function Enquire() {
 
   const s = specs(cfg);
   const [lo, hi] = priceRange(cfg);
-  const err = (k: string) => state.errors?.[k];
+  const [local, setLocal] = useState<Record<string, string> | null>(null);
+  const errors = local ?? state.errors ?? {};
+  const err = (k: string) => errors[k];
+  const v = (k: string) => state.values?.[k] ?? "";
+  const formRef = useRef<HTMLFormElement>(null);
+  const moreOpen = !!(state.values && ["email", "town", "licence", "use", "timeline", "message"].some((k) => state.values?.[k])) || !!err("email");
+
+  // check in the browser first; the server checks again
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const f = new FormData(e.currentTarget);
+    const next: Record<string, string> = {};
+    if (String(f.get("name") ?? "").trim().length < 2) next.name = "Tell us your name.";
+    if (!/^[+\d][\d\s()-]{8,18}$/.test(String(f.get("phone") ?? "").trim())) next.phone = "Add a phone or WhatsApp number we can reach you on, e.g. 082 123 4567.";
+    const em = String(f.get("email") ?? "").trim();
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) next.email = "That email address doesn't look complete.";
+    if (f.get("consent") !== "on") next.consent = "Please agree so we can contact you about your trailer.";
+    if (Object.keys(next).length) {
+      e.preventDefault();
+      setLocal(next);
+      return;
+    }
+    setLocal(null);
+  };
+
+  // move focus to the first problem, whichever side found it
+  useEffect(() => {
+    const first = ["name", "phone", "email", "consent"].find((k) => errors[k]);
+    if (!first) return;
+    if (first === "email" && formRef.current) formRef.current.querySelector("details")?.setAttribute("open", "");
+    document.getElementById(first)?.focus();
+  }, [local, state]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (state.status === "sent")
     return (
@@ -53,7 +83,7 @@ export default function Enquire() {
         <p className={styles.lede}>Two minutes now saves a week of back-and-forth. We&apos;ll come back with questions, a first sketch and an honest price.</p>
       </header>
 
-      <form action={action} className={styles.form} noValidate>
+      <form ref={formRef} action={action} onSubmit={onSubmit} className={styles.form} noValidate>
         <input type="hidden" name="t" value={t} />
         <div className={styles.trap} aria-hidden="true">
           <label htmlFor="company">Company</label>
@@ -62,47 +92,56 @@ export default function Enquire() {
 
         <div className={styles.grid}>
           <Field id="name" label="Your name" error={err("name")}>
-            <input id="name" name="name" autoComplete="name" required aria-invalid={!!err("name")} />
+            <input id="name" name="name" autoComplete="name" required defaultValue={v("name")} aria-invalid={!!err("name")} aria-describedby={err("name") ? "name-err" : undefined} />
           </Field>
           <Field id="phone" label="Phone or WhatsApp" error={err("phone")} hint="We reply on WhatsApp unless you say otherwise.">
-            <input id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required aria-invalid={!!err("phone")} />
+            <input id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required defaultValue={v("phone")} aria-invalid={!!err("phone")} aria-describedby={err("phone") ? "phone-err" : undefined} />
           </Field>
-          <Field id="email" label="Email (optional)" error={err("email")}>
-            <input id="email" name="email" type="email" autoComplete="email" aria-invalid={!!err("email")} />
-          </Field>
-          <Field id="town" label="Town">
-            <input id="town" name="town" autoComplete="address-level2" />
-          </Field>
-          <Field id="vehicle" label="What will tow it?" hint="Make, model and year. We match the drawbar, wiring and wheels to it.">
-            <input id="vehicle" name="vehicle" />
-          </Field>
-          <Field id="licence" label="Your licence code">
-            <select id="licence" name="licence" defaultValue="Not sure">
-              <option>B</option>
-              <option>EB</option>
-              <option>C1/EC1</option>
-              <option>Not sure</option>
-            </select>
-          </Field>
-          <Field id="use" label="Mainly for">
-            <select id="use" name="use" defaultValue={USES[0]}>
-              {USES.map((u) => (
-                <option key={u}>{u}</option>
-              ))}
-            </select>
-          </Field>
-          <Field id="timeline" label="When do you need it?">
-            <select id="timeline" name="timeline" defaultValue="Within 6 months">
-              <option>As soon as possible</option>
-              <option>Within 3 months</option>
-              <option>Within 6 months</option>
-              <option>Just planning</option>
-            </select>
-          </Field>
-          <Field id="message" label="Anything else?" wide hint="What you carry, where you go, what has gone wrong with trailers before.">
-            <textarea id="message" name="message" rows={4} />
+          <Field id="vehicle" label="What will tow it?" wide hint="Make, model and year. We match the drawbar, wiring and wheels to it.">
+            <input id="vehicle" name="vehicle" defaultValue={v("vehicle")} />
           </Field>
         </div>
+
+        <details className={styles.more} open={moreOpen}>
+          <summary>Add more detail (optional)</summary>
+          <div className={styles.grid}>
+            <Field id="email" label="Email" error={err("email")}>
+              <input id="email" name="email" type="email" autoComplete="email" defaultValue={v("email")} aria-invalid={!!err("email")} aria-describedby={err("email") ? "email-err" : undefined} />
+            </Field>
+            <Field id="town" label="Town">
+              <input id="town" name="town" autoComplete="address-level2" defaultValue={v("town")} />
+            </Field>
+            <Field id="licence" label="Your licence code">
+              <select id="licence" name="licence" key={`licence-${v("licence")}`} defaultValue={v("licence")}>
+                <option value="">Choose…</option>
+                <option>B</option>
+                <option>EB</option>
+                <option>C1/EC1</option>
+                <option>Not sure</option>
+              </select>
+            </Field>
+            <Field id="use" label="Mainly for">
+              <select id="use" name="use" key={`use-${v("use")}`} defaultValue={v("use")}>
+                <option value="">Choose…</option>
+                {USES.map((u) => (
+                  <option key={u}>{u}</option>
+                ))}
+              </select>
+            </Field>
+            <Field id="timeline" label="When do you need it?">
+              <select id="timeline" name="timeline" key={`timeline-${v("timeline")}`} defaultValue={v("timeline")}>
+                <option value="">Choose…</option>
+                <option>As soon as possible</option>
+                <option>Within 3 months</option>
+                <option>Within 6 months</option>
+                <option>Just planning</option>
+              </select>
+            </Field>
+            <Field id="message" label="Anything else?" wide hint="What you carry, where you go, what has gone wrong with trailers before.">
+              <textarea id="message" name="message" rows={4} defaultValue={v("message")} />
+            </Field>
+          </div>
+        </details>
 
         <div className={styles.build}>
           <label className={styles.check}>
@@ -119,7 +158,7 @@ export default function Enquire() {
                 {cfg.solar ? " · solar" : ""}
               </span>
               <span>
-                {rand(lo)} – {rand(hi)} indicative
+                {rand(lo)} – {rand(hi)} example price
               </span>
               <a href="#design">Change it</a>
             </div>
@@ -127,12 +166,16 @@ export default function Enquire() {
         </div>
 
         <label className={styles.check}>
-          <input type="checkbox" name="consent" aria-invalid={!!err("consent")} />
+          <input id="consent" type="checkbox" name="consent" defaultChecked={v("consent") === "on"} aria-invalid={!!err("consent")} aria-describedby={err("consent") ? "consent-err" : undefined} />
           <span>
             US Trailers may contact me about this enquiry. We keep your details only for your build and never share them. <a href="/privacy">Privacy notice (POPIA)</a>.
           </span>
         </label>
-        {err("consent") && <p className={styles.error}>{err("consent")}</p>}
+        {err("consent") && (
+          <p className={styles.error} id="consent-err">
+            {err("consent")}
+          </p>
+        )}
 
         {state.status === "offline" && (
           <div className={styles.offline} role="alert">
@@ -171,7 +214,9 @@ function Field({ id, label, error, hint, wide, children }: { id: string; label: 
           {error}
         </p>
       ) : hint ? (
-        <p className={styles.hint}>{hint}</p>
+        <p className={styles.hint} id={`${id}-hint`}>
+          {hint}
+        </p>
       ) : null}
     </div>
   );

@@ -77,7 +77,7 @@
 }
 .chn {
   font: 500 12px/1 var(--mono);
-  color: var(--ink);
+  color: var(--ink-on-stage, var(--ink));
   letter-spacing: 0.14em;
 }
 .cht {
@@ -181,7 +181,7 @@
   color: var(--fg-on-stage, var(--graphite));
 }
 .bom li[data-active] {
-  color: var(--red);
+  color: var(--red-on-stage, var(--red));
 }
 
 /* ---------- title block ---------- */
@@ -269,12 +269,12 @@
 .scaleTrack {
   position: relative;
   height: 8px;
-  border: 1.5px solid var(--graphite);
+  border: 1.5px solid var(--fg-on-stage, var(--graphite));
 }
 .scaleFill {
   position: absolute;
   inset: 0;
-  background: var(--ink);
+  background: var(--ink-on-stage, var(--ink));
   transform-origin: 0 50%;
   transform: scaleX(0);
 }
@@ -283,7 +283,7 @@
   top: -5px;
   bottom: -5px;
   width: 1.5px;
-  background: var(--graphite);
+  background: var(--fg-on-stage, var(--graphite));
 }
 .scaleLabels {
   display: flex;
@@ -291,7 +291,7 @@
   font: 500 12px/1 var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--graphite);
+  color: var(--fg-on-stage, var(--graphite));
 }
 
 /* stage turns to dusk at handover: flip overlay ink */
@@ -299,6 +299,8 @@
   --fg-on-stage: #f1efe8;
   --muted-on-stage: #b4bacb;
   --stage-bg: #1a1f36;
+  --ink-on-stage: #a9c0ee;
+  --red-on-stage: #ff9a8c;
 }
 
 @media (max-width: 760px) {

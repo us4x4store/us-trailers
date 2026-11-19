@@ -173,8 +173,18 @@
 }
 @media (max-width: 860px) {
   .hero,
-  .who {
+  .who,
+  .spec {
     grid-template-columns: 1fr;
+  }
+  /* on phones the drawing leads, so the page opens on the trailer */
+  .hero {
+    gap: 24px;
+    padding-top: 20px;
+  }
+  .art {
+    order: -1;
+    padding: 20px 12px 14px;
   }
   .points ol,
   .who ul {
@@ -186,5 +196,50 @@
   .primary,
   .secondary {
     flex: 1 1 100%;
+  }
+}
+.spec {
+  padding: 56px var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 24px;
+  border-bottom: 1.5px solid var(--graphite);
+  background: var(--graphite);
+  color: #e6eae5;
+}
+.spec .h2 {
+  color: #e6eae5;
+}
+.spec dl {
+  margin: 0;
+  display: grid;
+  border-top: 1px solid #4a5157;
+}
+.spec dl div {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 2fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #4a5157;
+}
+.spec dt {
+  font: 600 12px/1.6 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a9c0ee;
+}
+.spec dd {
+  margin: 0;
+  font: 500 17px/1.5 var(--display);
+  font-stretch: 100%;
+}
+.specNote {
+  grid-column: 2;
+  font: 400 13px/1.5 var(--mono);
+  color: #b9c0c4;
+}
+@media (max-width: 860px) {
+  .specNote {
+    grid-column: 1;
   }
 }

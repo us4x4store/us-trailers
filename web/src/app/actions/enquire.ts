@@ -12,9 +12,9 @@ const Schema = z.object({
   email: z.union([z.literal(""), z.string().trim().email("That email address doesn't look complete.")]),
   town: z.string().trim().max(60).optional().default(""),
   vehicle: z.string().trim().max(80).optional().default(""),
-  licence: z.enum(["B", "EB", "C1/EC1", "Not sure"]).default("Not sure"),
+  licence: z.enum(["", "B", "EB", "C1/EC1", "Not sure"]).default(""),
   use: z.string().trim().max(60).optional().default(""),
-  timeline: z.enum(["As soon as possible", "Within 3 months", "Within 6 months", "Just planning"]).default("Just planning"),
+  timeline: z.enum(["", "As soon as possible", "Within 3 months", "Within 6 months", "Just planning"]).default(""),
   message: z.string().trim().max(2000).optional().default(""),
   build: z.string().trim().max(40).optional().default(""),
   consent: z.literal("on", { message: "Please agree so we can contact you about your trailer." }),
@@ -23,14 +23,23 @@ const Schema = z.object({
   t: z.coerce.number(),
 });
 
-export type EnquiryState = { status: "idle" | "sent" | "error" | "offline"; errors?: Record<string, string>; message?: string; summary?: string };
+export type EnquiryState = {
+  status: "idle" | "sent" | "error" | "offline";
+  errors?: Record<string, string>;
+  message?: string;
+  summary?: string;
+  /** what the visitor typed, so nothing is lost when we send the form back */
+  values?: Record<string, string>;
+};
 
 export async function sendEnquiry(_: EnquiryState, form: FormData): Promise<EnquiryState> {
-  const parsed = Schema.safeParse(Object.fromEntries(form.entries()));
+  const raw = Object.fromEntries([...form.entries()].map(([k, v]) => [k, String(v)]));
+  const values = Object.fromEntries(Object.entries(raw).filter(([k]) => !["company", "t"].includes(k)));
+  const parsed = Schema.safeParse(raw);
   if (!parsed.success) {
     const errors: Record<string, string> = {};
     for (const i of parsed.error.issues) errors[String(i.path[0])] ??= i.message;
-    return { status: "error", errors };
+    return { status: "error", errors, values };
   }
   const d = parsed.data;
   // bots fill hidden fields or submit within 3 s of the form appearing
@@ -55,9 +64,9 @@ export async function sendEnquiry(_: EnquiryState, form: FormData): Promise<Enqu
     `Email: ${d.email || "-"}`,
     `Town: ${d.town || "-"}`,
     `Tow vehicle: ${d.vehicle || "-"}`,
-    `Licence: ${d.licence}`,
+    `Licence: ${d.licence || "-"}`,
     `Use: ${d.use || "-"}`,
-    `Timeline: ${d.timeline}`,
+    `Timeline: ${d.timeline || "-"}`,
     "",
     buildText,
     "",
@@ -69,7 +78,7 @@ export async function sendEnquiry(_: EnquiryState, form: FormData): Promise<Enqu
   const key = process.env.RESEND_API_KEY;
   if (!to || !key) {
     console.warn("[enquiry] inbox not connected; enquiry not delivered", { name: d.name, build: d.build });
-    return { status: "offline", summary };
+    return { status: "offline", summary, values };
   }
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -84,7 +93,7 @@ export async function sendEnquiry(_: EnquiryState, form: FormData): Promise<Enqu
   });
   if (!res.ok) {
     console.error("[enquiry] send failed", res.status, await res.text().catch(() => ""));
-    return { status: "offline", summary };
+    return { status: "offline", summary, values };
   }
   return { status: "sent" };
 }

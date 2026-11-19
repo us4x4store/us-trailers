@@ -46,6 +46,12 @@ export default function Process() {
         </div>
 
         <div className={styles.scrub}>
+          <p className={styles.scrubLabel} aria-hidden="true">
+            <span>
+              Week {week} of {LAST}
+            </span>
+            <b>{stage.title}</b>
+          </p>
           <input
             type="range"
             min={0}

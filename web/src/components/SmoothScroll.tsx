@@ -25,11 +25,17 @@ export default function SmoothScroll() {
       const el = document.querySelector(url.hash);
       if (!el) return;
       e.preventDefault();
-      lenis.scrollTo(el as HTMLElement, { duration: 1.6 });
+      lenis.scrollTo(el as HTMLElement, { duration: 1.6, force: true });
     };
     document.addEventListener("click", onAnchor);
+    const stop = () => lenis.stop();
+    const start = () => lenis.start();
+    window.addEventListener("lenis:stop", stop);
+    window.addEventListener("lenis:start", start);
     return () => {
       document.removeEventListener("click", onAnchor);
+      window.removeEventListener("lenis:stop", stop);
+      window.removeEventListener("lenis:start", start);
       gsap.ticker.remove(tick);
       lenis.destroy();
     };

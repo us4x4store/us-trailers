@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "Page not found | US Trailers", robots: { index: false } };
 import TypeDrawing from "@/components/drawings/TypeDrawing";
 
 export default function NotFound() {

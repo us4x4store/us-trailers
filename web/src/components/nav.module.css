@@ -148,3 +148,14 @@
     font-size: 16px;
   }
 }
+.menuClose {
+  margin-top: 10px;
+  min-height: 48px;
+  background: none;
+  border: 1.5px solid var(--graphite);
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  cursor: pointer;
+}

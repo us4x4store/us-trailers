@@ -32,6 +32,12 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
+  /* keyboard focus never lands under the fixed nav or the sticky price bar */
+  scroll-padding-top: 88px;
+  scroll-padding-bottom: 96px;
+}
+[hidden] {
+  display: none !important;
 }
 html.lenis,
 html.lenis body {

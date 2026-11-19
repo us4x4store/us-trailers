@@ -14,6 +14,8 @@ export type TypePage = {
   points: { h: string; p: string }[];
   rules: string[];
   faq: string[]; // FAQ ids
+  /** typical specification, EXAMPLE ranges until Justin confirms */
+  spec: [string, string][];
   drawing: "toyhauler" | "gooseneck" | "offroad" | "modify";
 };
 
@@ -26,7 +28,7 @@ export const TYPES: TypePage[] = [
       "Custom enclosed toy haulers for bikes, quads and side-by-sides, built to order in Cape Town. Rear ramp door, tie-down floor, galvanised chassis. Not one for sale off a floor: one drawn for you.",
     h1: "Toy haulers, built here.",
     intro:
-      "A garage on wheels for your bikes, quad or side-by-side, with somewhere to sleep, cook or work at the far end of the road. Nobody in South Africa builds them, so people import them. We draw yours around what you ride and what you tow with.",
+      "A garage on wheels for your bikes, quad or side-by-side, with somewhere to sleep, cook or work at the far end of the road. Few South African builders make them, so most people import one. We draw yours around what you ride and what you tow with.",
     forWho: ["Motocross and enduro riders", "Quad and side-by-side owners", "Jet-ski families", "Race teams that need a mobile pit"],
     points: [
       { h: "A ramp that's also the back wall", p: "The rear door drops to a gentle loading angle, rated for a 300 kg quad, and seals shut as a wall when you close it." },
@@ -36,6 +38,7 @@ export const TYPES: TypePage[] = [
     ],
     rules: ["Most enclosed toy haulers are over 750 kg GVM, so you'll need a code EB licence.", "Over 750 kg GVM, the trailer must have brakes. We size them to your vehicle."],
     faq: ["licence", "brakes", "speed", "register"],
+    spec: [["Body length", "3.6–6.0 m"], ["Axles", "Single up to 4.2 m, tandem above"], ["GVM", "1 600–3 000 kg"], ["Licence", "Code EB"], ["Rear ramp", "Rated for a 300 kg quad"], ["Build time", "About 12 weeks"]],
     drawing: "toyhauler",
   },
   {
@@ -59,6 +62,7 @@ export const TYPES: TypePage[] = [
       "The front overhang of a semi-trailer may not exceed 1.8 m.",
     ],
     faq: ["licence", "size", "speed", "brakes"],
+    spec: [["Body length", "6–9 m"], ["Hitch", "Gooseneck ball or fifth-wheel plate, through-bolted to the bakkie chassis"], ["GVM", "Matched to your bakkie's GCM"], ["Licence", "Code EB"], ["Combination length", "Up to 18.5 m"], ["Speed limit", "100 km/h behind a bakkie"]],
     drawing: "gooseneck",
   },
   {
@@ -82,6 +86,7 @@ export const TYPES: TypePage[] = [
       "A trailer of up to 750 kg GVM can be towed on code B. We can design to that limit.",
     ],
     faq: ["licence", "brakes", "speed", "register", "markings"],
+    spec: [["Body length", "2.5–4.0 m"], ["GVM", "750–2 000 kg"], ["Suspension", "Independent trailing arm, coil-over"], ["Coupling", "Articulating, 3 500 kg rated"], ["Licence", "B up to 750 kg GVM, EB above"], ["Water", "80–160 L, underslung"]],
     drawing: "offroad",
   },
   {
@@ -105,6 +110,7 @@ export const TYPES: TypePage[] = [
       "Contour (reflective) tape along the sides and rear is compulsory on every trailer.",
     ],
     faq: ["modify", "roadworthy", "markings", "brakes"],
+    spec: [["First step", "Inspection and weighbridge"], ["Typical turnaround", "1–3 weeks"], ["Suspension", "Independent kits, matched shocks"], ["Brakes", "Override or electric, sized to GVM"], ["Paperwork", "New tare on the information plate"], ["Roadworthy", "Needed if the change is a modification"]],
     drawing: "modify",
   },
 ];

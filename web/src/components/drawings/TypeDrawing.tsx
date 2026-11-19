@@ -182,7 +182,7 @@ export default function TypeDrawing({
       >
         <path
           d="M-60,300 H780"
-          stroke="#1F3B73"
+          style={{ stroke: "var(--drw-ink, #1F3B73)" }}
           strokeWidth="1"
           strokeDasharray="6 4 1 4"
           fill="none"
@@ -190,7 +190,7 @@ export default function TypeDrawing({
         {d.phantom && (
           <g
             fill="none"
-            stroke="#5E6461"
+            style={{ stroke: "var(--drw-phantom, #5E6461)" }}
             strokeWidth="1"
             strokeDasharray="7 5"
             vectorEffect="non-scaling-stroke"
@@ -202,7 +202,7 @@ export default function TypeDrawing({
         )}
         <g
           fill="none"
-          stroke="#22262A"
+          style={{ stroke: "var(--drw-line, #22262A)" }}
           strokeWidth="1.4"
           strokeLinejoin="round"
         >
@@ -221,7 +221,7 @@ export default function TypeDrawing({
           })}
         </g>
         <g
-          stroke="#1F3B73"
+          style={{ stroke: "var(--drw-ink, #1F3B73)" }}
           strokeWidth="1"
           fill="none"
           opacity={animated ? Math.min(1, (progress ?? 0) * 3) : 1}
@@ -231,7 +231,7 @@ export default function TypeDrawing({
           ))}
         </g>
         <g
-          fill="#1F3B73"
+          style={{ fill: "var(--drw-ink, #1F3B73)" }}
           fontFamily="var(--mono), ui-monospace, monospace"
           fontSize="12"
           letterSpacing="1.2"
@@ -250,7 +250,7 @@ export default function TypeDrawing({
           ))}
         </g>
         {d.revs && (
-          <g fill="none" stroke="#B8352A" strokeWidth="1.3">
+          <g fill="none" style={{ stroke: "var(--drw-red, #B8352A)" }} strokeWidth="1.3">
             {d.revs.map((r) => (
               <g key={r.tag}>
                 <circle cx={r.cx} cy={r.cy} r={r.r} strokeDasharray="3 3" />
@@ -258,13 +258,13 @@ export default function TypeDrawing({
                   cx={r.cx + r.r * 0.72}
                   cy={r.cy - r.r * 0.72}
                   r={20}
-                  fill="#E6EAE5"
+                  style={{ fill: "var(--drw-paper, #E6EAE5)" }}
                 />
                 <text
                   x={r.cx + r.r * 0.72}
                   y={r.cy - r.r * 0.72 + 8}
                   textAnchor="middle"
-                  fill="#B8352A"
+                  style={{ fill: "var(--drw-red, #B8352A)" }}
                   stroke="none"
                   fontFamily="var(--mono), ui-monospace, monospace"
                   fontSize="22"
