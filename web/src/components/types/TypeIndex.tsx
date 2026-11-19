@@ -17,7 +17,7 @@ export default function TypeIndex() {
       <ul className={styles.grid}>
         {TYPES.map((t, i) => (
           <li key={t.slug}>
-            <Link href={`/${t.slug}`} className={styles.card}>
+            <Link href={`/${t.slug}`} className={styles.card} aria-label={`${t.short}: open the sheet`}>
               <span className={styles.no}>Sheet {String(i + 1).padStart(2, "0")}</span>
               <TypeDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} />
               <span className={styles.name}>{t.short}</span>
