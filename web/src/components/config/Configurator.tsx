@@ -23,6 +23,7 @@ export default function Configurator() {
   const [mounted, setMounted] = useState(false);
   const [inView, setInView] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [light, setLight] = useState<"day" | "dusk" | "night">("day");
 
   // open a shared build from ?build=L48-A2-C0-R1-S1
   useEffect(() => {
@@ -96,10 +97,17 @@ export default function Configurator() {
       <div className={styles.board}>
         <div className={styles.view}>
           {mounted ? (
-            <ConfigScene cfg={cfg} active={inView} />
+            <ConfigScene cfg={cfg} active={inView} light={light} />
           ) : (
             <div className={styles.wait}>Setting up the drawing board…</div>
           )}
+          <div className={styles.light} role="group" aria-label="Light">
+            {(["day", "dusk", "night"] as const).map((l) => (
+              <button key={l} type="button" aria-pressed={light === l} onClick={() => setLight(l)}>
+                {l === "day" ? "Day" : l === "dusk" ? "Dusk" : "Night"}
+              </button>
+            ))}
+          </div>
           <div className={styles.code} aria-label="Build code">
             <span>Build</span>
             <b>{code}</b>

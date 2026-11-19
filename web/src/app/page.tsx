@@ -4,6 +4,7 @@ import TypeIndex from "@/components/types/TypeIndex";
 import Process from "@/components/process/Process";
 import Configurator from "@/components/config/Configurator";
 import FaqList from "@/components/faq/FaqList";
+import TowCheck from "@/components/towcheck/TowCheck";
 import Enquire from "@/components/enquire/Enquire";
 import { SITE_URL } from "@/content/site";
 
@@ -30,6 +31,7 @@ export default function Home() {
       <TypeIndex />
       <Process />
       <Configurator />
+      <TowCheck />
       <FaqList ids={["licence", "brakes", "roadworthy", "speed", "register", "time"]} />
       <Enquire />
     </main>

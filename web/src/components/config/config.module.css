@@ -314,3 +314,30 @@
 .toggles [aria-pressed="true"] small {
   color: inherit;
 }
+.light {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  display: flex;
+  border: 1.5px solid var(--graphite);
+  background: var(--paper);
+  z-index: 1;
+}
+.light button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  background: var(--paper);
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  cursor: pointer;
+}
+.light button + button {
+  border-left: 1px solid var(--graphite);
+}
+.light button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}

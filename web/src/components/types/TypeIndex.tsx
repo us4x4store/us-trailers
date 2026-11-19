@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TYPES } from "@/content/types";
-import TypeDrawing from "@/components/drawings/TypeDrawing";
+import RevealDrawing from "@/components/drawings/RevealDrawing";
 import styles from "./types.module.css";
 
 /** Home-page index of what we build: one drawing sheet per type, each linking to its page. */
@@ -19,7 +19,7 @@ export default function TypeIndex() {
           <li key={t.slug}>
             <Link href={`/${t.slug}`} className={styles.card}>
               <span className={styles.no}>Sheet {String(i + 1).padStart(2, "0")}</span>
-              <TypeDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} decorative />
+              <RevealDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} decorative />
               <span className={styles.name}>{t.short}</span>
               <span className={styles.go}>Open the sheet →</span>
             </Link>
