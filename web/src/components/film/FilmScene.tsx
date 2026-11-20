@@ -4,8 +4,9 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { buildTrailer, DEFAULT_CONFIG, type ChapterId } from "@/trailer/model";
+import { buildTrailer, DEFAULT_CONFIG, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
 import { buildPartGeometry, type BuiltPart } from "@/trailer/geometry";
+import { partMassKg } from "@/trailer/mass";
 import { createMaterials, INK, PAPER } from "@/trailer/materials";
 import { sound } from "@/lib/sound";
 import { RANGES, chapterAt, clamp01, easeInOut, easeOutCubic, easeSettle, film, partWindows } from "./timeline";
@@ -137,13 +138,20 @@ type Runtime = {
   landed: boolean;
 };
 
-function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObject<((at: THREE.Vector3, n: number) => void) | null> }) {
+function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableRefObject<((at: THREE.Vector3, n: number) => void) | null>; kind: Kind }) {
   const root = useRef<THREE.Group>(null);
   const { camera, size } = useThree();
-  const parts = useMemo(() => buildTrailer(DEFAULT_CONFIG), []);
+  const cfg = useMemo<TrailerConfig>(() => (kind === "toyhauler" ? DEFAULT_CONFIG : kind === "offroad" ? { ...DEFAULT_CONFIG, kind, length: 3.0, axles: 1, rack: false } : { ...DEFAULT_CONFIG, kind, length: 7.2, axles: 2, rack: false }), [kind]);
+  const parts = useMemo(() => buildTrailer(cfg), [cfg]);
+  useEffect(() => {
+    film.masses = parts.map((p) => partMassKg(p));
+    film.emit();
+  }, [parts]);
+  // camera framing was set for the 6.3 m toy hauler; scale it to this trailer's size
+  const scale = overallLength(cfg) / overallLength(DEFAULT_CONFIG);
   const windows = useMemo(() => partWindows(parts), [parts]);
   const runtime = useMemo<Runtime[]>(() => {
-    const base = createMaterials(DEFAULT_CONFIG.colour);
+    const base = createMaterials(cfg.colour);
     return parts.map((part) => {
       const built = buildPartGeometry(part, lite);
       const group = new THREE.Group();
@@ -276,6 +284,9 @@ function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObje
 
     // camera with pointer parallax
     cameraAt(p, camPos, camTgt);
+    camPos.sub(camTgt).multiplyScalar(0.25 + 0.75 * scale).add(camTgt);
+    camTgt.x *= scale;
+    camPos.x += camTgt.x - camTgt.x / scale;
     const aspect = size.width / size.height;
     const sc = safeCentre(p, aspect);
     const cam = state.camera as THREE.PerspectiveCamera;
@@ -412,7 +423,7 @@ function Lights() {
   );
 }
 
-export default function FilmScene({ active = true }: { active?: boolean }) {
+export default function FilmScene({ active = true, kind = "toyhauler" }: { active?: boolean; kind?: Kind }) {
   const sparks = useRef<((at: THREE.Vector3, n: number) => void) | null>(null);
   const lite = typeof window !== "undefined" && (window.innerWidth < 760 || (navigator.hardwareConcurrency ?? 8) <= 4);
   return (
@@ -439,7 +450,7 @@ export default function FilmScene({ active = true }: { active?: boolean }) {
       <Floor />
       <GridLines />
       {!lite && <ContactShadows position={[0, 0.004, 0]} opacity={0.45} scale={14} blur={2.4} far={3} resolution={512} />}
-      <Trailer lite={lite} sparks={sparks} />
+      <Trailer key={kind} lite={lite} sparks={sparks} kind={kind} />
       <Sparks api={sparks} />
     </Canvas>
   );

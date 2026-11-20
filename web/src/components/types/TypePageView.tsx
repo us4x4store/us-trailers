@@ -8,6 +8,13 @@ import Photo from "@/components/Photo";
 import { TYPE_IMAGE } from "@/content/images";
 import styles from "./type.module.css";
 
+/** each type opens the designer already set to that kind of trailer */
+const DESIGN_LINK: Record<string, string> = {
+  "toy-haulers": "/?build=L48-A2-C0-R1-S1#design",
+  "off-road-trailers": "/?build=O30-A1-C2-R0-S1#design",
+  "gooseneck-fifth-wheel-trailers": "/?build=G72-A2-C0-R0-S1#design",
+};
+
 export function typeMetadata(slug: string): Metadata {
   const t = typeBySlug(slug);
   if (!t) return {};
@@ -62,8 +69,8 @@ export default function TypePageView({ slug }: { slug: string }) {
             <Link className={styles.primary} href="/#enquire">
               Get a price
             </Link>
-            {t.slug === "toy-haulers" ? (
-              <Link className={styles.secondary} href="/#design">
+            {DESIGN_LINK[t.slug] ? (
+              <Link className={styles.secondary} href={DESIGN_LINK[t.slug]}>
                 Design one now
               </Link>
             ) : (

@@ -14,6 +14,8 @@ const POINTS = [0.02, 0.08, 0.17, 0.29, 0.39, 0.5, 0.62, 0.73, 0.83, 0.96];
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto(url, { waitUntil: "networkidle" });
+  const KIND = process.argv[5];
+  if (KIND) await page.locator("section").first().getByRole("button", { name: new RegExp("^" + KIND) }).click();
   await page.evaluate(() => window.dispatchEvent(new Event("pointerdown")));
   await page.waitForFunction(() => window.__film, null, { timeout: 30000 });
   const total = await page.evaluate(() => document.querySelector("section").offsetHeight - innerHeight);

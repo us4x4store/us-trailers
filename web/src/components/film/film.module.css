@@ -400,3 +400,56 @@
   flex-wrap: wrap;
   gap: 10px;
 }
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.intro.show .kinds {
+  pointer-events: auto;
+}
+.kinds span {
+  margin-right: 4px;
+}
+.kinds button {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1.5px solid var(--graphite);
+  background: var(--paper);
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  cursor: pointer;
+}
+.kinds button[aria-pressed="true"] {
+  background: var(--graphite);
+  color: var(--paper);
+}
+/* short phone screens (iPhone SE and similar): keep the whole intro on screen */
+@media (max-width: 760px) and (max-height: 760px) {
+  .intro {
+    top: 76px;
+    gap: 10px;
+  }
+  .h1 {
+    font-size: 44px;
+  }
+  .h1k {
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .lede {
+    display: none;
+  }
+  .kinds button {
+    min-height: 40px;
+    padding: 0 10px;
+  }
+}

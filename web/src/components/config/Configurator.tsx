@@ -2,10 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import type { TrailerConfig } from "@/trailer/model";
+import { KINDS, type Kind, type TrailerConfig } from "@/trailer/model";
 import {
   COLOURS,
-  LENGTHS,
+  KIND_LENGTHS,
   decodeBuild,
   encodeBuild,
   priceRange,
@@ -14,6 +14,7 @@ import {
 } from "@/trailer/pricing";
 import { buildStore } from "./buildStore";
 import ArButton from "./ArButton";
+import type { PartInfo } from "./Teardown";
 import { track } from "@/lib/track";
 import styles from "./config.module.css";
 
@@ -25,6 +26,10 @@ export default function Configurator() {
   const [mounted, setMounted] = useState(false);
   const [inView, setInView] = useState(false);
   const [copied, setCopied] = useState(false);
+  // "Take it apart": apart = physics running; tearing = teardown on screen (incl. the flight home)
+  const [apart, setApart] = useState(false);
+  const [tearing, setTearing] = useState(false);
+  const [picked, setPicked] = useState<PartInfo | null>(null);
   const [light, setLight] = useState<"day" | "dusk" | "night">("day");
 
   // open a shared build from ?build=L48-A2-C0-R1-S1
@@ -51,10 +56,25 @@ export default function Configurator() {
     };
   }, []);
 
+  const kind: Kind = cfg.kind ?? "toyhauler";
   const update = (patch: Partial<TrailerConfig>) => {
+    setApart(false);
+    setTearing(false);
+    setPicked(null);
     let next = { ...cfg, ...patch };
-    // long bodies need two axles; short bodies can choose
-    if (next.length > 4.2 && next.axles === 1 && !("axles" in patch))
+    const k = next.kind ?? "toyhauler";
+    // each kind has its own lengths and axle layout
+    if (!KIND_LENGTHS[k].includes(next.length))
+      next.length = KIND_LENGTHS[k][Math.min(1, KIND_LENGTHS[k].length - 1)];
+    if (k === "offroad") next = { ...next, axles: 1, rack: false };
+    if (k === "gooseneck") next = { ...next, axles: 2, rack: false };
+    // long toy-hauler bodies need two axles; short ones can choose
+    if (
+      k === "toyhauler" &&
+      next.length > 4.2 &&
+      next.axles === 1 &&
+      !("axles" in patch)
+    )
       next = { ...next, axles: 2 };
     setCfg(next);
     buildStore.set(next);
@@ -100,13 +120,69 @@ export default function Configurator() {
       <div className={styles.board}>
         <div className={styles.view}>
           {mounted ? (
-            <ConfigScene cfg={cfg} active={inView} light={light} />
+            <ConfigScene
+              cfg={cfg}
+              active={inView}
+              light={light}
+              tear={{
+                apart,
+                tearing,
+                onBack: () => setTearing(false),
+                onPick: setPicked,
+              }}
+            />
           ) : (
             <div className={styles.wait}>Setting up the drawing board…</div>
           )}
+          <div className={styles.tear}>
+            <button
+              type="button"
+              aria-pressed={apart}
+              disabled={tearing && !apart}
+              onClick={() => {
+                if (apart) setApart(false);
+                else {
+                  setTearing(true);
+                  setApart(true);
+                  track("teardown", { kind: cfg.kind ?? "toyhauler" });
+                }
+              }}
+            >
+              {apart
+                ? "Put it back together"
+                : tearing
+                  ? "Reassembling…"
+                  : "Take it apart"}
+            </button>
+            {apart && !picked && (
+              <span>Tap any part to see what it does and what it weighs.</span>
+            )}
+          </div>
+          {picked && (
+            <div className={styles.picked} role="status">
+              <b>{picked.name}</b>
+              <span className={styles.kg}>{Math.round(picked.kg)} kg</span>
+              <p>{picked.job}</p>
+              <small>
+                {picked.material} · {picked.spec}
+              </small>
+              <button
+                type="button"
+                aria-label="Close part details"
+                onClick={() => setPicked(null)}
+              >
+                ×
+              </button>
+            </div>
+          )}
           <div className={styles.light} role="group" aria-label="Light">
             {(["day", "dusk", "night"] as const).map((l) => (
-              <button key={l} type="button" aria-pressed={light === l} onClick={() => setLight(l)}>
+              <button
+                key={l}
+                type="button"
+                aria-pressed={light === l}
+                onClick={() => setLight(l)}
+              >
                 {l === "day" ? "Day" : l === "dusk" ? "Dusk" : "Night"}
               </button>
             ))}
@@ -122,9 +198,32 @@ export default function Configurator() {
 
         <div className={styles.panel}>
           <fieldset className={styles.field}>
+            <legend>Type</legend>
+            <div className={styles.seg}>
+              {KINDS.map((k) => (
+                <button
+                  key={k.id}
+                  type="button"
+                  aria-pressed={kind === k.id}
+                  onClick={() => update({ kind: k.id })}
+                >
+                  {k.short}
+                  <small>
+                    {k.id === "toyhauler"
+                      ? "bikes, quads, living"
+                      : k.id === "offroad"
+                        ? "camp anywhere"
+                        : "over the load bed"}
+                  </small>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className={styles.field}>
             <legend>Body length</legend>
             <div className={styles.seg}>
-              {LENGTHS.map((l) => (
+              {KIND_LENGTHS[kind].map((l) => (
                 <button
                   key={l}
                   type="button"
@@ -138,26 +237,33 @@ export default function Configurator() {
             </div>
           </fieldset>
 
-          <fieldset className={styles.field}>
-            <legend>Axles</legend>
-            <div className={styles.seg}>
-              <button
-                type="button"
-                aria-pressed={cfg.axles === 1}
-                disabled={cfg.length > 4.2}
-                onClick={() => update({ axles: 1 })}
-              >
-                Single<small>{cfg.length > 4.2 ? "Needs a body of 4 200 mm or less" : "up to 4 200 mm"}</small>
-              </button>
-              <button
-                type="button"
-                aria-pressed={cfg.axles === 2}
-                onClick={() => update({ axles: 2 })}
-              >
-                Tandem<small>more payload, more stable</small>
-              </button>
-            </div>
-          </fieldset>
+          {kind === "toyhauler" && (
+            <fieldset className={styles.field}>
+              <legend>Axles</legend>
+              <div className={styles.seg}>
+                <button
+                  type="button"
+                  aria-pressed={cfg.axles === 1}
+                  disabled={cfg.length > 4.2}
+                  onClick={() => update({ axles: 1 })}
+                >
+                  Single
+                  <small>
+                    {cfg.length > 4.2
+                      ? "Needs a body of 4 200 mm or less"
+                      : "up to 4 200 mm"}
+                  </small>
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={cfg.axles === 2}
+                  onClick={() => update({ axles: 2 })}
+                >
+                  Tandem<small>more payload, more stable</small>
+                </button>
+              </div>
+            </fieldset>
+          )}
 
           <fieldset className={styles.field}>
             <legend>
@@ -183,19 +289,22 @@ export default function Configurator() {
           <fieldset className={styles.field}>
             <legend>Kit</legend>
             <div className={styles.toggles}>
-              <button
-                type="button"
-                aria-pressed={cfg.rack}
-                onClick={() => update({ rack: !cfg.rack })}
-              >
-                Roof rack<small>150 kg, bolted to the frame</small>
-              </button>
+              {kind === "toyhauler" && (
+                <button
+                  type="button"
+                  aria-pressed={cfg.rack}
+                  onClick={() => update({ rack: !cfg.rack })}
+                >
+                  Roof rack<small>150 kg, bolted to the frame</small>
+                </button>
+              )}
               <button
                 type="button"
                 aria-pressed={cfg.solar}
                 onClick={() => update({ solar: !cfg.solar })}
               >
-                200 W solar<small>MPPT, lithium-ready</small>
+                {kind === "gooseneck" ? "2 × 200 W solar" : "200 W solar"}
+                <small>MPPT, lithium-ready</small>
               </button>
             </div>
           </fieldset>

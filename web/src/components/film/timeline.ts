@@ -61,6 +61,9 @@ export const film = {
   pinned: -1 as number, // part index pinned by click
   active: -1 as number,
   lights: false,
+  kind: "toyhauler" as import("@/trailer/model").Kind,
+  /** real mass of each part (kg), filled in by the 3D scene, which already has the geometry loaded */
+  masses: [] as number[],
   ramp: false,
   listeners: new Set<() => void>(),
   label: null as HTMLDivElement | null,

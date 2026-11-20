@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, overallLength, tareKg } from "@/trailer/model";
+import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, KINDS, overallLength, tareKg, type Kind, type TrailerConfig } from "@/trailer/model";
 import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
 import { sound } from "@/lib/sound";
@@ -29,12 +29,18 @@ export default function AssemblyFilm() {
   const [exploded, setExploded] = useState(false);
   const [lights, setLights] = useState(false);
   const [ramp, setRamp] = useState(false);
-  const parts = useMemo(() => buildTrailer(DEFAULT_CONFIG), []);
+  const [kind, setKind] = useState<Kind>("toyhauler");
+  const cfg = useMemo<TrailerConfig>(() => (kind === "toyhauler" ? DEFAULT_CONFIG : kind === "offroad" ? { ...DEFAULT_CONFIG, kind, length: 3.0, axles: 1, rack: false } : { ...DEFAULT_CONFIG, kind, length: 7.2, axles: 2, rack: false }), [kind]);
+  const parts = useMemo(() => buildTrailer(cfg), [cfg]);
+  const [masses, setMasses] = useState<number[]>([]);
 
   useEffect(() => {
     film.label = label.current;
     film.avoid = [chapterEl.current, bomEl.current];
-    const onActive = () => setActive(film.active);
+    const onActive = () => {
+      setActive(film.active);
+      setMasses(film.masses);
+    };
     film.listeners.add(onActive);
     const st = ScrollTrigger.create({
       trigger: section.current,
@@ -94,7 +100,7 @@ export default function AssemblyFilm() {
       <div className={styles.stage}>
         <div className={styles.canvas} aria-hidden="true">
           <DrawingPoster faded={ready && past} />
-          {ready && <FilmScene active={inView} />}
+          {ready && <FilmScene active={inView} kind={kind} />}
         </div>
 
         {/* headline over the drawing */}
@@ -108,6 +114,22 @@ export default function AssemblyFilm() {
           <p className={styles.lede}>
             Toy haulers, goosenecks, off-road trailers and upgrades, designed around your vehicle, your licence code and your load. Scroll, and watch one being built from the first line to the last weld.
           </p>
+          <div className={styles.kinds} role="group" aria-label="Which trailer to build">
+            <span>Build a</span>
+            {KINDS.map((k) => (
+              <button
+                key={k.id}
+                type="button"
+                aria-pressed={kind === k.id}
+                onClick={() => {
+                  film.kind = k.id;
+                  setKind(k.id);
+                }}
+              >
+                {k.name}
+              </button>
+            ))}
+          </div>
           <div className={styles.introCtas}>
             <a className={styles.ctaInk} href="#enquire">
               Get a price
@@ -136,6 +158,7 @@ export default function AssemblyFilm() {
                 <span className={styles.cardJob}>{part.job}</span>
                 <span className={styles.cardSpec}>
                   {part.material} · {part.spec}
+                  {masses[active] ? ` · ${Math.round(masses[active])} kg` : ""}
                 </span>
               </div>
             </>
@@ -157,11 +180,13 @@ export default function AssemblyFilm() {
           <span>Dwg</span>
           <b>UST-001</b>
           <span>Type</span>
-          <b>Toy hauler, {DEFAULT_CONFIG.axles === 2 ? "tandem" : "single"} axle</b>
+          <b>
+            {KINDS.find((k) => k.id === kind)?.name}, {cfg.axles === 2 ? "tandem" : "single"} axle
+          </b>
           <span>Overall</span>
-          <b>{(overallLength(DEFAULT_CONFIG) * 1000).toLocaleString("en-ZA")} mm</b>
-          <span>Tare (est.)</span>
-          <b>{tareKg(DEFAULT_CONFIG).toLocaleString("en-ZA")} kg</b>
+          <b>{(Math.round(overallLength(cfg) * 100) * 10).toLocaleString("en-ZA")} mm</b>
+          <span>Tare, sum of parts</span>
+          <b>{tareKg(cfg).toLocaleString("en-ZA")} kg</b>
           <span>Parts</span>
           <b>
             {Math.max(0, doneCount)} / {parts.length}
