@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, KINDS, overallLength, tareKg, type Kind, type TrailerConfig } from "@/trailer/model";
+import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, EXAMPLE_CFG, KINDS, overallLength, tareKg, type Kind, type TrailerConfig } from "@/trailer/model";
 import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
 import { sound } from "@/lib/sound";
@@ -30,7 +30,7 @@ export default function AssemblyFilm() {
   const [lights, setLights] = useState(false);
   const [ramp, setRamp] = useState(false);
   const [kind, setKind] = useState<Kind>("toyhauler");
-  const cfg = useMemo<TrailerConfig>(() => (kind === "toyhauler" ? DEFAULT_CONFIG : kind === "offroad" ? { ...DEFAULT_CONFIG, kind, length: 3.0, axles: 1, rack: false } : { ...DEFAULT_CONFIG, kind, length: 7.2, axles: 2, rack: false }), [kind]);
+  const cfg = useMemo<TrailerConfig>(() => EXAMPLE_CFG[kind], [kind]);
   const parts = useMemo(() => buildTrailer(cfg), [cfg]);
   const [masses, setMasses] = useState<number[]>([]);
 
@@ -88,7 +88,9 @@ export default function AssemblyFilm() {
   const part = active >= 0 ? parts[active] : null;
   const isIntro = chapter === 0;
   const isEnd = chapter === CHAPTERS.length - 1;
-  const doneCount = parts.filter((_, i) => i <= active).length;
+  const doneCount = isEnd ? parts.length : parts.filter((_, i) => i <= active).length;
+  // tare counts up as parts go on; the full figure (with welds, paint, fasteners) once it is built
+  const tally = isEnd || doneCount === parts.length || !masses.length ? tareKg(cfg) : Math.round(masses.slice(0, doneCount).reduce((a, b) => a + (b || 0), 0) * 1.12);
 
   const toggleExplode = (v: boolean) => {
     film.explode = v ? 1 : 0;
@@ -99,12 +101,12 @@ export default function AssemblyFilm() {
     <section ref={section} className={styles.film} aria-label="Watch a US Trailer being built, part by part">
       <div className={styles.stage}>
         <div className={styles.canvas} aria-hidden="true">
-          <DrawingPoster faded={ready && past} />
+          <DrawingPoster faded={(ready && past) || kind !== "toyhauler"} />
           {ready && <FilmScene active={inView} kind={kind} />}
         </div>
 
         {/* headline over the drawing */}
-        <div className={`${styles.intro} ${isIntro ? styles.show : ""}`}>
+        <div className={`${styles.intro} ${isIntro ? styles.show : ""}`} inert={!isIntro}>
           <h1 className={styles.h1}>
             <span className={styles.h1k}>Custom trailers, built in Cape Town</span>
             Drawn for you.
@@ -186,7 +188,7 @@ export default function AssemblyFilm() {
           <span>Overall</span>
           <b>{(Math.round(overallLength(cfg) * 100) * 10).toLocaleString("en-ZA")} mm</b>
           <span>Tare, sum of parts</span>
-          <b>{tareKg(cfg).toLocaleString("en-ZA")} kg</b>
+          <b>{tally.toLocaleString("en-ZA")} kg</b>
           <span>Parts</span>
           <b>
             {Math.max(0, doneCount)} / {parts.length}

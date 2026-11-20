@@ -1,12 +1,8 @@
 import type { Surface } from "./road";
-import { DEFAULT_CONFIG, tareKg, type Kind, type TrailerConfig } from "@/trailer/model";
+import { DEFAULT_CONFIG, EXAMPLE_CFG, tareKg, type Kind, type TrailerConfig } from "@/trailer/model";
 
 /** The example trailer each kind tows on the rig. */
-export const RIG_CFG: Record<Kind, TrailerConfig> = {
-  toyhauler: DEFAULT_CONFIG,
-  offroad: { ...DEFAULT_CONFIG, kind: "offroad", length: 3.0, axles: 1, rack: false },
-  gooseneck: { ...DEFAULT_CONFIG, kind: "gooseneck", length: 6.0, axles: 2, rack: false },
-};
+export const RIG_CFG = EXAMPLE_CFG;
 /** loads that physically fit each kind */
 export const KIND_LOADS: Record<Kind, LoadKind[]> = { toyhauler: ["quad", "bike", "jerry"], gooseneck: ["quad", "bike", "jerry"], offroad: ["kit", "jerry"] };
 /** what a healthy hitch load looks like: % of the trailer's mass on the ball */

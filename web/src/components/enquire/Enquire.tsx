@@ -15,7 +15,8 @@ export default function Enquire() {
   const [state, action, pending] = useActionState<EnquiryState, FormData>(sendEnquiry, { status: "idle" });
   const [cfg, setCfg] = useState(buildStore.cfg);
   const [touched, setTouched] = useState(buildStore.touched);
-  const [attach, setAttach] = useState(true);
+  // attach the build only once the visitor has actually designed one (or opened a shared one)
+  const [attach, setAttach] = useState(false);
   const [t, setT] = useState(0);
   const [copied, setCopied] = useState(false);
 
@@ -24,6 +25,7 @@ export default function Enquire() {
     const f = () => {
       setCfg(buildStore.cfg);
       setTouched(buildStore.touched);
+      if (buildStore.touched) setAttach(true);
     };
     buildStore.listeners.add(f);
     f(); // a shared ?build= link may have loaded before we subscribed
@@ -61,6 +63,11 @@ export default function Enquire() {
   useEffect(() => {
     if (state.status === "sent" || state.status === "offline") track("enquiry_submitted", { status: state.status, attached: attach });
   }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // announce the fallback by moving focus to it
+  useEffect(() => {
+    if (state.status === "offline") document.getElementById("enquire-offline")?.focus();
+  }, [state]);
 
   // move focus to the first problem, whichever side found it
   useEffect(() => {
@@ -186,7 +193,7 @@ export default function Enquire() {
         )}
 
         {state.status === "offline" && (
-          <div className={styles.offline} role="alert">
+          <div className={styles.offline} role="alert" tabIndex={-1} id="enquire-offline">
             <p>Your brief is ready. Our online inbox is still being connected, so send it straight to the workshop instead: one tap, everything already filled in.</p>
             <div className={styles.offlineActions}>
               {waLink() && (
@@ -220,7 +227,7 @@ export default function Enquire() {
         )}
 
         <button className={styles.submit} type="submit" disabled={pending}>
-          {pending ? "Sending your brief…" : "Send my brief"}
+          {pending ? "Sending your brief…" : state.status === "offline" ? "Update my brief" : "Send my brief"}
         </button>
       </form>
     </section>

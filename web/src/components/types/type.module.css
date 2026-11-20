@@ -10,8 +10,14 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+.crumbs {
+  align-items: center;
+}
 .crumbs a {
   color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 .hero {
   display: grid;
@@ -285,5 +291,26 @@
 @media (max-width: 860px) {
   .photo {
     aspect-ratio: 4 / 3;
+  }
+}
+/* phones: one column everywhere (this sits after .spec so it wins the cascade) */
+@media (max-width: 860px) {
+  .hero,
+  .who,
+  .spec {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 420px) {
+  .spec dl div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+@media (max-width: 480px) {
+  /* long words like "fifth-wheels" must fit a 375 px phone */
+  .h1 {
+    font-size: clamp(28px, 8vw, 40px);
+    overflow-wrap: break-word;
   }
 }

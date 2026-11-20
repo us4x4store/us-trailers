@@ -418,3 +418,10 @@
     display: none;
   }
 }
+.noseWarn {
+  margin: 4px 0 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--red);
+  background: color-mix(in srgb, var(--red) 10%, transparent);
+  font: 500 13px/1.45 var(--mono);
+}

@@ -131,3 +131,9 @@ main li a:not([class]) {
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
+
+/* inline text links: a taller hit area without changing line spacing */
+p a,
+label a {
+  padding-block: 6px;
+}

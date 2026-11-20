@@ -312,6 +312,13 @@ export default function TestDrive() {
                 <i className={styles.band} style={{ left: `${(band.lo / band.max) * 100}%`, width: `${((band.hi - band.lo) / band.max) * 100}%` }} />
                 <i className={styles.needle} style={{ left: `${Math.max(0, Math.min(100, (nosePct / band.max) * 100))}%` }} />
               </div>
+              {!noseOk && (
+                <p className={styles.noseWarn} role="status">
+                  {nosePct < band.lo
+                    ? "Too light on the nose: this rig will want to sway. Load heavy items ahead of the axle, or take some off the back."
+                    : "Too heavy on the nose: the bakkie's rear will squat and steering goes light. Move weight back over the axle."}
+                </p>
+              )}
               <small>
                 Parked, level: worked out from where the mass sits. Live hitch load on this road: {live >= 0 ? `${live} kg` : `${-live} kg lifting`}. {band.note}
               </small>

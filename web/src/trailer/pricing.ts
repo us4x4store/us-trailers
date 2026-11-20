@@ -47,7 +47,7 @@ export function priceRange(cfg: TrailerConfig): [number, number] {
 /** Rated GVM (kg), EXAMPLE axle ratings: toy hauler single 1 600 / tandem 3 000; off-road 1 500; gooseneck by length. */
 export function gvmKg(cfg: TrailerConfig) {
   if (cfg.kind === "offroad") return 1500;
-  if (cfg.kind === "gooseneck") return cfg.length <= 6 ? 3500 : cfg.length <= 7.2 ? 4000 : 4500;
+  if (cfg.kind === "gooseneck") return 3500; // stays within a light vehicle's 3 500 kg braked towing rating
   return cfg.axles === 2 ? 3000 : 1600;
 }
 

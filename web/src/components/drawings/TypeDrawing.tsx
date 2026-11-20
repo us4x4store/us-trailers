@@ -52,7 +52,7 @@ const PATHS: Record<
       },
       {
         d: "M670,8 V300 M663,8 H677 M663,300 H677",
-        label: "2 900",
+        label: "2 800",
         x: 690,
         y: 154,
         rotate: true,

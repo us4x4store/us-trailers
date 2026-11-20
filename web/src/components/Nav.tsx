@@ -25,7 +25,16 @@ export default function Nav() {
   useEffect(() => setOpen(false), [path]);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return setOpen(false);
+      if (e.key !== "Tab") return;
+      // keep focus inside the open menu: its close button plus its links
+      const items = [document.querySelector<HTMLElement>("[aria-controls=menu]"), ...document.querySelectorAll<HTMLElement>("#menu a, #menu button")].filter(Boolean) as HTMLElement[];
+      const i = items.indexOf(document.activeElement as HTMLElement);
+      const next = e.shiftKey ? (i <= 0 ? items.length - 1 : i - 1) : i === -1 || i === items.length - 1 ? 0 : i + 1;
+      e.preventDefault();
+      items[next]?.focus();
+    };
     document.addEventListener("keydown", onKey);
     document.documentElement.style.overflow = "hidden";
     window.dispatchEvent(new Event("lenis:stop"));

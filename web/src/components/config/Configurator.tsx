@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { KINDS, type Kind, type TrailerConfig } from "@/trailer/model";
+import { EXAMPLE_CFG, KINDS, type Kind, type TrailerConfig } from "@/trailer/model";
 import {
   COLOURS,
   KIND_LENGTHS,
@@ -65,7 +65,7 @@ export default function Configurator() {
     const k = next.kind ?? "toyhauler";
     // each kind has its own lengths and axle layout
     if (!KIND_LENGTHS[k].includes(next.length))
-      next.length = KIND_LENGTHS[k][Math.min(1, KIND_LENGTHS[k].length - 1)];
+      next.length = EXAMPLE_CFG[k].length;
     if (k === "offroad") next = { ...next, axles: 1, rack: false };
     if (k === "gooseneck") next = { ...next, axles: 2, rack: false };
     // long toy-hauler bodies need two axles; short ones can choose

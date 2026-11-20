@@ -115,6 +115,12 @@ export type TrailerConfig = {
 };
 
 export const DEFAULT_CONFIG: TrailerConfig = { length: 4.8, axles: 2, colour: "#2C3136", solar: true, rack: true };
+/** The one example build per kind, shared by the film, the test rig, the designer links and the type pages. */
+export const EXAMPLE_CFG: Record<Kind, TrailerConfig> = {
+  toyhauler: DEFAULT_CONFIG,
+  offroad: { ...DEFAULT_CONFIG, kind: "offroad", length: 3.0, axles: 1, rack: false },
+  gooseneck: { ...DEFAULT_CONFIG, kind: "gooseneck", length: 6.0, axles: 2, rack: false },
+};
 
 /* ---------- fixed dimensions (metres) ---------- */
 export const DIM = {

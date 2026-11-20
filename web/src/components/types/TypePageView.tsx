@@ -12,7 +12,7 @@ import styles from "./type.module.css";
 const DESIGN_LINK: Record<string, string> = {
   "toy-haulers": "/?build=L48-A2-C0-R1-S1#design",
   "off-road-trailers": "/?build=O30-A1-C2-R0-S1#design",
-  "gooseneck-fifth-wheel-trailers": "/?build=G72-A2-C0-R0-S1#design",
+  "gooseneck-fifth-wheel-trailers": "/?build=G60-A2-C0-R0-S1#design",
 };
 
 export function typeMetadata(slug: string): Metadata {
@@ -85,7 +85,7 @@ export default function TypePageView({ slug }: { slug: string }) {
         </div>
       </header>
 
-      {TYPE_IMAGE[t.slug] && <Photo img={TYPE_IMAGE[t.slug]} sizes="100vw" className={styles.photo} />}
+      {TYPE_IMAGE[t.slug] && <Photo img={TYPE_IMAGE[t.slug]} sizes="100vw" eager className={styles.photo} />}
 
       <section className={styles.spec} aria-labelledby="spec">
         <h2 id="spec" className={styles.h2}>

@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { buildTrailer, DEFAULT_CONFIG, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
+import { buildTrailer, DEFAULT_CONFIG, EXAMPLE_CFG, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
 import { buildPartGeometry, type BuiltPart } from "@/trailer/geometry";
 import { partMassKg } from "@/trailer/mass";
 import { createMaterials, INK, PAPER } from "@/trailer/materials";
@@ -141,7 +141,7 @@ type Runtime = {
 function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableRefObject<((at: THREE.Vector3, n: number) => void) | null>; kind: Kind }) {
   const root = useRef<THREE.Group>(null);
   const { camera, size } = useThree();
-  const cfg = useMemo<TrailerConfig>(() => (kind === "toyhauler" ? DEFAULT_CONFIG : kind === "offroad" ? { ...DEFAULT_CONFIG, kind, length: 3.0, axles: 1, rack: false } : { ...DEFAULT_CONFIG, kind, length: 7.2, axles: 2, rack: false }), [kind]);
+  const cfg = useMemo<TrailerConfig>(() => EXAMPLE_CFG[kind], [kind]);
   const parts = useMemo(() => buildTrailer(cfg), [cfg]);
   useEffect(() => {
     film.masses = parts.map((p) => partMassKg(p));
