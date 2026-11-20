@@ -52,7 +52,9 @@ _Last updated: 2026-11-19 (session 1)_
 - Optional synthesised sound (off by default, remembered): weld, clank, ramp hiss, road noise.
 - Phone nav fits 375 px; 'Get a price' moves to the menu under 400 px.
 - Live Lighthouse mobile home: 96 / 100 / 100 / 100.
-- Review 3 running.
+- Review 3 (docs/review-3.md) fixed: one towing-rules source (towCheck) for rig, configurator and part copy; shared builds reach the enquiry; tow check GCM/blank fields/EB-only offer/sticky phone result/reg 293 heavy limit; film card hidden at intro/handover; rig peak g, 7-10% band, shifted loads; sticky type-page CTA; 13 px labels, 52 px phone H1; poster lettering; home FAQ links.
+- Live Lighthouse mobile after review 3: home 97/100/100/100, /toy-haulers 100/100/100/100.
+- To confirm with Justin/legal: reg 293 100 km/h sign wording and the >9 000 kg 80 km/h case.
 
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
