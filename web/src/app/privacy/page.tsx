@@ -15,6 +15,8 @@ export default function Privacy() {
     <main id="main" style={{ padding: "120px var(--gutter) 96px", display: "grid", gap: 14, background: "var(--paper)" }}>
       <p style={{ font: "600 12px/1 var(--mono)", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--ink)" }}>POPIA</p>
       <h1 style={{ font: "800 clamp(40px, 6vw, 80px)/0.95 var(--display)", fontStretch: "116%", letterSpacing: "-0.02em" }}>Privacy notice</h1>
+      <h2 style={S.h2}>Who is responsible</h2>
+      <p style={S.p}>US Trailers, Cape Town, South Africa. Information officer: Justin, owner. Email: hello@ustrailers.co.za. (Placeholder details, to be confirmed before launch.)</p>
       <h2 style={S.h2}>What we collect</h2>
       <p style={S.p}>When you send us a brief we collect what you type into the form: your name, phone or WhatsApp number, email address, town, tow vehicle, licence code and your trailer design. We don&apos;t collect anything else about you, and the site doesn&apos;t use advertising cookies.</p>
       <h2 style={S.h2}>Why we collect it</h2>

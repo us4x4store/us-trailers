@@ -278,3 +278,12 @@
     text-decoration: none;
   }
 }
+.photo {
+  aspect-ratio: 21 / 9;
+  border-bottom: 1.5px solid var(--graphite);
+}
+@media (max-width: 860px) {
+  .photo {
+    aspect-ratio: 4 / 3;
+  }
+}

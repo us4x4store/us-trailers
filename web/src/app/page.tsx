@@ -1,5 +1,6 @@
 import AssemblyFilm from "@/components/film/AssemblyFilm";
 import TestDrive from "@/components/drive/TestDrive";
+import PhotoBand from "@/components/photoband/PhotoBand";
 import TypeIndex from "@/components/types/TypeIndex";
 import Process from "@/components/process/Process";
 import Configurator from "@/components/config/Configurator";
@@ -27,6 +28,7 @@ export default function Home() {
       <div id="film">
         <AssemblyFilm />
       </div>
+      <PhotoBand />
       <TestDrive />
       <TypeIndex />
       <Process />

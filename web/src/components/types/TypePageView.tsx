@@ -4,6 +4,8 @@ import { TYPES, typeBySlug } from "@/content/types";
 import TypeDrawing from "@/components/drawings/TypeDrawing";
 import FaqList, { faqJsonLd } from "@/components/faq/FaqList";
 import { SITE_URL } from "@/content/site";
+import Photo from "@/components/Photo";
+import { TYPE_IMAGE } from "@/content/images";
 import styles from "./type.module.css";
 
 export function typeMetadata(slug: string): Metadata {
@@ -75,6 +77,8 @@ export default function TypePageView({ slug }: { slug: string }) {
           <TypeDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} />
         </div>
       </header>
+
+      {TYPE_IMAGE[t.slug] && <Photo img={TYPE_IMAGE[t.slug]} sizes="100vw" className={styles.photo} />}
 
       <section className={styles.spec} aria-labelledby="spec">
         <h2 id="spec" className={styles.h2}>

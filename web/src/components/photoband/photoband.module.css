@@ -1,0 +1,57 @@
+.band {
+  background: var(--graphite);
+  color: #e6eae5;
+  padding: clamp(72px, 10vh, 120px) var(--gutter);
+  display: grid;
+  gap: 28px;
+}
+.head {
+  display: grid;
+  gap: 14px;
+  max-width: 900px;
+}
+.eyebrow {
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a9c0ee;
+}
+.title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 118%;
+  font-size: clamp(36px, 6vw, 84px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+/* desktop: wide | square, then square | wide */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas: "a a b" "c d d";
+  gap: 12px;
+}
+.a {
+  grid-area: a;
+  aspect-ratio: 16 / 9;
+}
+.b {
+  grid-area: b;
+}
+.c {
+  grid-area: c;
+}
+.d {
+  grid-area: d;
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "a" "b" "c" "d";
+  }
+  .b,
+  .c {
+    aspect-ratio: 4 / 3;
+  }
+}
