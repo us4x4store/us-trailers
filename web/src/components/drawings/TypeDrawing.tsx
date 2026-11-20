@@ -148,7 +148,7 @@ const PATHS: Record<
     revs: [
       { cx: 365, cy: 250, r: 62, tag: "A  Independent suspension" },
       { cx: 579, cy: 194, r: 26, tag: "B  LED lights + contour tape" },
-      { cx: 105, cy: 236, r: 34, tag: "C  Override brakes" },
+      { cx: 105, cy: 236, r: 34, tag: "C  Overrun brakes" },
     ],
   },
 };

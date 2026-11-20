@@ -227,9 +227,9 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     parts.push({
       id: `brakes${i}`,
       name: cfg.axles === 2 ? `Disc brakes, ${i === 0 ? "front" : "rear"}` : "Disc brakes",
-      job: "Override braking: the trailer brakes itself when the bakkie slows, so it never pushes.",
+      job: "Overrun braking: when the bakkie slows, the trailer presses on the coupling and that applies its own brakes. Electric brakes are added when the trailer outweighs your vehicle.",
       material: "Vented disc, galvanised caliper",
-      spec: "Ø 300 mm discs, mechanical override",
+      spec: "Ø 300 mm discs, overrun (electric where required)",
       chapter: "running",
       anchor: [ax, wheelR + 0.15, trackZ - 0.05],
       from: [0, 0, 1.4],

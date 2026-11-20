@@ -32,7 +32,7 @@ export default function Home() {
       <Process />
       <Configurator />
       <TowCheck />
-      <FaqList ids={["licence", "brakes", "roadworthy", "speed", "register", "time"]} />
+      <FaqList ids={["cost", "licence", "brakes", "roadworthy", "speed", "time"]} more />
       <Enquire />
     </main>
   );

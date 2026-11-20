@@ -101,7 +101,7 @@ export const TYPES: TypePage[] = [
     forWho: ["Trailers that sway, bottom out or crack", "Upgrading to independent suspension", "Adding brakes for a heavier load", "Turning an open trailer into a closed one"],
     points: [
       { h: "Inspection first", p: "We put the trailer on the weighbridge and check the chassis, the welds, the bearings and the wiring before quoting." },
-      { h: "Suspension & brakes", p: "Independent suspension kits, matched shocks, and override or electric brakes sized to the trailer's GVM." },
+      { h: "Suspension & brakes", p: "Independent suspension kits, matched shocks, and overrun or electric brakes sized to the trailer's GVM." },
       { h: "Wiring done once", p: "A new sealed harness from plug to tail light, with LED lights, contour tape and an information plate." },
       { h: "Racks, water, solar", p: "Bolted to the frame, never just to the skin, and weighed afterwards so you know the new tare." },
     ],
@@ -110,7 +110,7 @@ export const TYPES: TypePage[] = [
       "Contour (reflective) tape along the sides and rear is compulsory on every trailer.",
     ],
     faq: ["modify", "roadworthy", "markings", "brakes"],
-    spec: [["First step", "Inspection and weighbridge"], ["Typical turnaround", "1–3 weeks"], ["Suspension", "Independent kits, matched shocks"], ["Brakes", "Override or electric, sized to GVM"], ["Paperwork", "New tare on the information plate"], ["Roadworthy", "Needed if the change is a modification"]],
+    spec: [["First step", "Inspection and weighbridge"], ["Typical turnaround", "1–3 weeks"], ["Suspension", "Independent kits, matched shocks"], ["Brakes", "Overrun or electric, sized to GVM"], ["Paperwork", "New tare on the information plate"], ["Roadworthy", "Needed if the change is a modification"]],
     drawing: "modify",
   },
 ];

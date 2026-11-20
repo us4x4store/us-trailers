@@ -107,7 +107,9 @@ function Rig({ lite }: { lite: boolean }) {
   const armRefs = useRef<THREE.Mesh[]>([]);
   const coilRefs = useRef<THREE.Mesh[]>([]);
   const controller = useRef<ReturnType<typeof world.createVehicleController> | null>(null);
-  const state = useRef({ x: COUPLER[0], v: 0, dist: 0, lastVy: 0, g: 1, readT: 0, nose: 0 });
+  const state = useRef({ x: COUPLER[0], v: 0, dist: 0, lastVy: 0, g: 1, gPeak: 0, readT: 0, nose: 0 });
+  // where each load settled on the deck (trailer space), to spot loads that shift
+  const homes = useRef(new Map<number, { x: number; z: number; t: number }>());
   const [loads, setLoads] = useState(drive.loads);
 
   useSphericalJoint(tow as React.RefObject<RapierRigidBody>, trailer as React.RefObject<RapierRigidBody>, [
@@ -247,6 +249,9 @@ function Rig({ lite }: { lite: boolean }) {
     const acc = (vy - s.lastVy) / Math.max(dt, 1e-3);
     s.lastVy = vy;
     s.g += (1 + acc / 9.81 - s.g) * 0.15;
+    // peak vertical g at the floor over the last second or so (what you'd feel)
+    const gRaw = Math.max(-2, Math.min(4, 1 + acc / 9.81));
+    s.gPeak = Math.max(s.gPeak * Math.exp(-dt * 1.2), Math.abs(gRaw - 1));
     if (s.readT > 0.08) {
       s.readT = 0;
       const q = b.rotation();
@@ -274,6 +279,7 @@ function Rig({ lite }: { lite: boolean }) {
       if (water.current && drive.water) addBody(water.current);
       // a load counts only while it is on the deck; one that has left it is reported as loose
       let loose = 0;
+      let shifted = 0;
       world.forEachRigidBody((rb) => {
         if (!(rb.userData as { load?: boolean } | undefined)?.load) return;
         const c = rb.translation();
@@ -281,6 +287,10 @@ function Rig({ lite }: { lite: boolean }) {
         const onDeck = Math.abs(l.x) < CFG.length / 2 + 0.2 && Math.abs(l.z) < DIM.bodyW / 2 + 0.2 && l.y > DIM.floorY - 0.2 && l.y < DIM.roofY + 0.2;
         if (onDeck) addBody(rb);
         else loose++;
+        const h = homes.current.get(rb.handle);
+        if (!h) homes.current.set(rb.handle, { x: l.x, z: l.z, t: performance.now() });
+        else if (performance.now() - h.t < 2500) Object.assign(h, { x: l.x, z: l.z }); // still settling
+        else if (Math.hypot(l.x - h.x, l.z - h.z) > 0.25) shifted++;
       });
       const comX = mx / Math.max(m, 1);
       const nose = (gross * (comX - AXLE_X)) / (COUPLER[0] - AXLE_X);
@@ -291,10 +301,11 @@ function Rig({ lite }: { lite: boolean }) {
         travel,
         pitch: +THREE.MathUtils.radToDeg(e.z).toFixed(1),
         roll: +THREE.MathUtils.radToDeg(e.x).toFixed(1),
-        g: +Math.max(-1, Math.min(4, s.g)).toFixed(2),
+        g: +(1 + s.gPeak).toFixed(2),
         noseKg: Math.round(Math.max(-gross, Math.min(gross, nose))),
         liveNoseKg: Math.round(Math.max(-gross, Math.min(gross, s.nose))),
         loose,
+        shifted,
         gross,
         ready: true,
       };

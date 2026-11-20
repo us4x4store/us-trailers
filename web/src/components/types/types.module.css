@@ -11,7 +11,7 @@
   max-width: 760px;
 }
 .eyebrow {
-  font: 500 12px/1 var(--mono);
+  font: 500 13px/1 var(--mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink);
@@ -20,7 +20,7 @@
   font-family: var(--display);
   font-weight: 800;
   font-stretch: 118%;
-  font-size: clamp(42px, 6vw, 84px);
+  font-size: clamp(36px, 6vw, 84px);
   line-height: 0.92;
   letter-spacing: -0.02em;
 }
@@ -61,7 +61,7 @@
   transform: translateX(6px);
 }
 .no {
-  font: 500 12px/1 var(--mono);
+  font: 500 13px/1 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink);
@@ -71,7 +71,7 @@
   font-stretch: 112%;
 }
 .go {
-  font: 500 12px/1 var(--mono);
+  font: 500 13px/1 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);

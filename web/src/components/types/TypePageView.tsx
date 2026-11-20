@@ -130,6 +130,11 @@ export default function TypePageView({ slug }: { slug: string }) {
 
       <FaqList ids={t.faq} heading={false} id={`faq-${t.slug}`} />
 
+      <div className={styles.stickyCta}>
+        <span>{t.short}, built for you</span>
+        <Link href="/#enquire">Get a price</Link>
+      </div>
+
       <section className={styles.close}>
         <h2 className={styles.closeH}>Commission yours, not one for sale off a floor.</h2>
         <div className={styles.ctas}>

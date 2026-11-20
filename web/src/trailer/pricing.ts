@@ -47,7 +47,10 @@ export function specs(cfg: TrailerConfig) {
     gvm,
     payload: gvm - tare,
     licence: gvm > 750 ? "EB" : "B",
-    brakes: gvm > 750 ? "Required (fitted: override discs)" : "Not required",
+    brakes:
+      gvm > 750
+        ? `Overrun disc brakes. If your vehicle's tare is under ${gvm.toLocaleString("en-ZA").replace(/,/g, " ")} kg, electric brakes you work from the driver's seat as well.`
+        : "Parking brake, plus overrun brakes if the trailer's GVM is over half your vehicle's tare.",
     // a loaded single axle over ~4.2 m carries too much on one axle: we recommend tandem
     axleAdvice: cfg.axles === 1 && cfg.length > 4.2 ? "Over 4.2 m we fit two axles. One axle would be overloaded." : null,
   };

@@ -2,7 +2,7 @@ import { FAQ, FAQ_NOTE, type Faq } from "@/content/faq";
 import styles from "./faq.module.css";
 
 /** Server-rendered FAQ (native <details>, works without JS). Pass ids to show a subset. */
-export default function FaqList({ ids, heading = true, id = "faq", page = false }: { ids?: string[]; heading?: boolean; id?: string; page?: boolean }) {
+export default function FaqList({ ids, heading = true, id = "faq", page = false, more = false }: { ids?: string[]; heading?: boolean; id?: string; page?: boolean; more?: boolean }) {
   const H = page ? "h1" : "h2";
   const items: Faq[] = ids ? ids.map((i) => FAQ.find((f) => f.id === i)!).filter(Boolean) : FAQ;
   return (
@@ -36,6 +36,14 @@ export default function FaqList({ ids, heading = true, id = "faq", page = false 
           </details>
         ))}
       </div>
+      {more && (
+        <div className={styles.more}>
+          <a href="/faq">All towing questions, in plain words →</a>
+          <a className={styles.moreCta} href="/#enquire">
+            Get a price
+          </a>
+        </div>
+      )}
       <p className={styles.note}>{FAQ_NOTE}</p>
     </section>
   );

@@ -13,6 +13,8 @@ export type TowInput = {
   trailerGvm: number;
   /** manufacturer's braked towing capacity, kg (optional, from the owner's manual) */
   towRating?: number;
+  /** tow vehicle's gross combination mass, kg (optional, from the owner's manual) */
+  gcm?: number;
 };
 
 export type TowResult = {
@@ -58,10 +60,12 @@ export function towCheck(i: TowInput): TowResult {
   let speed: TowResult["speed"];
   if (i.vehicle === "bakkie" && sum > 3500 && sum <= 9000)
     speed = { limit: "100 km/h, everywhere", why: `Bakkie GVM plus trailer GVM is ${fmt(sum)} kg, over 3 500 kg. Show a 100 km/h sign on the back.`, sign: true };
-  else if (i.vehicle === "bakkie" && sum > 9000) speed = { limit: "Check with your licensing office", why: `A combined GVM of ${fmt(sum)} kg is a heavy combination with its own limits.`, sign: true };
+  else if (i.vehicle === "bakkie" && sum > 9000) speed = { limit: "80 km/h", why: `A combined GVM of ${fmt(sum)} kg is over 9 000 kg, so the heavy-vehicle limit applies.`, sign: false };
   else speed = { limit: "60 / 100 / 120 km/h", why: "Normal limits: town, rural roads, freeways.", sign: false };
 
   if (i.towRating && i.trailerGvm > i.towRating) warnings.push(`The trailer's GVM (${fmt(i.trailerGvm)} kg) is more than your vehicle's rated braked towing capacity (${fmt(i.towRating)} kg).`);
+  if (i.gcm && sum > i.gcm)
+    warnings.push(`Fully loaded, vehicle GVM plus trailer GVM is ${fmt(sum)} kg, more than the vehicle's GCM of ${fmt(i.gcm)} kg. Keep the real combined mass under ${fmt(i.gcm)} kg, or ask us for a lighter build.`);
   if (i.gvm < i.tare) warnings.push("Your vehicle's GVM should be more than its tare. Check the numbers on the licence disc.");
   if (i.trailerGvm > 3500 && !heavyVehicle) warnings.push("A trailer over 3 500 kg GVM is unusual behind a light vehicle. Talk to us before you build.");
   return { licence, brakes, speed, warnings };

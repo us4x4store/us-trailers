@@ -17,6 +17,7 @@ export function DrawingPoster({ faded }: { faded: boolean }) {
         pointerEvents: "none",
       }}
       role="img"
+      className="drw"
       aria-label="Side elevation drawing of a tandem-axle toy hauler"
     >
       <g fill="none" stroke="#1F3B73" strokeWidth="1.3" strokeLinejoin="round">

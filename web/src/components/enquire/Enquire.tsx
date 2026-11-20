@@ -23,6 +23,7 @@ export default function Enquire() {
       setTouched(buildStore.touched);
     };
     buildStore.listeners.add(f);
+    f(); // a shared ?build= link may have loaded before we subscribed
     return () => {
       buildStore.listeners.delete(f);
     };
@@ -65,7 +66,7 @@ export default function Enquire() {
   if (state.status === "sent")
     return (
       <section id="enquire" className={styles.enq}>
-        <div className={styles.done} role="status">
+        <div className={styles.done} role="status" tabIndex={-1} ref={(el) => el?.focus()}>
           <p className={styles.eyebrow}>Brief received</p>
           <h2 className={styles.title}>Your drawing is on our desk.</h2>
           <p className={styles.lede}>We read every brief ourselves and reply within one working day, usually by WhatsApp. Keep your build code handy: {encodeBuild(cfg)}.</p>

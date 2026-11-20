@@ -6,6 +6,7 @@ import { DEFAULT_CONFIG, tareKg } from "@/trailer/model";
 import { BAKKIE, drive, GVM, LOADS, type LoadKind, type Readout } from "./driveState";
 import type { Surface } from "./road";
 import { sound } from "@/lib/sound";
+import { towCheck } from "@/content/towrules";
 import styles from "./drive.module.css";
 
 const DriveScene = dynamic(() => import("./DriveScene"), { ssr: false });
@@ -77,8 +78,11 @@ export default function TestDrive() {
   const payload = r.gross - TARE;
   const over = r.gross > GVM;
   const nosePct = r.gross > 0 ? (r.noseKg / r.gross) * 100 : 0;
-  const noseOk = !r.ready || (nosePct >= 6 && nosePct <= 12);
+  const noseOk = !r.ready || (nosePct >= 7 && nosePct <= 10);
   const combo = BAKKIE.gvm + GVM;
+  // the same rules the tow checker uses, for this example bakkie and trailer
+  const rules = towCheck({ vehicle: "bakkie", tare: BAKKIE.tare, gvm: BAKKIE.gvm, trailerGvm: GVM, towRating: BAKKIE.towRating, gcm: BAKKIE.gcm });
+  const live = r.liveNoseKg;
 
   return (
     <section ref={root} id="drive" className={styles.drive} aria-labelledby="drive-title">
@@ -124,9 +128,13 @@ export default function TestDrive() {
               ))}
             </span>
           </div>
-          {(notice || (r.loose ?? 0) > 0) && (
+          {(notice || (r.loose ?? 0) > 0 || (r.shifted ?? 0) > 0) && (
             <p className={styles.notice} role="status">
-              {(r.loose ?? 0) > 0 ? `${r.loose === 1 ? "A load has" : `${r.loose} loads have`} come loose. Strap it down, or unload.` : notice}
+              {(r.loose ?? 0) > 0
+                ? `${r.loose === 1 ? "A load has" : `${r.loose} loads have`} come off the deck. Strap it down, or unload.`
+                : (r.shifted ?? 0) > 0
+                  ? `${r.shifted === 1 ? "A load has" : `${r.shifted} loads have`} shifted on the deck. Straps on keeps them where you put them.`
+                  : notice}
             </p>
           )}
         </div>
@@ -182,7 +190,7 @@ export default function TestDrive() {
             )}
             {kmh > 100 && combo > 3500 && (
               <p className={styles.warn}>
-                Over 100 km/h. A bakkie towing a combined GVM over 3 500 kg is limited to 100 km/h (reg. 293). This combination is {combo.toLocaleString("en-ZA")} kg.
+                Over the limit for this combination: {rules.speed.limit}. {rules.speed.why}
               </p>
             )}
           </div>
@@ -236,7 +244,7 @@ export default function TestDrive() {
               <i>km/h</i>
             </div>
             <div className={styles.stat}>
-              <span>Floor g</span>
+              <span>Floor g, peak</span>
               <b>{r.g.toFixed(2)}</b>
               <i>g</i>
             </div>
@@ -270,11 +278,11 @@ export default function TestDrive() {
                 )}
               </b>
               <div className={styles.track}>
-                <i className={styles.band} style={{ left: "35%", width: "35%" }} />
+                <i className={styles.band} style={{ left: `${(7 / 17) * 100}%`, width: `${(3 / 17) * 100}%` }} />
                 <i className={styles.needle} style={{ left: `${Math.max(0, Math.min(100, (nosePct / 17) * 100))}%` }} />
               </div>
               <small>
-                Parked, level: worked out from where the mass sits. Live hitch load on this road: {r.liveNoseKg} kg. Aim for 7–10%: too little and it sways, too much and
+                Parked, level: worked out from where the mass sits. Live hitch load on this road: {live >= 0 ? `${live} kg` : `${-live} kg lifting`}. Aim for 7–10%: too little and it sways, too much and
                 the bakkie&apos;s rear squats.
               </small>
             </div>
@@ -295,16 +303,27 @@ export default function TestDrive() {
             <dl className={styles.legal}>
               <div>
                 <dt>Licence</dt>
-                <dd>Code EB (trailer GVM over 750 kg)</dd>
+                <dd>
+                  Code {rules.licence.code}. {rules.licence.why}
+                </dd>
               </div>
               <div>
                 <dt>Brakes</dt>
-                <dd>Required. Fitted: override discs</dd>
+                <dd>
+                  {rules.brakes.need}. {rules.brakes.why} Fitted on this example: {rules.brakes.need.includes("driver") ? "electric disc brakes with an in-cab controller" : "overrun disc brakes"}.
+                </dd>
+              </div>
+              <div>
+                <dt>Speed</dt>
+                <dd>
+                  {rules.speed.limit}. {rules.speed.why}
+                </dd>
               </div>
               <div>
                 <dt>Tow vehicle</dt>
                 <dd>
-                  {BAKKIE.name}, rated {BAKKIE.towRating.toLocaleString("en-ZA")} kg braked
+                  {BAKKIE.name}: tare {BAKKIE.tare.toLocaleString("en-ZA").replace(/,/g, " ")} kg, GVM {BAKKIE.gvm.toLocaleString("en-ZA").replace(/,/g, " ")} kg, rated{" "}
+                  {BAKKIE.towRating.toLocaleString("en-ZA").replace(/,/g, " ")} kg braked
                 </dd>
               </div>
             </dl>

@@ -118,7 +118,7 @@ export default function AssemblyFilm() {
 
         {/* part callout, positioned on the part by the scene */}
         <div ref={label} className={styles.label} style={{ opacity: 0 }}>
-          {part && !isIntro && (
+          {part && !isIntro && !isEnd && (
             <>
               <span className={styles.leader} data-leader />
               <span className={styles.dot} />
@@ -159,7 +159,7 @@ export default function AssemblyFilm() {
           </b>
         </div>
 
-        <div className={styles.controls} hidden={!ready}>
+        <div className={styles.controls} hidden={!ready || isIntro}>
           <button
             type="button"
             className={styles.ctl}

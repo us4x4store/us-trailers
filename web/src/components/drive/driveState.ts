@@ -11,7 +11,7 @@ export const LOADS: Record<LoadKind, { label: string; kg: number; size: [number,
 /** Rated gross vehicle mass for this example build (kg). */
 export const GVM = 3000;
 /** Example tow vehicle: double-cab 4×4 bakkie. */
-export const BAKKIE = { name: "Double-cab 4×4 bakkie", gvm: 3210, towRating: 3500 };
+export const BAKKIE = { name: "Double-cab 4×4 bakkie", tare: 2100, gvm: 3210, gcm: 5850, towRating: 3500 };
 
 export type Readout = {
   kmh: number;
@@ -24,6 +24,7 @@ export type Readout = {
   gross: number;
   ready: boolean;
   loose?: number;
+  shifted?: number;
 };
 
 export const drive = {
