@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { DEFAULT_CONFIG, tareKg } from "@/trailer/model";
 import { BAKKIE, drive, GVM, LOADS, type LoadKind, type Readout } from "./driveState";
 import type { Surface } from "./road";
+import { sound } from "@/lib/sound";
 import styles from "./drive.module.css";
 
 const DriveScene = dynamic(() => import("./DriveScene"), { ssr: false });
@@ -38,6 +39,10 @@ export default function TestDrive() {
     vis.observe(root.current!);
     const f = () => {
       setR(drive.readout);
+      const t = drive.readout.travel;
+      // how hard the suspension is working, for the stone-and-corrugation noise
+      const spread = Math.max(...t) - Math.min(...t);
+      sound.road(drive.readout.kmh, Math.min(1, spread / 60), drive.surface);
       setResetKey(drive.resetKey);
       setNotice(drive.notice);
     };
@@ -48,6 +53,11 @@ export default function TestDrive() {
       drive.listeners.delete(f);
     };
   }, []);
+
+  // quiet the road when the rig scrolls away
+  useEffect(() => {
+    if (!inView) sound.road(0, 0, "tar");
+  }, [inView]);
 
   const addLoad = (kind: LoadKind) => {
     const max = kind === "quad" ? 1 : kind === "bike" ? 2 : 6;

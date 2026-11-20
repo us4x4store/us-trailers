@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, overallLength, tareKg } from "@/trailer/model";
 import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
+import { sound } from "@/lib/sound";
 import styles from "./film.module.css";
 
 const FilmScene = dynamic(() => import("./FilmScene"), { ssr: false });
@@ -177,6 +178,7 @@ export default function AssemblyFilm() {
               aria-pressed={ramp}
               onClick={() => {
                 film.ramp = !ramp;
+                sound.hiss();
                 setRamp(!ramp);
               }}
             >

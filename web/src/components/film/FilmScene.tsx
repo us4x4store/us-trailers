@@ -7,6 +7,7 @@ import * as THREE from "three";
 import { buildTrailer, DEFAULT_CONFIG, type ChapterId } from "@/trailer/model";
 import { buildPartGeometry, type BuiltPart } from "@/trailer/geometry";
 import { createMaterials, INK, PAPER } from "@/trailer/materials";
+import { sound } from "@/lib/sound";
 import { RANGES, chapterAt, clamp01, easeInOut, easeOutCubic, easeSettle, film, partWindows } from "./timeline";
 
 const REDUCED = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -244,9 +245,11 @@ function Trailer({ lite, sparks }: { lite: boolean; sparks: React.MutableRefObje
       // weld sparks the moment a steel part lands
       if (k >= 0.98 && !rt.landed) {
         rt.landed = true;
-        if (part.weld && sparks.current && film.ps > drawEnd && Math.abs(film.p - film.ps) < 0.03) {
+        const settled = film.ps > drawEnd && Math.abs(film.p - film.ps) < 0.03;
+        if (part.weld && sparks.current && settled) {
           if (!REDUCED) sparks.current(tmp.set(...part.anchor), lite ? 40 : 90);
-        }
+          sound.weld();
+        } else if (settled) sound.clank();
       } else if (k < 0.9) rt.landed = false;
       if (k > 0 && k < 1) active = i;
       if (k >= 1 && active === -1 && p < w.end + 0.03) active = i;

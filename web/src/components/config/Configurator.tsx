@@ -13,6 +13,7 @@ import {
   specs,
 } from "@/trailer/pricing";
 import { buildStore } from "./buildStore";
+import ArButton from "./ArButton";
 import styles from "./config.module.css";
 
 const ConfigScene = dynamic(() => import("./ConfigScene"), { ssr: false });
@@ -196,6 +197,10 @@ export default function Configurator() {
               </button>
             </div>
           </fieldset>
+
+          <div className={styles.arRow}>
+            <ArButton code={code} />
+          </div>
 
           <dl className={styles.specs}>
             <div>
