@@ -61,6 +61,13 @@ _Last updated: 2026-11-19 (session 1)_
 - docs/brand.md written in full.
 - Launch kit for Justin: https://claude.ai/artifact/PScxQ1StFoFQbfjQ15zrkQ (source design/launch-kit.html): needs checklist, shot list, Google Business Profile steps.
 
+## Round 6 (session 3)
+- Placeholder contacts live (content/contact.ts, flagged): WhatsApp 27210000000, 021 000 0000, hello@ustrailers.co.za; privacy responsible party placeholder.
+- Six concept renders generated in Figma (file 'US Trailers – concept renders'), captioned 'Concept render': photo band + type page photos. Unsplash blocks this environment (401), so no stock photos.
+- New kinds: off-road camper and gooseneck toy hauler, part by part. Real part masses (src/trailer/mass.ts), tare = sum x 1.12 (tare.json via scripts/gen-tare.ts). Gooseneck 2.44 m wide.
+- Designer: type switch, physics teardown with per-part mass, tap-to-inspect, reassemble. Film builds any kind.
+- Live Lighthouse mobile home: 92 / 100 / 100 / 100.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
