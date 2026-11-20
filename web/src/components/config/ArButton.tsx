@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@/lib/track";
 import styles from "./config.module.css";
 
 type Platform = "ios" | "android" | "desktop";
@@ -32,7 +33,7 @@ export default function ArButton({ code }: { code: string }) {
 
   if (platform === "ios")
     return (
-      <a className={styles.ar} rel="ar" href={`/api/ar/${code}.usdz#allowsContentScaling=0`}>
+      <a className={styles.ar} rel="ar" href={`/api/ar/${code}.usdz#allowsContentScaling=0`} onClick={() => track("ar_opened", { platform: "ios", build: code })}>
         <img src={PIXEL} alt="" width={1} height={1} />
         See it in your driveway
       </a>
@@ -42,7 +43,7 @@ export default function ArButton({ code }: { code: string }) {
     const file = `${location.origin}/api/ar/${code}.glb`;
     const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(file)}&mode=ar_preferred&resizable=false&title=${encodeURIComponent("Your US Trailers build")}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(pageUrl)};end;`;
     return (
-      <a className={styles.ar} href={intent}>
+      <a className={styles.ar} href={intent} onClick={() => track("ar_opened", { platform: "android", build: code })}>
         See it in your driveway
       </a>
     );
@@ -50,7 +51,10 @@ export default function ArButton({ code }: { code: string }) {
 
   return (
     <div className={styles.arWrap}>
-      <button type="button" className={styles.ar} aria-expanded={open} onClick={() => setOpen(!open)}>
+      <button type="button" className={styles.ar} aria-expanded={open} onClick={() => {
+          if (!open) track("ar_opened", { platform: "desktop-qr", build: code });
+          setOpen(!open);
+        }}>
         See it in your driveway
       </button>
       {open && (

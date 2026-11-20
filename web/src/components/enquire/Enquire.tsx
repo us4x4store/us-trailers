@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState, type FormEvent } from "rea
 import { sendEnquiry, type EnquiryState } from "@/app/actions/enquire";
 import { buildStore } from "@/components/config/buildStore";
 import { COLOURS, encodeBuild, priceRange, rand, specs } from "@/trailer/pricing";
+import { track } from "@/lib/track";
 import styles from "./enquire.module.css";
 
 const USES = ["Bikes or quads", "Overlanding / camping", "Horses", "Mobile business", "Farm or contracting", "Something else"];
@@ -54,6 +55,10 @@ export default function Enquire() {
     }
     setLocal(null);
   };
+
+  useEffect(() => {
+    if (state.status === "sent" || state.status === "offline") track("enquiry_submitted", { status: state.status, attached: attach });
+  }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // move focus to the first problem, whichever side found it
   useEffect(() => {

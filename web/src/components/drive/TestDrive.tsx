@@ -7,6 +7,7 @@ import { BAKKIE, drive, GVM, LOADS, type LoadKind, type Readout } from "./driveS
 import type { Surface } from "./road";
 import { sound } from "@/lib/sound";
 import { towCheck } from "@/content/towrules";
+import { track } from "@/lib/track";
 import styles from "./drive.module.css";
 
 const DriveScene = dynamic(() => import("./DriveScene"), { ssr: false });
@@ -183,6 +184,7 @@ export default function TestDrive() {
                 onClick={() => {
                   drive.targetKmh = 40;
                   setKmh(40);
+                  track("rig_driven", { surface });
                 }}
               >
                 Set off at 40 km/h

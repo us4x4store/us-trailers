@@ -4,6 +4,8 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { Analytics } from "@vercel/analytics/next";
+import ClickTracking from "@/components/ClickTracking";
 import { SITE_URL } from "@/content/site";
 import "./globals.css";
 
@@ -29,6 +31,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <Footer />
         <WhatsAppButton />
+        <Analytics />
+        <ClickTracking />
       </body>
     </html>
   );

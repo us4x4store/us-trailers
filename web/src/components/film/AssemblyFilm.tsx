@@ -8,6 +8,7 @@ import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, overallLength, tareKg } from "@
 import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
 import { sound } from "@/lib/sound";
+import { track } from "@/lib/track";
 import styles from "./film.module.css";
 
 const FilmScene = dynamic(() => import("./FilmScene"), { ssr: false });
@@ -68,6 +69,14 @@ export default function AssemblyFilm() {
       film.label = null;
     };
   }, []);
+
+  const finished = useRef(false);
+  useEffect(() => {
+    if (chapter === CHAPTERS.length - 1 && !finished.current) {
+      finished.current = true;
+      track("film_finished");
+    }
+  }, [chapter]);
 
   const ch = CHAPTERS[chapter];
   const part = active >= 0 ? parts[active] : null;

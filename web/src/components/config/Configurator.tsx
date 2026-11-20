@@ -14,6 +14,7 @@ import {
 } from "@/trailer/pricing";
 import { buildStore } from "./buildStore";
 import ArButton from "./ArButton";
+import { track } from "@/lib/track";
 import styles from "./config.module.css";
 
 const ConfigScene = dynamic(() => import("./ConfigScene"), { ssr: false });
@@ -71,6 +72,7 @@ export default function Configurator() {
         await navigator.share({ title: "My US Trailers build", url });
       else await navigator.clipboard.writeText(url);
       setCopied(true);
+      track("build_shared", { build: code });
     } catch {
       /* user cancelled */
     }

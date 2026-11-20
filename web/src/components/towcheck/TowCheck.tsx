@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/track";
 import { fmt, towCheck, type TowInput } from "@/content/towrules";
 import styles from "./towcheck.module.css";
 
@@ -26,8 +27,20 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
       ? towCheck({ vehicle, tare: n("tare"), gvm: n("gvm"), trailerGvm: n("trailerGvm"), towRating: n("towRating") > 0 ? n("towRating") : undefined, gcm: n("gcm") > 0 ? n("gcm") : undefined })
       : null;
 
+  // one event per visitor who actually uses it, after they stop typing
+  const sent = useRef(false);
+  const touched = useRef(false);
+  useEffect(() => {
+    if (!touched.current || sent.current || !r) return;
+    const t = setTimeout(() => {
+      sent.current = true;
+      track("tow_check", { licence: r.licence.code, vehicle });
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [raw, vehicle]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <section id={id} className={styles.tc} aria-labelledby={`${id}-title`}>
+    <section id={id} className={styles.tc} onInput={() => (touched.current = true)} onClick={() => (touched.current = true)} aria-labelledby={`${id}-title`}>
       <header className={styles.head}>
         <p className={styles.eyebrow}>Calculation sheet</p>
         <h2 id={`${id}-title`} className={styles.title}>
