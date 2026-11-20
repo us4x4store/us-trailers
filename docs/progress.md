@@ -47,6 +47,13 @@ _Last updated: 2026-11-19 (session 1)_
 - Designer: day/dusk/night with LEDs and awning work light (luminance 193 -> 151 -> 40; tail lights read red).
 - Live Lighthouse mobile home: 92-95 performance over three runs, 100 a11y/BP/SEO; /faq 99.
 
+## Round 4 (session 3)
+- AR 'See it in your driveway': /api/ar/<build>.usdz (iPhone Quick Look) and .glb (Android Scene Viewer), generated server-side at real size (6.42 x 2.50 x 2.96 m for a 4.8 m tandem), 1.0 MB GLB / 3.2 MB USDZ, cached a year. QR on desktop. NOT yet tested on a real phone: needs Justin.
+- Optional synthesised sound (off by default, remembered): weld, clank, ramp hiss, road noise.
+- Phone nav fits 375 px; 'Get a price' moves to the menu under 400 px.
+- Live Lighthouse mobile home: 96 / 100 / 100 / 100.
+- Review 3 running.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
