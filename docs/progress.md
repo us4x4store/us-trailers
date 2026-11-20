@@ -68,6 +68,15 @@ _Last updated: 2026-11-19 (session 1)_
 - Designer: type switch, physics teardown with per-part mass, tap-to-inspect, reassemble. Film builds any kind.
 - Live Lighthouse mobile home: 92 / 100 / 100 / 100.
 
+## Round 7 (session 4)
+- Test rig tows all three types. Each has its own rig spec (web/src/components/drive/rigSpec.ts): coupler, wheels, and part mass boxes from real volumes. Springs are shared per wheel. Results from scripts/test-physics.js:
+  - toy hauler: 8.6% on the hitch, about 53 mm sag
+  - off-road camper: 9.4%, about 52 mm sag
+  - gooseneck: 22.1%, about 45 mm sag
+  - hitch gap 0, no NaN on any type
+- Enquiry form always completes. With the inbox not connected it offers "Send on WhatsApp" and "Email it", both with the full brief filled in, plus "Copy my brief". Tested with scripts/test-offline.js.
+- Fourth independent review running.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
@@ -80,5 +89,4 @@ _Last updated: 2026-11-19 (session 1)_
 - After the choice: full brand system in `docs/brand.md`, then the site plan (decision 2).
 
 ## Blocked
-- **GitHub push**: repo `us4x4store/us-trailers` exists and is connected, but pushes are refused until the Claude GitHub App is installed on it; this session's permission check also blocked a push. Commits are local until then.
-
+- Nothing technical. Waiting on Justin for real details (see questions-for-justin.md).
