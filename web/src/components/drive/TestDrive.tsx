@@ -2,8 +2,9 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_CONFIG, tareKg } from "@/trailer/model";
-import { BAKKIE, drive, GVM, LOADS, type LoadKind, type Readout } from "./driveState";
+import { KINDS, tareKg, type Kind } from "@/trailer/model";
+import { gvmKg } from "@/trailer/pricing";
+import { BAKKIE, drive, KIND_LOADS, LOADS, NOSE_BAND, RIG_CFG, type LoadKind, type Readout } from "./driveState";
 import type { Surface } from "./road";
 import { sound } from "@/lib/sound";
 import { towCheck } from "@/content/towrules";
@@ -17,7 +18,6 @@ const SURFACES: { id: Surface; label: string; note: string }[] = [
   { id: "gravel", label: "Corrugations", note: "R355 to the Tankwa" },
   { id: "rocks", label: "Rocks", note: "Axle-twisters and boulders" },
 ];
-const TARE = tareKg(DEFAULT_CONFIG);
 const WHEEL_NAMES = ["Front left", "Front right", "Rear left", "Rear right"];
 
 export default function TestDrive() {
@@ -25,6 +25,10 @@ export default function TestDrive() {
   const [mounted, setMounted] = useState(false);
   const [inView, setInView] = useState(false);
   const [surface, setSurface] = useState<Surface>(drive.surface);
+  const [kind, setKind] = useState<Kind>(drive.kind);
+  const TARE = tareKg(RIG_CFG[kind]);
+  const GVM = gvmKg(RIG_CFG[kind]);
+  const band = NOSE_BAND[kind];
   const [kmh, setKmh] = useState(drive.targetKmh);
   const [view, setView] = useState(drive.view);
   const [strapped, setStrapped] = useState(drive.strapped);
@@ -79,7 +83,7 @@ export default function TestDrive() {
   const payload = r.gross - TARE;
   const over = r.gross > GVM;
   const nosePct = r.gross > 0 ? (r.noseKg / r.gross) * 100 : 0;
-  const noseOk = !r.ready || (nosePct >= 7 && nosePct <= 10);
+  const noseOk = !r.ready || (nosePct >= band.lo && nosePct <= band.hi);
   const combo = BAKKIE.gvm + GVM;
   // the same rules the tow checker uses, for this example bakkie and trailer
   const rules = towCheck({ vehicle: "bakkie", tare: BAKKIE.tare, gvm: BAKKIE.gvm, trailerGvm: GVM, towRating: BAKKIE.towRating, gcm: BAKKIE.gcm });
@@ -99,7 +103,7 @@ export default function TestDrive() {
 
       <div className={styles.rig}>
         <div className={styles.viewport}>
-          {mounted ? <DriveScene surface={surface} active={inView} resetKey={resetKey} /> : <div className={styles.placeholder}>Loading the test rig…</div>}
+          {mounted ? <DriveScene surface={surface} active={inView} resetKey={resetKey} kind={kind} /> : <div className={styles.placeholder}>Loading the test rig…</div>}
           <div className={styles.views} role="group" aria-label="Camera">
             {(["chase", "wheel", "side"] as const).map((v) => (
               <button
@@ -141,6 +145,31 @@ export default function TestDrive() {
         </div>
 
         <aside className={styles.panel} aria-label="Test rig controls and readouts">
+          <fieldset className={styles.group}>
+            <legend>Trailer</legend>
+            <div className={styles.seg}>
+              {KINDS.map((k) => (
+                <button
+                  key={k.id}
+                  type="button"
+                  aria-pressed={kind === k.id}
+                  onClick={() => {
+                    drive.kind = k.id;
+                    drive.loads = [];
+                    drive.water = false;
+                    setLoads([]);
+                    setWater(false);
+                    setKind(k.id);
+                    drive.reset("");
+                  }}
+                >
+                  <b>{k.short}</b>
+                  <small>{k.id === "gooseneck" ? "hitched in the load bed" : k.id === "offroad" ? "3.0 m camper" : "4.8 m tandem"}</small>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
           <fieldset className={styles.group}>
             <legend>Road</legend>
             <div className={styles.seg}>
@@ -200,7 +229,7 @@ export default function TestDrive() {
           <fieldset className={styles.group}>
             <legend>Load it</legend>
             <div className={styles.loads}>
-              {(Object.keys(LOADS) as LoadKind[]).map((k) => (
+              {KIND_LOADS[kind].map((k: LoadKind) => (
                 <button key={k} type="button" onClick={() => addLoad(k)}>
                   + {LOADS[k].label} <small>{LOADS[k].kg} kg</small>
                 </button>
@@ -280,12 +309,11 @@ export default function TestDrive() {
                 )}
               </b>
               <div className={styles.track}>
-                <i className={styles.band} style={{ left: `${(7 / 17) * 100}%`, width: `${(3 / 17) * 100}%` }} />
-                <i className={styles.needle} style={{ left: `${Math.max(0, Math.min(100, (nosePct / 17) * 100))}%` }} />
+                <i className={styles.band} style={{ left: `${(band.lo / band.max) * 100}%`, width: `${((band.hi - band.lo) / band.max) * 100}%` }} />
+                <i className={styles.needle} style={{ left: `${Math.max(0, Math.min(100, (nosePct / band.max) * 100))}%` }} />
               </div>
               <small>
-                Parked, level: worked out from where the mass sits. Live hitch load on this road: {live >= 0 ? `${live} kg` : `${-live} kg lifting`}. Aim for 7–10%: too little and it sways, too much and
-                the bakkie&apos;s rear squats.
+                Parked, level: worked out from where the mass sits. Live hitch load on this road: {live >= 0 ? `${live} kg` : `${-live} kg lifting`}. {band.note}
               </small>
             </div>
 

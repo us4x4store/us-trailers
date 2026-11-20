@@ -132,9 +132,10 @@ export const DIM = {
 const lin = (a: number, b: number, n: number) => Array.from({ length: n }, (_, i) => a + ((b - a) * i) / (n - 1));
 
 export function axlePositions(cfg: TrailerConfig): number[] {
-  if (cfg.kind === "offroad") return [-cfg.length * 0.08];
+  // positions tuned in the test rig so the hitch carries ~9% (camper) and ~20% (gooseneck) when parked
+  if (cfg.kind === "offroad") return [-cfg.length * 0.03];
   // gooseneck: axles well back, the hitch over the bakkie's rear axle carries 15-25% of the load
-  if (cfg.kind === "gooseneck") return [-cfg.length * 0.22 + 0.45, -cfg.length * 0.22 - 0.45];
+  if (cfg.kind === "gooseneck") return [-cfg.length * 0.06 + 0.45, -cfg.length * 0.06 - 0.45];
   // axle group sits just behind the centre of mass so the coupler carries ~9% nose weight
   // (checked live in the test rig: nose kg = gross − Σ wheel suspension forces / g)
   const L = cfg.length;

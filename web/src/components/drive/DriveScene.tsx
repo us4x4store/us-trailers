@@ -16,22 +16,34 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { axlePositions, buildTrailer, DEFAULT_CONFIG, DIM, overallLength, tareKg } from "@/trailer/model";
+import { buildTrailer, overallLength, type Kind } from "@/trailer/model";
+import { rigSpec } from "./rigSpec";
 import { buildPartGeometry } from "@/trailer/geometry";
 import { createMaterials, PAPER } from "@/trailer/materials";
 import { heightAt, heightfield, ROAD, TILE, type Surface } from "./road";
 import { drive, LOADS, type LoadKind } from "./driveState";
 
-const CFG = DEFAULT_CONFIG;
-const TARE = tareKg(CFG);
-const COUPLER: [number, number, number] = [CFG.length / 2 + 1.35, DIM.coupleH, 0];
-const WHEELS = axlePositions(CFG).flatMap((x) => [
-  { x, z: DIM.trackZ },
-  { x, z: -DIM.trackZ },
-]);
-const REST = 0.3;
-const AXLE_X = axlePositions(CFG).reduce((a, b) => a + b, 0) / axlePositions(CFG).length;
-const HARD_Y = DIM.railY;
+/*
+ * The rig is set up for one kind of trailer at a time (see rigSpec.ts). These module values are
+ * swapped by configureRig() before the physics world is rebuilt for a new kind.
+ */
+let RIG = rigSpec("toyhauler");
+let CFG = RIG.cfg;
+let TARE = RIG.tare;
+let COUPLER = RIG.coupler;
+let WHEELS = RIG.wheels;
+let REST = RIG.rest;
+let AXLE_X = RIG.axleX;
+let HARD_Y = RIG.hardY;
+let BODY = RIG.body;
+let RAIL_Z = RIG.railZ;
+let TRACK_Z = RIG.trackZ;
+let WHEEL_R = RIG.wheelR;
+function configureRig(kind: Kind) {
+  if (RIG.kind === kind) return;
+  RIG = rigSpec(kind);
+  ({ cfg: CFG, tare: TARE, coupler: COUPLER, wheels: WHEELS, rest: REST, axleX: AXLE_X, hardY: HARD_Y, body: BODY, railZ: RAIL_Z, trackZ: TRACK_Z, wheelR: WHEEL_R } = RIG);
+}
 
 /* ------------------------------------------------------------------ road */
 function Road({ surface, lite }: { surface: Surface; lite: boolean }) {
@@ -133,17 +145,17 @@ function Rig({ lite }: { lite: boolean }) {
     const body = trailer.current!;
     const vc = world.createVehicleController(body);
     WHEELS.forEach((w, i) => {
-      vc.addWheel({ x: w.x, y: HARD_Y, z: w.z }, { x: 0, y: -1, z: 0 }, { x: 0, y: 0, z: -1 }, REST, DIM.wheelR);
-      vc.setWheelSuspensionStiffness(i, 40); // ~60 mm static sag, ~2 Hz body bounce
-      vc.setWheelSuspensionCompression(i, 2.2);
-      vc.setWheelSuspensionRelaxation(i, 2.8);
+      vc.addWheel({ x: w.x, y: HARD_Y, z: w.z }, { x: 0, y: -1, z: 0 }, { x: 0, y: 0, z: -1 }, REST, WHEEL_R);
+      vc.setWheelSuspensionStiffness(i, 160 / WHEELS.length); // per-unit-mass springs shared by the wheels: ~60 mm static sag, ~2 Hz bounce
+      vc.setWheelSuspensionCompression(i, (2.2 * 4) / WHEELS.length);
+      vc.setWheelSuspensionRelaxation(i, (2.8 * 4) / WHEELS.length);
       vc.setWheelMaxSuspensionTravel(i, 0.25);
       vc.setWheelMaxSuspensionForce(i, 80000);
       vc.setWheelFrictionSlip(i, 1.6);
       vc.setWheelSideFrictionStiffness(i, 1.0);
     });
     controller.current = vc;
-    if (process.env.NODE_ENV !== "production") (window as unknown as { __drive: unknown }).__drive = { world, vc, body, tow: tow.current, drive, heightAt, rapier };
+    if (process.env.NODE_ENV !== "production") (window as unknown as { __drive: unknown }).__drive = { world, vc, body, tow: tow.current, drive, heightAt, rapier, coupler: COUPLER };
     return () => {
       controller.current = null;
       try {
@@ -228,19 +240,19 @@ function Rig({ lite }: { lite: boolean }) {
       const g = wheelRefs.current[i];
       if (g) {
         g.position.copy(hub);
-        g.rotation.z = -s.dist / DIM.wheelR;
+        g.rotation.z = -s.dist / WHEEL_R;
       }
-      pivot.set(w.x + 0.6, HARD_Y - 0.06, side * (DIM.railZ + 0.03));
+      pivot.set(w.x + 0.6, HARD_Y - 0.06, side * (RAIL_Z + 0.03));
       const arm = armRefs.current[i];
-      if (arm) placeBetween(arm, pivot, tmpA.set(w.x, hub.y, side * (DIM.trackZ - 0.2)), 0.07);
+      if (arm) placeBetween(arm, pivot, tmpA.set(w.x, hub.y, side * (TRACK_Z - 0.2)), 0.07);
       const coil = coilRefs.current[i];
-      coilTop.set(w.x + 0.22, HARD_Y + 0.04, side * (DIM.railZ + 0.06));
-      if (coil) placeBetween(coil, tmpA.set(w.x + 0.12, hub.y + 0.06, side * (DIM.trackZ - 0.26)), coilTop, 0.05);
+      coilTop.set(w.x + 0.22, HARD_Y + 0.04, side * (RAIL_Z + 0.06));
+      if (coil) placeBetween(coil, tmpA.set(w.x + 0.12, hub.y + 0.06, side * (TRACK_Z - 0.26)), coilTop, 0.05);
     });
 
     // bakkie follows the tow ball
     const tp = tow.current!.translation();
-    if (bakkie.current) bakkie.current.position.set(tp.x, tp.y - COUPLER[1], tp.z);
+    if (bakkie.current) bakkie.current.position.set(tp.x + RIG.bakkieShift, tp.y - COUPLER[1], tp.z);
 
     // readouts at ~12 Hz
     s.readT += dt;
@@ -284,7 +296,7 @@ function Rig({ lite }: { lite: boolean }) {
         if (!(rb.userData as { load?: boolean } | undefined)?.load) return;
         const c = rb.translation();
         const l = tmpB.set(c.x - bp.x, c.y - bp.y, c.z - bp.z).applyQuaternion(qInv);
-        const onDeck = Math.abs(l.x) < CFG.length / 2 + 0.2 && Math.abs(l.z) < DIM.bodyW / 2 + 0.2 && l.y > DIM.floorY - 0.2 && l.y < DIM.roofY + 0.2;
+        const onDeck = Math.abs(l.x) < BODY.L / 2 + 0.2 && Math.abs(l.z) < BODY.W / 2 + 0.2 && l.y > BODY.floorY - 0.2 && l.y < BODY.roofY + 0.2;
         if (onDeck) addBody(rb);
         else loose++;
         const h = homes.current.get(rb.handle);
@@ -330,15 +342,17 @@ function Rig({ lite }: { lite: boolean }) {
         ccd
         userData={{ trailer: true }}
       >
-        {/* mass model: heavy chassis low down, light body shell above (≈ tare) */}
-        <CuboidCollider args={[CFG.length / 2, 0.08, 0.62]} position={[0, DIM.railY, 0]} mass={TARE * 0.5} />
-        <CuboidCollider args={[CFG.length / 2, 0.08, DIM.bodyW / 2]} position={[0, DIM.floorY - 0.08, 0]} mass={TARE * 0.12} />
-        <CuboidCollider args={[CFG.length / 2, (DIM.roofY - DIM.floorY) / 2, 0.08]} position={[0, (DIM.roofY + DIM.floorY) / 2, DIM.bodyW / 2 + 0.06]} mass={TARE * 0.1} />
-        <CuboidCollider args={[CFG.length / 2, (DIM.roofY - DIM.floorY) / 2, 0.08]} position={[0, (DIM.roofY + DIM.floorY) / 2, -DIM.bodyW / 2 - 0.06]} mass={TARE * 0.1} />
-        <CuboidCollider args={[0.08, (DIM.roofY - DIM.floorY) / 2, DIM.bodyW / 2]} position={[CFG.length / 2 + 0.06, (DIM.roofY + DIM.floorY) / 2, 0]} mass={TARE * 0.05} />
-        <CuboidCollider args={[0.08, (DIM.roofY - DIM.floorY) / 2, DIM.bodyW / 2]} position={[-CFG.length / 2 - 0.05, (DIM.roofY + DIM.floorY) / 2, 0]} mass={TARE * 0.06} />
-        <CuboidCollider args={[CFG.length / 2, 0.08, DIM.bodyW / 2]} position={[0, DIM.roofY + 0.06, 0]} mass={TARE * 0.05} />
-        <CuboidCollider args={[0.65, 0.05, 0.3]} position={[CFG.length / 2 + 0.65, DIM.coupleH + 0.03, 0]} mass={TARE * 0.02} />
+        {/* mass model: every part as a box with its real mass, so the centre of mass is the trailer's own */}
+        {RIG.massBoxes.map((m, i) => (
+          <CuboidCollider key={i} args={m.half} position={m.pos} mass={m.kg} sensor />
+        ))}
+        {/* containment for loads: floor, walls and roof (thick, nearly massless) */}
+        <CuboidCollider args={[BODY.L / 2, 0.08, BODY.W / 2]} position={[0, BODY.floorY - 0.08, 0]} mass={0.01} />
+        <CuboidCollider args={[BODY.L / 2, (BODY.roofY - BODY.floorY) / 2, 0.08]} position={[0, (BODY.roofY + BODY.floorY) / 2, BODY.W / 2 + 0.06]} mass={0.01} />
+        <CuboidCollider args={[BODY.L / 2, (BODY.roofY - BODY.floorY) / 2, 0.08]} position={[0, (BODY.roofY + BODY.floorY) / 2, -BODY.W / 2 - 0.06]} mass={0.01} />
+        <CuboidCollider args={[0.08, (BODY.roofY - BODY.floorY) / 2, BODY.W / 2]} position={[BODY.L / 2 + 0.06, (BODY.roofY + BODY.floorY) / 2, 0]} mass={0.01} />
+        <CuboidCollider args={[0.08, (BODY.roofY - BODY.floorY) / 2, BODY.W / 2]} position={[-BODY.L / 2 - 0.05, (BODY.roofY + BODY.floorY) / 2, 0]} mass={0.01} />
+        <CuboidCollider args={[BODY.L / 2, 0.08, BODY.W / 2]} position={[0, BODY.roofY + 0.06, 0]} mass={0.01} />
         {statics.map((s) => (
           <mesh key={s.key} geometry={s.geo} material={s.mat} castShadow={!lite} receiveShadow={!lite} />
         ))}
@@ -369,15 +383,15 @@ function Rig({ lite }: { lite: boolean }) {
 }
 
 function WaterMass({ trailer, body }: { trailer: React.RefObject<RapierRigidBody | null>; body: React.RefObject<RapierRigidBody | null> }) {
-  const x = CFG.length / 2 - 1.2;
+  const [x, ty] = RIG.tank;
   useFixedJoint(trailer as React.RefObject<RapierRigidBody>, body as React.RefObject<RapierRigidBody>, [
-    [x, DIM.railY - 0.15, 0],
+    [x, ty, 0],
     [0, 0, 0, 1],
     [0, 0, 0],
     [0, 0, 0, 1],
   ]);
   return (
-    <RigidBody ref={body} position={[x, DIM.railY - 0.09, 0]} colliders={false}>
+    <RigidBody ref={body} position={[x, ty + 0.06, 0]} colliders={false}>
       <CuboidCollider args={[0.5, 0.09, 0.5]} mass={0.01} sensor />
     </RigidBody>
   );
@@ -415,9 +429,12 @@ function Load({ kind, index, trailer }: { kind: LoadKind; index: number; trailer
   const [hs] = useState(() => spec.size.map((v) => v / 2) as [number, number, number]);
   // where it drops in, in trailer space
   const local = useMemo(() => {
-    const zOff = kind === "bike" ? (index % 2 ? 0.45 : -0.45) : kind === "jerry" ? -0.7 + (index % 4) * 0.2 : 0;
-    return new THREE.Vector3(spec.x, DIM.floorY + hs[1] + 0.35, zOff);
-  }, [kind, index, spec.x, hs]);
+    const zOff = kind === "bike" ? (index % 2 ? 0.45 : -0.45) : kind === "jerry" ? -0.6 + (index % 4) * 0.2 : 0;
+    const hx = BODY.L / 2;
+    // spots measured from the ends of the body, so they work for any length
+    const x = kind === "quad" ? -hx + 1.2 : kind === "bike" ? hx - 1.5 : kind === "kit" ? -hx + 0.8 : hx - 0.5;
+    return new THREE.Vector3(x, BODY.floorY + hs[1] + 0.35, zOff);
+  }, [kind, index, hs]);
   const [start] = useState(() => {
     const b = trailer.current;
     if (!b) return local.clone();
@@ -452,11 +469,11 @@ function Load({ kind, index, trailer }: { kind: LoadKind; index: number; trailer
 
 function LoadMesh({ kind, size }: { kind: LoadKind; size: [number, number, number] }) {
   const [x, y, z] = size;
-  if (kind === "jerry")
+  if (kind === "jerry" || kind === "kit")
     return (
       <mesh castShadow>
         <boxGeometry args={size} />
-        <meshStandardMaterial color="#3E5A2E" roughness={0.6} />
+        <meshStandardMaterial color={kind === "jerry" ? "#3E5A2E" : "#6B5E4A"} roughness={0.6} />
       </mesh>
     );
   const wheelR = kind === "quad" ? 0.26 : 0.34;
@@ -571,7 +588,8 @@ function CameraRig() {
   return <OrbitControls ref={controls} makeDefault enablePan={false} enableDamping dampingFactor={0.08} minDistance={2.2} maxDistance={22} maxPolarAngle={Math.PI / 2 - 0.04} />;
 }
 
-export default function DriveScene({ surface, active = true, resetKey = 0 }: { surface: Surface; active?: boolean; resetKey?: number }) {
+export default function DriveScene({ surface, active = true, resetKey = 0, kind = "toyhauler" }: { surface: Surface; active?: boolean; resetKey?: number; kind?: Kind }) {
+  configureRig(kind);
   const lite = typeof window !== "undefined" && (window.innerWidth < 760 || (navigator.hardwareConcurrency ?? 8) <= 4);
   return (
     <Canvas
@@ -604,7 +622,7 @@ export default function DriveScene({ surface, active = true, resetKey = 0 }: { s
         <Lightformer form="rect" intensity={2.5} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} />
         <Lightformer form="rect" intensity={1.4} color="#ffe2b8" position={[8, 2, -4]} rotation-y={-Math.PI / 2.5} scale={[8, 3, 1]} />
       </Environment>
-      <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60} key={`${surface}-${resetKey}`} paused={!active}>
+      <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60} key={`${kind}-${surface}-${resetKey}`} paused={!active}>
         <Road surface={surface} lite={lite} />
         <Rig lite={lite} />
       </Physics>

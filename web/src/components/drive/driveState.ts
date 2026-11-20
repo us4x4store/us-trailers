@@ -1,11 +1,27 @@
 import type { Surface } from "./road";
-import { DEFAULT_CONFIG, tareKg } from "@/trailer/model";
+import { DEFAULT_CONFIG, tareKg, type Kind, type TrailerConfig } from "@/trailer/model";
 
-export type LoadKind = "quad" | "bike" | "jerry";
+/** The example trailer each kind tows on the rig. */
+export const RIG_CFG: Record<Kind, TrailerConfig> = {
+  toyhauler: DEFAULT_CONFIG,
+  offroad: { ...DEFAULT_CONFIG, kind: "offroad", length: 3.0, axles: 1, rack: false },
+  gooseneck: { ...DEFAULT_CONFIG, kind: "gooseneck", length: 6.0, axles: 2, rack: false },
+};
+/** loads that physically fit each kind */
+export const KIND_LOADS: Record<Kind, LoadKind[]> = { toyhauler: ["quad", "bike", "jerry"], gooseneck: ["quad", "bike", "jerry"], offroad: ["kit", "jerry"] };
+/** what a healthy hitch load looks like: % of the trailer's mass on the ball */
+export const NOSE_BAND: Record<Kind, { lo: number; hi: number; max: number; note: string }> = {
+  toyhauler: { lo: 7, hi: 10, max: 17, note: "Aim for 7–10%: too little and it sways, too much and the bakkie's rear squats." },
+  offroad: { lo: 7, hi: 10, max: 17, note: "Aim for 7–10%: too little and it sways, too much and the bakkie's rear squats." },
+  gooseneck: { lo: 15, hi: 25, max: 35, note: "A gooseneck wants 15–25% on the ball: it sits over the bakkie's rear axle, which carries it easily." },
+};
+
+export type LoadKind = "quad" | "bike" | "jerry" | "kit";
 export const LOADS: Record<LoadKind, { label: string; kg: number; size: [number, number, number]; x: number }> = {
   quad: { label: "Quad bike", kg: 290, size: [1.9, 1.15, 1.15], x: -1.2 },
   bike: { label: "Dirt bike", kg: 105, size: [2.1, 1.2, 0.36], x: 0.9 },
   jerry: { label: "Jerry can, full", kg: 22, size: [0.35, 0.47, 0.17], x: 1.9 },
+  kit: { label: "Camping kit", kg: 120, size: [0.9, 0.5, 0.6], x: -0.6 },
 };
 
 /** Rated gross vehicle mass for this example build (kg). */
@@ -30,6 +46,7 @@ export type Readout = {
 export const drive = {
   // parked until the visitor sets off; with reduced motion it stays parked
   targetKmh: 0,
+  kind: "toyhauler" as import("@/trailer/model").Kind,
   surface: "gravel" as Surface,
   view: "chase" as "chase" | "wheel" | "side",
   strapped: true,

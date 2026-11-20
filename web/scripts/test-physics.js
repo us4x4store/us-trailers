@@ -10,6 +10,12 @@ const url = process.argv[2] || "http://localhost:3000/";
   await page.goto(url, { waitUntil: "networkidle" });
   await page.evaluate(() => document.getElementById("drive").scrollIntoView());
   await page.waitForFunction(() => window.__drive && window.__drive.body, null, { timeout: 60000 });
+  const KIND = process.argv[3];
+  if (KIND) {
+    await page.locator("#drive").getByRole("button", { name: new RegExp("^" + KIND) }).click();
+    await page.waitForTimeout(4000);
+    await page.waitForFunction(() => window.__drive && window.__drive.body, null, { timeout: 60000 });
+  }
   const R = {};
   // 1. heightfield orientation vs visual height function
   await page.waitForTimeout(3000);
@@ -61,7 +67,7 @@ const url = process.argv[2] || "http://localhost:3000/";
       const tick = () => {
         const b = d.body.translation(), q = d.body.rotation(), t = d.tow.translation();
         // coupler world position
-        const cx = 3.75, cy = 0.55;
+        const cx = d.coupler[0], cy = d.coupler[1];
         const qv = new (window.__film?.camera.position.constructor || Object)(cx, cy, 0);
         // rotate coupler by body quaternion (manual)
         const ix = q.w * cx + q.y * 0 - q.z * cy, iy = q.w * cy + q.z * cx - q.x * 0, iz = q.w * 0 + q.x * cy - q.y * cx, iw = -q.x * cx - q.y * cy - q.z * 0;
@@ -86,9 +92,10 @@ const url = process.argv[2] || "http://localhost:3000/";
   await page.evaluate(() => { window.__drive.drive.targetKmh = 0; });
   await page.waitForTimeout(4000);
   const before = await page.evaluate(() => window.__drive.drive.readout.noseKg);
-  await page.getByRole("button", { name: /Quad bike/ }).click();
-  await page.getByRole("button", { name: /Dirt bike/ }).click();
-  await page.getByRole("button", { name: /Dirt bike/ }).click();
+  for (const n of [/Quad bike/, /Dirt bike/, /Dirt bike/, /Camping kit/]) {
+    const b = page.locator("#drive").getByRole("button", { name: n });
+    if (await b.count()) await b.first().click();
+  }
   await page.getByRole("button", { name: /Fill water tank/ }).click();
   await page.waitForTimeout(6000);
   R.loads = await page.evaluate((before) => {
