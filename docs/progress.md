@@ -56,6 +56,11 @@ _Last updated: 2026-11-19 (session 1)_
 - Live Lighthouse mobile after review 3: home 97/100/100/100, /toy-haulers 100/100/100/100.
 - To confirm with Justin/legal: reg 293 100 km/h sign wording and the >9 000 kg 80 km/h case.
 
+## Round 5 (session 3)
+- Vercel Web Analytics live (page views). Conversion events wired through web/src/lib/track.ts: enquiry_submitted, build_shared, ar_opened, tow_check, film_finished, rig_driven, whatsapp_click, get_price_click. Custom events need Vercel Pro (account is Hobby).
+- docs/brand.md written in full.
+- Launch kit for Justin: https://claude.ai/artifact/PScxQ1StFoFQbfjQ15zrkQ (source design/launch-kit.html): needs checklist, shot list, Google Business Profile steps.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
