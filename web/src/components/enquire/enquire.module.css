@@ -151,16 +151,38 @@
   gap: 10px;
   font: 400 13px/1.5 var(--mono);
 }
-.offline button {
-  justify-self: start;
+.offlineActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.offlinePrimary,
+.offlineGhost {
+  display: inline-grid;
+  place-items: center;
+  min-height: 48px;
+  padding: 0 18px;
   font: 600 13px/1 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border: 1.5px solid var(--graphite);
-  background: var(--paper);
-  padding: 12px 14px;
-  min-height: 44px;
+  text-decoration: none;
   cursor: pointer;
+}
+.offlinePrimary {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1.5px solid var(--ink);
+}
+.offlineGhost {
+  background: var(--paper);
+  color: var(--graphite);
+  border: 1.5px solid var(--graphite);
+}
+@media (max-width: 760px) {
+  .offlinePrimary,
+  .offlineGhost {
+    flex: 1 1 100%;
+  }
 }
 .submit {
   justify-self: start;

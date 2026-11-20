@@ -1,5 +1,7 @@
 "use client";
 
+import { CONTACT, waLink } from "@/content/contact";
+
 import { useActionState, useEffect, useRef, useState, type FormEvent } from "react";
 import { sendEnquiry, type EnquiryState } from "@/app/actions/enquire";
 import { buildStore } from "@/components/config/buildStore";
@@ -185,20 +187,35 @@ export default function Enquire() {
 
         {state.status === "offline" && (
           <div className={styles.offline} role="alert">
-            <p>Your brief is ready, but our online inbox isn&apos;t connected yet, so it hasn&apos;t been sent. Copy it and keep it: you&apos;ll be able to send it as soon as we go live.</p>
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(state.summary ?? "");
-                  setCopied(true);
-                } catch {
-                  /* clipboard refused */
-                }
-              }}
-            >
-              {copied ? "Copied" : "Copy my brief"}
-            </button>
+            <p>Your brief is ready. Our online inbox is still being connected, so send it straight to the workshop instead: one tap, everything already filled in.</p>
+            <div className={styles.offlineActions}>
+              {waLink() && (
+                <a className={styles.offlinePrimary} href={waLink(`Hi US Trailers, here's my trailer brief:\n\n${state.summary ?? ""}`)!} target="_blank" rel="noopener" onClick={() => track("enquiry_fallback", { via: "whatsapp" })}>
+                  Send on WhatsApp
+                </a>
+              )}
+              <a
+                className={styles.offlineGhost}
+                href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Trailer brief" + (state.values?.name ? `: ${state.values.name}` : ""))}&body=${encodeURIComponent(state.summary ?? "")}`}
+                onClick={() => track("enquiry_fallback", { via: "email" })}
+              >
+                Email it
+              </a>
+              <button
+                type="button"
+                className={styles.offlineGhost}
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(state.summary ?? "");
+                    setCopied(true);
+                  } catch {
+                    /* clipboard refused */
+                  }
+                }}
+              >
+                {copied ? "Copied" : "Copy my brief"}
+              </button>
+            </div>
           </div>
         )}
 
