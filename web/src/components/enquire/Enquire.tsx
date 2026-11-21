@@ -188,7 +188,7 @@ export default function Enquire() {
               <span>
                 {rand(lo)} – {rand(hi)} example price
               </span>
-              <a href="#design">Change it</a>
+              <a href="/#design">Change it</a>
             </div>
           )}
         </div>
@@ -203,7 +203,7 @@ export default function Enquire() {
               <div className={styles.sheet}>
                 <input type="hidden" name="rig" value={rig} />
                 <span>{rig}</span>
-                <a href="#drive">Change it</a>
+                <a href="/#drive">Change it</a>
               </div>
             )}
           </div>

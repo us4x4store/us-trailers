@@ -26,3 +26,14 @@ Rough answers are fine. Skip anything you don't know yet.
 ## Content
 15. Any photos or videos of past builds, even rough phone clips? (Upload them here in chat.)
 16. Client quotes or reviews we can use, with first name and town.
+
+## Batch 3: placeholder terms now on the site (please confirm or correct)
+- How it works, "Money and promises":
+  - 40% deposit on signing the drawing, 40% at galvanised chassis, balance at handover
+  - changes free until the chassis is cut
+  - 5-year chassis and weld guarantee, 1-year fittings and electrics
+  - delivery in the Western Cape
+- Contact page: call hours Mon–Fri 07:30–17:00, Sat 08:00–12:00. Workshop address sent on booking.
+- Workshop page: the 12-point handover checklist. Swap in your own QA sheet if it differs.
+- Builds page: four example commissions (Tankwa toy hauler, Cederberg camper, Ceres gooseneck, car-trailer rebuild). These are replaced by real client builds and photos as you send them.
+- Terms of use: a draft for your attorney to check.

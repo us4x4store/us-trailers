@@ -8,8 +8,9 @@ import styles from "./nav.module.css";
 
 const LINKS = [
   { href: "/#film", label: "The build" },
-  { href: "/#types", label: "Trailers" },
+  { href: "/builds", label: "Builds" },
   { href: "/#design", label: "Design yours" },
+  { href: "/how-it-works", label: "How it works" },
   { href: "/faq", label: "Towing laws" },
 ];
 

@@ -92,6 +92,15 @@ _Last updated: 2026-11-19 (session 1)_
   - A "Built." card shows parts, kg and mm. "Share this build" sends the /b/ link. The parts list and chapter heading step aside.
 - Verified by WebGL pixel reads (glow present: about 390 red and 620 warm sampled pixels) and layout boxes at 1440, 390 and 375: no overlap with the trailer.
 
+## Round 10 (session 4)
+- New pages from the brief's site plan, in the drawing-office style:
+  - /builds: four example commissions (need, drawing, build, result), with specs from the model and "Start from this build" links
+  - /how-it-works: nine steps with "your part", money and promises, the handover pack
+  - /workshop: the bill of materials generated from the model with real part masses, and the 12-point checklist
+  - /contact: channels, workshop visit and the full enquiry form
+  - /terms: draft terms of use
+- Nav, footer and sitemap updated. Placeholder terms are listed in questions-for-justin.md, batch 3.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.

@@ -2,7 +2,7 @@
 // viewport, broken internal links, and the timeline / FAQ interactions. No screenshots.
 const { chromium } = require("playwright");
 const base = process.argv[2] || "http://localhost:3001";
-const PAGES = ["/", "/toy-haulers", "/gooseneck-fifth-wheel-trailers", "/off-road-trailers", "/modifications-and-upgrades", "/faq", "/privacy", "/nope"];
+const PAGES = ["/", "/toy-haulers", "/gooseneck-fifth-wheel-trailers", "/off-road-trailers", "/modifications-and-upgrades", "/builds", "/how-it-works", "/workshop", "/contact", "/terms", "/faq", "/privacy", "/nope"];
 (async () => {
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
   const links = new Set();

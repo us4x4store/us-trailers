@@ -24,9 +24,13 @@ export default function Footer() {
         <Link href="/#film">Watch the build</Link>
         <Link href="/#drive">Tow it</Link>
         <Link href="/#design">Design yours</Link>
+        <Link href="/builds">Builds</Link>
+        <Link href="/how-it-works">How it works</Link>
+        <Link href="/workshop">The workshop</Link>
         <Link href="/faq">Towing laws &amp; FAQ</Link>
-        <Link href="/#enquire">Get a price</Link>
+        <Link href="/contact">Contact</Link>
         <Link href="/privacy">Privacy (POPIA)</Link>
+        <Link href="/terms">Terms</Link>
       </nav>
       {(CONTACT.whatsapp || CONTACT.phone || CONTACT.email) && (
         <div className={styles.col}>
