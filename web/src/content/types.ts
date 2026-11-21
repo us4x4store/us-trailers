@@ -62,7 +62,7 @@ export const TYPES: TypePage[] = [
       "The front overhang of a semi-trailer may not exceed 1.8 m.",
     ],
     faq: ["licence", "size", "speed", "brakes"],
-    spec: [["Body length", "6–9 m"], ["Hitch", "Gooseneck ball or fifth-wheel plate, through-bolted to the bakkie chassis"], ["GVM", "Matched to your bakkie's GCM"], ["Licence", "Code EB"], ["Combination length", "Up to 18.5 m"], ["Speed limit", "100 km/h behind a bakkie"]],
+    spec: [["Body length", "6.0–8.4 m"], ["Hitch", "Gooseneck ball or fifth-wheel plate, through-bolted to the bakkie chassis"], ["GVM", "3 500 kg, inside a light bakkie's braked towing rating"], ["Licence", "Code EB"], ["Combination length", "Up to 18.5 m"], ["Speed limit", "100 km/h behind a bakkie"]],
     drawing: "gooseneck",
   },
   {
@@ -83,10 +83,10 @@ export const TYPES: TypePage[] = [
     ],
     rules: [
       "Every trailer, small ones included, must be registered and licensed.",
-      "A trailer of up to 750 kg GVM can be towed on code B. We can design to that limit.",
+      "A trailer of up to 750 kg GVM can be towed on code B. Our standard camper is 1 500 kg; ask us for a stripped-back 750 kg build.",
     ],
     faq: ["licence", "brakes", "speed", "register", "markings"],
-    spec: [["Body length", "2.5–4.0 m"], ["GVM", "750–2 000 kg"], ["Suspension", "Independent trailing arm, coil-over"], ["Coupling", "Articulating, 3 500 kg rated"], ["Licence", "B up to 750 kg GVM, EB above"], ["Water", "80–160 L, underslung"]],
+    spec: [["Body length", "2.4–3.6 m"], ["GVM", "1 500 kg as drawn; a stripped-back 750 kg build on request"], ["Suspension", "Independent trailing arm, coil-over"], ["Coupling", "Articulating, 3 500 kg rated"], ["Licence", "EB as drawn; B for a 750 kg build"], ["Water", "80–160 L, underslung"]],
     drawing: "offroad",
   },
   {

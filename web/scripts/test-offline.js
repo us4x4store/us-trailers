@@ -14,9 +14,9 @@ const base = process.argv[2] || "http://localhost:3001";
     await page.check("#consent");
     await page.waitForTimeout(3300);
     await page.click("text=Send my brief");
-    await page.waitForSelector("[role=alert] a", { timeout: 15000 });
+    await page.waitForSelector("#enquire-offline a", { timeout: 15000 });
     const r = await page.evaluate(() => {
-      const box = document.querySelector("[role=alert]");
+      const box = document.getElementById("enquire-offline");
       return {
         text: box.querySelector("p").textContent.slice(0, 60),
         actions: [...box.querySelectorAll("a,button")].map((a) => {

@@ -13,6 +13,9 @@ import {
   specs,
 } from "@/trailer/pricing";
 import { buildStore } from "./buildStore";
+import { rigRules } from "@/content/rig";
+import { vehicleStore, type Vehicle } from "@/content/vehicles";
+import { goToEnquiry } from "@/lib/goToEnquiry";
 import ArButton from "./ArButton";
 import type { PartInfo } from "./Teardown";
 import { track } from "@/lib/track";
@@ -26,6 +29,15 @@ export default function Configurator() {
   const [mounted, setMounted] = useState(false);
   const [inView, setInView] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+  const [veh, setVeh] = useState<Vehicle>(vehicleStore.v);
+  useEffect(() => {
+    const f = () => setVeh(vehicleStore.v);
+    vehicleStore.listeners.add(f);
+    return () => {
+      vehicleStore.listeners.delete(f);
+    };
+  }, []);
   // "Take it apart": apart = physics running; tearing = teardown on screen (incl. the flight home)
   const [apart, setApart] = useState(false);
   const [tearing, setTearing] = useState(false);
@@ -41,6 +53,9 @@ export default function Configurator() {
       buildStore.set(shared);
       setCfg(shared);
     }
+    // follow a trailer chosen in the film until the visitor designs their own
+    const follow = () => setCfg(buildStore.cfg);
+    buildStore.listeners.add(follow);
     const near = new IntersectionObserver(
       (es) => es[0].isIntersecting && setMounted(true),
       { rootMargin: "100% 0px" },
@@ -53,6 +68,7 @@ export default function Configurator() {
     return () => {
       near.disconnect();
       vis.disconnect();
+      buildStore.listeners.delete(follow);
     };
   }, []);
 
@@ -82,6 +98,7 @@ export default function Configurator() {
   };
 
   const s = specs(cfg);
+  const rules = rigRules(cfg, veh);
   const [lo, hi] = priceRange(cfg);
   const code = encodeBuild(cfg);
 
@@ -91,7 +108,15 @@ export default function Configurator() {
     try {
       if (navigator.share)
         await navigator.share({ title: "My US Trailers build", url });
-      else await navigator.clipboard.writeText(url);
+      else {
+        try {
+          await navigator.clipboard.writeText(url);
+        } catch {
+          // clipboard refused: show the link so it can be copied by hand
+          setShareUrl(url);
+          return;
+        }
+      }
       setCopied(true);
       track("build_shared", { build: code });
     } catch {
@@ -338,8 +363,22 @@ export default function Configurator() {
             </div>
             <div>
               <dt>Brakes</dt>
-              <dd>{s.brakes}</dd>
+              <dd>
+                {rules.fitted}, sized for a {veh.name}.{" "}
+                <a href="#drive" className={styles.vehLink}>
+                  Change vehicle
+                </a>
+              </dd>
             </div>
+            {(rules.warnings.length > 0 || kind === "offroad") && (
+              <div>
+                <dt>Check</dt>
+                <dd className={styles.checkNote}>
+                  {rules.warnings.join(" ")}
+                  {kind === "offroad" ? `${rules.warnings.length ? " " : ""}Only have code B? We can strip this camper back to a 750 kg GVM build. Ask us.` : ""}
+                </dd>
+              </div>
+            )}
           </dl>
 
           <div className={styles.dock} data-own-dock>
@@ -355,12 +394,26 @@ export default function Configurator() {
             </div>
 
             <div className={styles.actions}>
-              <a className={styles.send} href="#enquire">
+              <a
+                className={styles.send}
+                href="#enquire"
+                onClick={(e) => {
+                  e.preventDefault();
+                  buildStore.set(cfg);
+                  goToEnquiry();
+                }}
+              >
                 Send this build
               </a>
               <button type="button" className={styles.share} onClick={share}>
                 {copied ? "Link copied" : "Share"}
               </button>
+              {shareUrl && (
+                <label className={styles.shareUrl}>
+                  <span>Copy this link</span>
+                  <input readOnly value={shareUrl} onFocus={(e) => e.currentTarget.select()} />
+                </label>
+              )}
             </div>
           </div>
         </div>

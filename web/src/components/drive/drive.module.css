@@ -491,3 +491,10 @@
     justify-self: stretch;
   }
 }
+.rigNote {
+  margin: 0;
+  padding-left: 10px;
+  border-left: 2px solid #b7791f;
+  font: 400 12.5px/1.45 var(--mono);
+  color: var(--graphite);
+}

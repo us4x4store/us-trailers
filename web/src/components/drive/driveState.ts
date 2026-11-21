@@ -22,8 +22,6 @@ export const LOADS: Record<LoadKind, { label: string; kg: number; size: [number,
 
 /** Rated gross vehicle mass for this example build (kg). */
 export const GVM = 3000;
-/** Example tow vehicle: double-cab 4×4 bakkie. */
-export const BAKKIE = { name: "Double-cab 4×4 bakkie", tare: 2100, gvm: 3210, gcm: 5850, towRating: 3500 };
 
 export type Readout = {
   kmh: number;
@@ -61,6 +59,15 @@ export const drive = {
     this.notice = notice;
     this.readout = { ...this.readout, ready: false };
     this.emit();
+  },
+  /** change the trailer on the rig: loads come off and the world is rebuilt */
+  setKind(k: import("@/trailer/model").Kind) {
+    if (this.kind === k) return;
+    this.kind = k;
+    this.loads = [];
+    this.water = false;
+    this.lastReset = 0;
+    this.reset("");
   },
   listeners: new Set<() => void>(),
   emit() {

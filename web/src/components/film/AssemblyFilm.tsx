@@ -9,6 +9,8 @@ import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
 import { sound } from "@/lib/sound";
 import { encodeBuild } from "@/trailer/pricing";
+import { drive } from "@/components/drive/driveState";
+import { buildStore } from "@/components/config/buildStore";
 import { track } from "@/lib/track";
 import styles from "./film.module.css";
 
@@ -128,6 +130,9 @@ export default function AssemblyFilm() {
                 onClick={() => {
                   film.kind = k.id;
                   setKind(k.id);
+                  // the rest of the page follows the trailer the visitor chose here
+                  drive.setKind(k.id);
+                  buildStore.suggest(EXAMPLE_CFG[k.id]);
                 }}
               >
                 {k.name}

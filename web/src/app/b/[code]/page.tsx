@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { KINDS, type Kind, type TrailerConfig } from "@/trailer/model";
 import { KIND_LENGTHS } from "@/trailer/catalogue";
 import { COLOURS, decodeBuild, encodeBuild, priceRange, rand, specs } from "@/trailer/pricing";
+import { notFound } from "next/navigation";
 import OpenBuild from "./OpenBuild";
 
 type Props = { params: Promise<{ code: string }> };
@@ -39,7 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SharedBuild({ params }: Props) {
   const { code } = await params;
-  const ok = !!decodeBuild(code);
+  if (!decodeBuild(code)) notFound();
+  const ok = true;
   const href = ok ? `/?build=${code}#design` : "/#design";
   return (
     <main id="main" style={{ minHeight: "70svh", display: "grid", placeContent: "center", gap: 16, padding: "96px var(--gutter)", fontFamily: "var(--mono)" }}>

@@ -8,7 +8,8 @@ import { VEHICLES, rigStore, vehicleStore, type Vehicle } from "@/content/vehicl
 import { drive, KIND_LOADS, LOADS, NOSE_BAND, RIG_CFG, type LoadKind, type Readout } from "./driveState";
 import type { Surface } from "./road";
 import { sound } from "@/lib/sound";
-import { towCheck } from "@/content/towrules";
+import { rigRules } from "@/content/rig";
+import { goToEnquiry } from "@/lib/goToEnquiry";
 import { track } from "@/lib/track";
 import styles from "./drive.module.css";
 
@@ -63,6 +64,9 @@ export default function TestDrive() {
       sound.road(drive.readout.kmh, Math.min(1, spread / 60), drive.surface);
       setResetKey(drive.resetKey);
       setNotice(drive.notice);
+      setKind(drive.kind);
+      setLoads(drive.loads);
+      setWater(drive.water);
     };
     drive.listeners.add(f);
     return () => {
@@ -97,19 +101,20 @@ export default function TestDrive() {
   const nosePct = r.gross > 0 ? (r.noseKg / r.gross) * 100 : 0;
   const noseOk = !r.ready || (nosePct >= band.lo && nosePct <= band.hi);
   // the same rules the tow checker uses, for the visitor's vehicle and this trailer
-  const rules = towCheck({ vehicle: veh.kind, tare: veh.tare, gvm: veh.gvm, trailerGvm: GVM, towRating: veh.towRating, gcm: veh.gcm });
+  const rules = rigRules(RIG_CFG[kind], veh);
   // what is actually on the road right now, against the vehicle's own limits
   const overRating = r.ready && r.gross > veh.towRating;
   const overGcm = r.ready && veh.gvm + r.gross > veh.gcm;
+  // judged on what is really on the road; the "fully loaded" rule warnings show as notes
   const rigOk = r.ready && noseOk && !over && !overRating && !overGcm;
-  const rigLine = `${veh.name} + ${KINDS.find((k) => k.id === kind)?.name ?? kind}, ${r.gross.toLocaleString("en-ZA").replace(/,/g, " ")} kg loaded, ${nosePct.toFixed(1)}% on the ball, code ${rules.licence.code}, ${rules.speed.limit}${rigOk ? "" : " (needs a look: " + [!noseOk && "hitch load", over && "over GVM", overRating && "over towing rating", overGcm && "over GCM"].filter(Boolean).join(", ") + ")"}`;
+  const issues = [!noseOk && "hitch load", over && "over GVM", overRating && "over towing rating", overGcm && "over GCM"].filter(Boolean);
+  const rigLine = `${veh.name} + ${KINDS.find((k) => k.id === kind)?.name ?? kind}, ${r.gross.toLocaleString("en-ZA").replace(/,/g, " ")} kg loaded, ${nosePct.toFixed(1)}% on the ball, code ${rules.licence.code}, ${rules.speed.limit}${issues.length ? " (needs a look: " + issues.join(", ") + ")" : ""}`;
   const sendRig = () => {
     rigStore.set(rigLine);
     setRigSent(true);
     track("rig_attached", { vehicle: veh.id, kind, ok: rigOk });
-    document.getElementById("enquire")?.scrollIntoView({ behavior: "smooth" });
+    goToEnquiry();
   };
-  const live = r.liveNoseKg;
 
   return (
     <section ref={root} id="drive" className={styles.drive} aria-labelledby="drive-title">
@@ -175,15 +180,7 @@ export default function TestDrive() {
                   key={k.id}
                   type="button"
                   aria-pressed={kind === k.id}
-                  onClick={() => {
-                    drive.kind = k.id;
-                    drive.loads = [];
-                    drive.water = false;
-                    setLoads([]);
-                    setWater(false);
-                    setKind(k.id);
-                    drive.reset("");
-                  }}
+                  onClick={() => drive.setKind(k.id)}
                 >
                   <b>{k.short}</b>
                   <small>{k.id === "gooseneck" ? "hitched in the load bed" : k.id === "offroad" ? "3.0 m camper" : "4.8 m tandem"}</small>
@@ -342,7 +339,7 @@ export default function TestDrive() {
                 </p>
               )}
               <small>
-                Parked, level: worked out from where the mass sits. Live hitch load on this road: {live >= 0 ? `${live} kg` : `${-live} kg lifting`}. {band.note}
+                Parked and level, worked out from where the mass sits. On the road it swings with every bump; this is the number that matters. {band.note}
               </small>
             </div>
 
@@ -369,7 +366,7 @@ export default function TestDrive() {
               <div>
                 <dt>Brakes</dt>
                 <dd>
-                  {rules.brakes.need}. {rules.brakes.why} Fitted on this example: {rules.brakes.need.includes("driver") ? "electric disc brakes with an in-cab controller" : "overrun disc brakes"}.
+                  {rules.brakes.need}. {rules.brakes.why} Fitted for this vehicle: {rules.fitted.toLowerCase()}.
                 </dd>
               </div>
               <div>
@@ -405,12 +402,17 @@ export default function TestDrive() {
               </div>
             </dl>
 
-            <div className={`${styles.rigCard} ${rigOk ? styles.rigOk : styles.rigBad}`} aria-live="polite">
+            <div className={`${styles.rigCard} ${!r.ready ? "" : rigOk ? styles.rigOk : styles.rigBad}`}>
               <span className={styles.rigK}>Your rig</span>
               <b>
                 Code {rules.licence.code} · {rules.speed.limit} · {r.ready ? `${nosePct.toFixed(1)}% nose` : "weighing…"} {r.ready ? (rigOk ? "✓" : "✕") : ""}
               </b>
-              <p>{rigLine}</p>
+              <p>{r.ready ? rigLine : "Weighing the rig…"}</p>
+              {rules.warnings.map((w) => (
+                <p key={w} className={styles.rigNote}>
+                  {w}
+                </p>
+              ))}
               <button type="button" className={styles.rigSend} onClick={sendRig} disabled={!r.ready}>
                 {rigSent ? "Attached to your brief ✓" : "Send this rig with my brief"}
               </button>

@@ -81,7 +81,7 @@ const PATHS: Record<
     dims: [
       {
         d: "M50,325 H700 M50,318 V332 M700,318 V332",
-        label: "6 500 body",
+        label: "6 000 body",
         x: 375,
         y: 345,
       },

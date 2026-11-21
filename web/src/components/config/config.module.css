@@ -481,3 +481,28 @@
     bottom: 12px;
   }
 }
+.vehLink {
+  color: var(--ink);
+  white-space: nowrap;
+}
+.checkNote {
+  color: var(--red);
+}
+.shareUrl {
+  flex-basis: 100%;
+  display: grid;
+  gap: 4px;
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.shareUrl input {
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1.5px solid var(--graphite);
+  font: 400 13px/1 var(--mono);
+  text-transform: none;
+  letter-spacing: 0;
+}

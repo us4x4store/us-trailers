@@ -18,7 +18,7 @@ export const PRICING = {
 const KIND_PRICE: Record<Kind, { base: number; perMetre: number; from: number }> = {
   toyhauler: { base: PRICING.base, perMetre: PRICING.perMetre, from: 3.6 },
   offroad: { base: 165_000, perMetre: 38_000, from: 2.4 }, // kitchen, tent, tank, lithium included
-  gooseneck: { base: 395_000, perMetre: 52_000, from: 6.0 }, // neck, landing legs, electric brakes
+  gooseneck: { base: 395_000, perMetre: 52_000, from: 6.0 }, // neck, landing legs, brakes sized to the tow vehicle
 };
 
 /** toy hauler lengths (kept for older code); use KIND_LENGTHS for every kind */
@@ -63,7 +63,7 @@ export function specs(cfg: TrailerConfig) {
     licence: gvm > 750 ? "EB" : "B",
     brakes:
       gvm > 750
-        ? `Overrun disc brakes. If your vehicle's tare is under ${gvm.toLocaleString("en-ZA").replace(/,/g, " ")} kg, electric brakes you work from the driver's seat as well.`
+        ? `Overrun disc brakes, or electric disc brakes with an in-cab controller when the trailer's ${gvm.toLocaleString("en-ZA").replace(/,/g, " ")} kg GVM is more than your vehicle's tare.`
         : "Parking brake, plus overrun brakes if the trailer's GVM is over half your vehicle's tare.",
     // a loaded single axle over ~4.2 m carries too much on one axle: we recommend tandem
     axleAdvice: cfg.axles === 1 && cfg.length > 4.2 ? "Over 4.2 m we fit two axles. One axle would be overloaded." : null,

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/track";
 import { fmt, towCheck, type TowInput } from "@/content/towrules";
 import { VEHICLES, vehicleStore, type Vehicle } from "@/content/vehicles";
+import { buildStore } from "@/components/config/buildStore";
+import { gvmKg } from "@/trailer/pricing";
 import styles from "./towcheck.module.css";
 
 type Field = "tare" | "gvm" | "trailerGvm" | "towRating" | "gcm";
@@ -14,14 +16,17 @@ const FIELDS: { k: Field; label: string; hint: string; optional?: boolean }[] = 
   { k: "towRating", label: "Braked towing capacity", hint: "From the owner's manual.", optional: true },
   { k: "gcm", label: "Vehicle GCM", hint: "Gross combination mass, from the owner's manual.", optional: true },
 ];
-/** example double-cab bakkie */
-const START: Record<Field, string> = { tare: "2100", gvm: "3210", trailerGvm: "1500", towRating: "3500", gcm: "5850" };
+/** start from the vehicle chosen in the test rig and the trailer in the designer */
+const start = (): Record<Field, string> => {
+  const v = vehicleStore.v;
+  return { tare: String(v.tare), gvm: String(v.gvm), trailerGvm: String(gvmKg(buildStore.cfg)), towRating: String(v.towRating), gcm: String(v.gcm) };
+};
 
 /** "Can I tow it?": licence code, brakes and speed limit from the numbers on two licence discs. */
 export default function TowCheck({ id = "tow-check" }: { id?: string }) {
-  const [vehicle, setVehicle] = useState<TowInput["vehicle"]>("bakkie");
-  const [raw, setRaw] = useState(START);
-  const [preset, setPreset] = useState("");
+  const [vehicle, setVehicle] = useState<TowInput["vehicle"]>(vehicleStore.v.kind);
+  const [raw, setRaw] = useState(start);
+  const [preset, setPreset] = useState(vehicleStore.v.id);
   const fill = (v: Vehicle) => {
     setVehicle(v.kind);
     setPreset(v.id);
@@ -30,10 +35,13 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
   // the vehicle picked in the test rig fills this sheet too
   useEffect(() => {
     const f = () => fill(vehicleStore.v);
-    if (vehicleStore.chosen) f();
     vehicleStore.listeners.add(f);
+    // and the trailer being designed
+    const b = () => setRaw((cur) => ({ ...cur, trailerGvm: String(gvmKg(buildStore.cfg)) }));
+    buildStore.listeners.add(b);
     return () => {
       vehicleStore.listeners.delete(f);
+      buildStore.listeners.delete(b);
     };
   }, []);
   const n = (k: Field) => (raw[k].trim() === "" ? NaN : Number(raw[k]));
@@ -162,7 +170,7 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
                 <p>{r.speed.why}</p>
               </div>
               {r.warnings.map((w) => (
-                <p key={w} className={styles.warn} role="alert">
+                <p key={w} className={styles.warn}>
                   {w}
                 </p>
               ))}
@@ -171,7 +179,7 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
               </p>
               {r.licence.code === "EB" && (
                 <a className={styles.cta} href="/#enquire">
-                  Only have code B? Ask us for a 750 kg build
+                  Only have code B? Ask us about a 750 kg build
                 </a>
               )}
             </>

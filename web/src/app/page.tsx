@@ -20,6 +20,8 @@ const ORG = {
   currenciesAccepted: "ZAR",
 };
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default function Home() {
   return (
     <main id="main">
