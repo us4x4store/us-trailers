@@ -1,9 +1,9 @@
 .cfg {
   background: var(--paper);
-  padding: clamp(72px, 10vh, 120px) var(--gutter) 64px;
+  padding: var(--sy) var(--gutter) var(--sy-end);
   display: grid;
   gap: 28px;
-  border-top: 1.5px solid var(--graphite);
+  border-top: 1px solid var(--line);
 }
 .head {
   display: grid;
@@ -25,13 +25,14 @@
   letter-spacing: -0.02em;
 }
 .lede {
-  font: 400 15px/1.6 var(--mono);
-  max-width: 62ch;
+  font: 400 clamp(17px, 1.35vw, 20px)/1.55 var(--display);
+  font-stretch: 100%;
+  max-width: 52ch;
 }
 .board {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
 }
 .view {
   /* the trailer stays on screen while you work down the options */
@@ -41,7 +42,7 @@
   min-width: 0;
   height: min(calc(100svh - 96px), 820px);
   min-height: 480px;
-  border-right: 1.5px solid var(--graphite);
+  border-right: 1px solid var(--line);
 }
 .view canvas {
   touch-action: pan-y;
@@ -62,7 +63,7 @@
   bottom: 12px;
   display: grid;
   grid-template-columns: auto auto;
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   background: var(--paper);
   font: 500 13px/1 var(--mono);
   text-transform: uppercase;
@@ -72,12 +73,12 @@
   padding: 8px 10px;
 }
 .code span {
-  border-right: 1px solid var(--graphite);
+  border-right: 1px solid var(--line);
 }
 .codeShare {
   display: none;
   border: 0;
-  border-left: 1px solid var(--graphite);
+  border-left: 1px solid var(--line);
   background: var(--paper);
   font: 600 13px/1 var(--mono);
   letter-spacing: 0.08em;
@@ -100,7 +101,7 @@
   border: 0;
   margin: 0;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
   min-width: 0;
 }
 .field legend {
@@ -182,7 +183,7 @@
 .specs {
   margin: 0;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
   display: grid;
   gap: 6px;
 }
@@ -206,7 +207,7 @@
   padding: 16px;
   display: grid;
   gap: 6px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .price span {
   font: 600 13px/1 var(--mono);
@@ -263,7 +264,7 @@
     top: 64px;
     z-index: 2;
     border-right: 0;
-    border-bottom: 1.5px solid var(--graphite);
+    border-bottom: 1px solid var(--line);
     min-height: 0;
     height: 36svh;
     background: var(--paper);
@@ -277,7 +278,7 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     background: var(--paper);
-    border-top: 1.5px solid var(--graphite);
+    border-top: 1px solid var(--line);
     box-shadow: 0 -8px 16px -12px rgba(34, 38, 42, 0.35);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -347,7 +348,7 @@
 }
 .arRow {
   padding: 14px 16px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .arWrap {
   display: grid;
@@ -385,7 +386,7 @@
   width: 120px;
   height: 120px;
   display: block;
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
 }
 .qrImg svg {
   display: block;
@@ -439,7 +440,7 @@
   gap: 4px 12px;
   padding: 12px 40px 12px 14px;
   background: var(--paper);
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
 }
 .picked b {
   font: 800 20px/1.1 var(--display);

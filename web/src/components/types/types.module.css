@@ -1,7 +1,7 @@
 .index {
   background: var(--paper);
-  border-top: 1.5px solid var(--graphite);
-  padding: clamp(72px, 10vh, 120px) var(--gutter) 64px;
+  border-top: 1px solid var(--line);
+  padding: var(--sy) var(--gutter) var(--sy-end);
   display: grid;
   gap: 28px;
 }
@@ -25,8 +25,9 @@
   letter-spacing: -0.02em;
 }
 .lede {
-  font: 400 15px/1.6 var(--mono);
-  max-width: 62ch;
+  font: 400 clamp(17px, 1.35vw, 20px)/1.55 var(--display);
+  font-stretch: 100%;
+  max-width: 52ch;
 }
 .grid {
   list-style: none;
@@ -34,12 +35,12 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-top: 1.5px solid var(--graphite);
-  border-left: 1.5px solid var(--graphite);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
 }
 .grid li {
-  border-right: 1.5px solid var(--graphite);
-  border-bottom: 1.5px solid var(--graphite);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   min-width: 0;
 }
 .card {

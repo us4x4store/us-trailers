@@ -1,7 +1,7 @@
 .enq {
   background: var(--paper);
-  border-top: 1.5px solid var(--graphite);
-  padding: clamp(72px, 10vh, 120px) var(--gutter) 80px;
+  border-top: 1px solid var(--line);
+  padding: var(--sy) var(--gutter) var(--sy-end);
   display: grid;
   gap: 28px;
 }
@@ -26,8 +26,9 @@
   letter-spacing: -0.02em;
 }
 .lede {
-  font: 400 15px/1.6 var(--mono);
-  max-width: 62ch;
+  font: 400 clamp(17px, 1.35vw, 20px)/1.55 var(--display);
+  font-stretch: 100%;
+  max-width: 52ch;
 }
 .form {
   display: grid;
@@ -44,18 +45,18 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
 }
 .field {
   display: grid;
   gap: 6px;
   align-content: start;
   padding: 12px 14px 14px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
   min-width: 0;
 }
 .field:nth-child(odd):not(.wide) {
-  border-right: 1px solid var(--graphite);
+  border-right: 1px solid var(--line);
 }
 .wide {
   grid-column: 1 / -1;
@@ -108,12 +109,12 @@
 .sheet {
   display: flex;
   flex-wrap: wrap;
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   font: 400 13px/1.3 var(--mono);
 }
 .sheet > * {
   padding: 10px 12px;
-  border-right: 1px solid var(--graphite);
+  border-right: 1px solid var(--line);
 }
 .sheet > :first-child {
   font-weight: 600;
@@ -215,7 +216,7 @@
   }
 }
 .more {
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   border-top: 0;
 }
 .more summary {
@@ -231,7 +232,7 @@
 }
 .more .grid {
   border: 0;
-  border-top: 1px solid var(--graphite);
+  border-top: 1px solid var(--line);
 }
 .form .grid + .more {
   margin-top: -18px;

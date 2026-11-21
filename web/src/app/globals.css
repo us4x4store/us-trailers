@@ -4,6 +4,13 @@
 :root {
   --paper: #e6eae5;
   --grid: #cdd5d0;
+  /* hairlines: structure without frames */
+  --line: rgba(34, 38, 42, 0.14);
+  /* vertical rhythm: generous, so each section reads as its own scene */
+  --sy: clamp(96px, 13vh, 176px);
+  --sy-end: clamp(80px, 10vh, 136px);
+  --sy-sm: clamp(64px, 9vh, 120px);
+  --line-strong: rgba(34, 38, 42, 0.28);
   --ink: #1f3b73;
   --graphite: #22262a;
   --galv: #a7afb2;

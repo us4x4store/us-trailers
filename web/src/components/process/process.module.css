@@ -33,8 +33,9 @@
   letter-spacing: -0.02em;
 }
 .lede {
-  font: 400 15px/1.6 var(--mono);
-  max-width: 62ch;
+  font: 400 clamp(17px, 1.35vw, 20px)/1.55 var(--display);
+  font-stretch: 100%;
+  max-width: 52ch;
 }
 .sheet {
   border: 1.5px solid var(--bp-line);

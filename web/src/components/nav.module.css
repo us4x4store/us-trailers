@@ -59,7 +59,7 @@
   min-height: 44px;
   padding: 0 12px;
   background: var(--paper);
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   font: 600 13px/1 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -90,8 +90,6 @@
   background: var(--paper);
   padding: calc(max(14px, env(safe-area-inset-top, 0px)) + 72px) var(--gutter) 32px;
   overflow-y: auto;
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
 }
 .menu nav {
   display: grid;
@@ -102,7 +100,7 @@
   color: var(--graphite);
   text-decoration: none;
   padding: 10px 0;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .mh {
   font: 600 13px/1 var(--mono);
@@ -152,7 +150,7 @@
   margin-top: 10px;
   min-height: 48px;
   background: none;
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   font: 600 13px/1 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;

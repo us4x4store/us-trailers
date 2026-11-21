@@ -1,7 +1,7 @@
 .band {
   background: var(--graphite);
   color: #e6eae5;
-  padding: clamp(72px, 10vh, 120px) var(--gutter);
+  padding: var(--sy) var(--gutter) var(--sy-end);
   display: grid;
   gap: 28px;
 }

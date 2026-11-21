@@ -58,7 +58,8 @@
   color: var(--ink);
 }
 .lede {
-  font: 400 15px/1.6 var(--mono);
+  font: 400 clamp(17px, 1.35vw, 20px)/1.55 var(--display);
+  font-stretch: 100%;
   max-width: 40ch;
   color: var(--graphite);
 }
@@ -125,7 +126,7 @@
   gap: 4px;
   padding: 10px 12px;
   background: var(--paper);
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   font-family: var(--mono);
   will-change: transform;
 }
@@ -191,7 +192,7 @@
   bottom: 74px;
   display: grid;
   grid-template-columns: auto auto;
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
   background: var(--paper);
   font: 400 13px/1 var(--mono);
   text-transform: uppercase;
@@ -199,10 +200,10 @@
 }
 .tb > * {
   padding: 6px 10px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .tb > span {
-  border-right: 1px solid var(--graphite);
+  border-right: 1px solid var(--line);
 }
 .tb > :nth-last-child(-n + 2) {
   border-bottom: 0;
@@ -269,7 +270,7 @@
 .scaleTrack {
   position: relative;
   height: 8px;
-  border: 1.5px solid var(--fg-on-stage, var(--graphite));
+  border: 1px solid var(--line);
 }
 .scaleFill {
   position: absolute;

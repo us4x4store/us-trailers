@@ -1,7 +1,7 @@
 .faq {
   background: var(--paper);
-  border-top: 1.5px solid var(--graphite);
-  padding: clamp(72px, 10vh, 120px) var(--gutter) 64px;
+  border-top: 1px solid var(--line);
+  padding: var(--sy) var(--gutter) var(--sy-end);
   display: grid;
   gap: 28px;
 }
@@ -28,11 +28,11 @@
   font-stretch: 112%;
 }
 .list {
-  border-top: 1.5px solid var(--graphite);
+  border-top: 1px solid var(--line);
   max-width: 980px;
 }
 .item {
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .item summary {
   list-style: none;
@@ -66,7 +66,7 @@
   left: 0;
   right: 0;
   top: 6px;
-  border-top: 1.5px solid var(--graphite);
+  border-top: 1px solid var(--line);
   transition: transform 0.25s var(--ease);
 }
 .item summary i::after {

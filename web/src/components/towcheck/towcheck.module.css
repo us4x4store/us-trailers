@@ -1,7 +1,7 @@
 .tc {
   background: var(--paper);
-  border-top: 1.5px solid var(--graphite);
-  padding: clamp(80px, 11vh, 128px) var(--gutter) 56px;
+  border-top: 1px solid var(--line);
+  padding: var(--sy) var(--gutter) var(--sy-end);
   display: grid;
   gap: 28px;
 }
@@ -32,15 +32,13 @@
 .sheet {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  border: 1.5px solid var(--graphite);
+  border: 1px solid var(--line);
 }
 .inputs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-content: start;
-  border-right: 1.5px solid var(--graphite);
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
+  border-right: 1px solid var(--line);
 }
 .seg {
   grid-column: 1 / -1;
@@ -90,11 +88,11 @@
   align-content: start;
   padding: 14px 16px;
   background: var(--paper);
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
   min-width: 0;
 }
 .field:nth-of-type(odd) {
-  border-right: 1px solid var(--graphite);
+  border-right: 1px solid var(--line);
 }
 .unit {
   display: flex;
@@ -157,7 +155,7 @@
   display: grid;
   gap: 8px;
   padding: 18px 20px;
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .k {
   font: 600 13px/1 var(--mono);
@@ -225,7 +223,7 @@
   }
   .inputs {
     border-right: 0;
-    border-bottom: 1.5px solid var(--graphite);
+    border-bottom: 1px solid var(--line);
   }
 }
 @media (max-width: 480px) {
@@ -252,7 +250,7 @@
     z-index: 3;
     background: var(--ink);
     color: var(--paper);
-    border-top: 1.5px solid var(--graphite);
+    border-top: 1px solid var(--line);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     order: 1;
   }
@@ -290,7 +288,7 @@
   gap: 6px;
   padding: 14px 16px;
   background: var(--paper);
-  border-bottom: 1px solid var(--graphite);
+  border-bottom: 1px solid var(--line);
 }
 .fillRow label {
   font: 600 13px/1.2 var(--mono);
