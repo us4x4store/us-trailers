@@ -230,6 +230,10 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
       { shape: { k: "box", s: [0.26, 0.11, 0.12] }, p: [coupX, coupleH, 0], m: "galv" },
       { shape: { k: "cyl", r: 0.06, h: 0.1, axis: "y" }, p: [coupX + 0.14, coupleH, 0], m: "poly" },
       { shape: { k: "rod", a: [coupX - 0.05, coupleH + 0.06, 0.04], b: [coupX + 0.1, coupleH + 0.11, 0.04], r: 0.012 }, m: "galv" },
+      // coupling head: domed housing over the ball, release lever, safety chains looped to the drawbar
+      { shape: { k: "cyl", r: 0.075, r2: 0.055, h: 0.09, axis: "y" }, p: [coupX + 0.14, coupleH + 0.08, 0], m: "galv", cosmetic: true },
+      { shape: { k: "box", s: [0.22, 0.03, 0.05] }, p: [coupX + 0.02, coupleH + 0.13, 0], rot: [0, 0, 0.18], m: "accent", cosmetic: true },
+      ...[1, -1].map((s) => ({ shape: { k: "tube", pts: [[coupX - 0.25, coupleH - 0.04, s * 0.07], [coupX - 0.05, coupleH - 0.2, s * 0.1], [coupX + 0.12, coupleH - 0.12, s * 0.06]], r: 0.008 }, m: "galv", cosmetic: true }) as MeshSpec),
     ],
   });
   parts.push({
@@ -325,6 +329,7 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
       { shape: { k: "box", s: [ax0 - ax1, 0.006, 0.34] }, p: [(ax0 + ax1) / 2, wheelR * 2 + 0.07, s * trackZ], m: "checker" } as MeshSpec,
       { shape: { k: "box", s: [0.006, 0.26, 0.34] }, p: [ax0, wheelR * 2 - 0.06, s * trackZ], rot: [0, 0, -0.5], m: "checker" } as MeshSpec,
       { shape: { k: "box", s: [0.006, 0.26, 0.34] }, p: [ax1, wheelR * 2 - 0.06, s * trackZ], rot: [0, 0, 0.5], m: "checker" } as MeshSpec,
+      { shape: { k: "box", s: [0.008, 0.36, 0.3] }, p: [ax1 - 0.12, wheelR * 2 - 0.3, s * trackZ], m: "rubber", cosmetic: true } as MeshSpec,
     ]),
   });
 
@@ -390,6 +395,12 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     meshes: [
       ...[1, -1].map((s) => ({ shape: { k: "box", s: [L, bodyH, 0.012] }, p: [0, floorY + bodyH / 2, s * (hz + 0.006)] as V3, m: "powder" as Mat } as MeshSpec)),
       ...[1, -1].flatMap((s) => [trimY(-hx, floorY, roofY, s * (hz + 0.006)), rubRail(-hx, hx, floorY + 0.06, s * (hz + 0.016))]),
+      // bonded panel joints every 1.2 m: a fine shadow line, the way the real panels meet
+      ...[1, -1].flatMap((s) =>
+        lin(-hx, hx, Math.max(2, Math.round(L / 1.2) + 1))
+          .slice(1, -1)
+          .map((x) => ({ shape: { k: "box", s: [0.006, bodyH - 0.12, 0.004] }, p: [x, floorY + bodyH / 2 + 0.02, s * (hz + 0.013)] as V3, m: "poly" as Mat, cosmetic: true }) as MeshSpec),
+      ),
     ],
   });
   parts.push({
@@ -443,6 +454,12 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     meshes: [
       { shape: { k: "box", s: [0.05, rampH, bodyW - 0.02] }, p: [-hx - 0.025, floorY + rampH / 2, 0], m: "powder" },
       { shape: { k: "box", s: [0.006, rampH - 0.1, bodyW - 0.12] }, p: [-hx - 0.052, floorY + rampH / 2, 0], m: "checker" },
+      // three hinge knuckles along the bottom, two cam-lock bars up the face
+      ...[-0.7, 0, 0.7].map((z) => ({ shape: { k: "cyl", r: 0.03, h: 0.18, axis: "z" }, p: [-hx - 0.03, floorY + 0.02, z * (bodyW / 2)] as V3, m: "galv" as Mat, cosmetic: true }) as MeshSpec),
+      ...[1, -1].flatMap((s) => [
+        { shape: { k: "rod", a: [-hx - 0.065, floorY + 0.15, s * (bodyW / 2 - 0.2)], b: [-hx - 0.065, floorY + rampH - 0.12, s * (bodyW / 2 - 0.2)], r: 0.012 }, m: "galv", cosmetic: true } as MeshSpec,
+        { shape: { k: "box", s: [0.04, 0.2, 0.05] }, p: [-hx - 0.075, floorY + rampH * 0.5, s * (bodyW / 2 - 0.2)], m: "galv", cosmetic: true } as MeshSpec,
+      ]),
     ],
   });
   const doorX = hx - 0.95;
@@ -460,6 +477,11 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     meshes: [
       { shape: { k: "box", s: [0.7, 1.85, 0.03] }, p: [doorX, floorY + 0.05 + 0.925, hz + 0.02], m: "powder" },
       { shape: { k: "box", s: [0.04, 0.16, 0.03] }, p: [doorX - 0.28, floorY + 1.0, hz + 0.045], m: "galv" },
+      // rubber seal round the frame, three hinges, flush lock, drip rail above
+      { shape: { k: "box", s: [0.74, 1.89, 0.012] }, p: [doorX, floorY + 0.05 + 0.925, hz + 0.01], m: "rubber", cosmetic: true },
+      ...[0.3, 0.95, 1.6].map((y) => ({ shape: { k: "cyl", r: 0.016, h: 0.12, axis: "y" }, p: [doorX + 0.36, floorY + 0.05 + y, hz + 0.04] as V3, m: "alu" as Mat, cosmetic: true }) as MeshSpec),
+      { shape: { k: "cyl", r: 0.02, h: 0.02, axis: "z" }, p: [doorX - 0.28, floorY + 1.15, hz + 0.045], m: "alu", cosmetic: true },
+      { shape: { k: "box", s: [0.86, 0.02, 0.05] }, p: [doorX, floorY + 0.05 + 1.95, hz + 0.03], m: "alu", cosmetic: true },
     ],
   });
   parts.push({
@@ -472,7 +494,11 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     anchor: [-0.9, floorY + 1.65, hz + 0.02],
     from: [0, 0.6, 1.4],
     explode: [0, 0, 0.7],
-    meshes: [1, -1].map((s) => ({ shape: { k: "box", s: [0.9, 0.45, 0.02] }, p: [-0.9, floorY + 1.6, s * (hz + 0.012)] as V3, m: "glass" as Mat } as MeshSpec)),
+    meshes: [1, -1].flatMap((s) => [
+      { shape: { k: "box", s: [0.9, 0.45, 0.02] }, p: [-0.9, floorY + 1.6, s * (hz + 0.012)] as V3, m: "glass" as Mat } as MeshSpec,
+      // black rubber surround, slightly proud of the panel
+      { shape: { k: "box", s: [0.98, 0.53, 0.014] }, p: [-0.9, floorY + 1.6, s * (hz + 0.009)] as V3, m: "poly" as Mat, cosmetic: true } as MeshSpec,
+    ]),
   });
 
   /* ---------------- 07 Systems ---------------- */
@@ -483,16 +509,27 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     material: "Sealed LED units",
     spec: "IP67, 12 V, SANS 1046 compliant",
     chapter: "systems",
-    anchor: [-hx - 0.04, floorY + 0.2, hz - 0.12],
+    anchor: [-hx - 0.04, floorY - 0.1, hz - 0.12],
     from: [-0.6, 0.8, 0],
     explode: [-0.5, 0, 0.3],
     meshes: [
       ...[1, -1].flatMap((s) => [
-        { shape: { k: "box", s: [0.03, 0.16, 0.22] }, p: [-hx - 0.06, floorY + 0.18, s * (hz - 0.16)], m: "ledRed" } as MeshSpec,
+        { shape: { k: "box", s: [0.03, 0.16, 0.22] }, p: [-hx - 0.06, floorY - 0.1, s * (hz - 0.16)], m: "ledRed" } as MeshSpec,
         { shape: { k: "box", s: [0.06, 0.04, 0.012] }, p: [hx - 0.1, roofY - 0.08, s * (hz + 0.014)], m: "ledAmber" } as MeshSpec,
         { shape: { k: "box", s: [0.06, 0.04, 0.012] }, p: [-hx + 0.1, roofY - 0.08, s * (hz + 0.014)], m: "ledAmber" } as MeshSpec,
       ]),
       { shape: { k: "box", s: [0.6, 0.02, 0.05] }, p: [doorX, roofY - 0.12, hz + 0.04], m: "ledWhite" },
+      // tail-light clusters: housing, stop/tail, indicator, reverse
+      ...[1, -1].flatMap((s) => [
+        { shape: { k: "box", s: [0.03, 0.2, 0.5] }, p: [-hx - 0.035, floorY - 0.1, s * (hz - 0.3)], m: "poly", cosmetic: true } as MeshSpec,
+        { shape: { k: "box", s: [0.03, 0.12, 0.12] }, p: [-hx - 0.065, floorY - 0.1, s * (hz - 0.45)], m: "ledAmber", cosmetic: true } as MeshSpec,
+        { shape: { k: "box", s: [0.03, 0.12, 0.08] }, p: [-hx - 0.065, floorY - 0.1, s * (hz - 0.08)], m: "ledWhite", cosmetic: true } as MeshSpec,
+      ]),
+      // number-plate holder with its own light
+      { shape: { k: "box", s: [0.02, 0.17, 0.52] }, p: [-hx - 0.05, floorY - 0.12, 0], m: "poly", cosmetic: true },
+      { shape: { k: "box", s: [0.012, 0.13, 0.48] }, p: [-hx - 0.062, floorY - 0.12, 0], m: "ledWhite", cosmetic: true },
+      // amber side markers along the bottom edge
+      ...[1, -1].flatMap((s) => lin(-hx + 0.4, hx - 0.4, 3).map((x) => ({ shape: { k: "box", s: [0.08, 0.035, 0.012] }, p: [x, floorY + 0.13, s * (hz + 0.026)] as V3, m: "ledAmber" as Mat, cosmetic: true }) as MeshSpec)),
     ],
   });
   parts.push({

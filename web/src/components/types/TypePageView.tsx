@@ -4,7 +4,7 @@ import { TYPES, typeBySlug } from "@/content/types";
 import TypeDrawing from "@/components/drawings/TypeDrawing";
 import FaqList, { faqJsonLd } from "@/components/faq/FaqList";
 import { SITE_URL } from "@/content/site";
-import Photo from "@/components/Photo";
+import Image from "next/image";
 import { TYPE_IMAGE } from "@/content/images";
 import styles from "./type.module.css";
 
@@ -60,8 +60,11 @@ export default function TypePageView({ slug }: { slug: string }) {
         <span aria-current="page">{t.short}</span>
       </nav>
 
-      <header className={styles.hero}>
-        <div className={styles.copy}>
+      {/* full-screen photograph with the headline set over it */}
+      <header className={styles.cine}>
+        {TYPE_IMAGE[t.slug] && <Image src={TYPE_IMAGE[t.slug].src} alt={TYPE_IMAGE[t.slug].alt} fill priority sizes="100vw" className={styles.cineImg} />}
+        <div className={styles.cineShade} aria-hidden="true" />
+        <div className={styles.cineCopy}>
           <p className={styles.eyebrow}>Sheet {String(i + 1).padStart(2, "0")} · Built in Cape Town</p>
           <h1 className={styles.h1}>{t.h1}</h1>
           <p className={styles.lede}>{t.intro}</p>
@@ -80,12 +83,15 @@ export default function TypePageView({ slug }: { slug: string }) {
             )}
           </div>
         </div>
-        <div className={styles.art}>
-          <TypeDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} />
-        </div>
+        {TYPE_IMAGE[t.slug]?.concept && <span className={styles.cineCap}>Concept render</span>}
       </header>
 
-      {TYPE_IMAGE[t.slug] && <Photo img={TYPE_IMAGE[t.slug]} sizes="100vw" eager className={styles.photo} />}
+      <section className={styles.sheetBand} aria-label={`Side elevation drawing: ${t.short}`}>
+        <p className={styles.eyebrow}>Side elevation · not to scale</p>
+        <div className={styles.sheetArt}>
+          <TypeDrawing kind={t.drawing} label={`Side elevation drawing: ${t.short}`} />
+        </div>
+      </section>
 
       <section className={styles.spec} aria-labelledby="spec">
         <h2 id="spec" className={styles.h2}>

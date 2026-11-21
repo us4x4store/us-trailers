@@ -417,7 +417,7 @@ function DuskGlow({ kind, lite }: { kind: Kind; lite: boolean }) {
         <>
           <pointLight ref={cabin} position={[-hx + 0.7, d.floorY + 1.1, 0]} color="#ffc58a" intensity={0} distance={7} decay={2} />
           {[-1, 1].map((s, i) => (
-            <pointLight key={s} ref={(el) => void (el && (tails.current[i] = el))} position={[-hx - 0.25, d.floorY + 0.15, s * (hz - 0.12)]} color="#ff2a1c" intensity={0} distance={3} decay={2} />
+            <pointLight key={s} ref={(el) => void (el && (tails.current[i] = el))} position={[-hx - 0.25, d.floorY - 0.1, s * (hz - 0.12)]} color="#ff2a1c" intensity={0} distance={3} decay={2} />
           ))}
         </>
       )}

@@ -312,3 +312,72 @@
     overflow-wrap: break-word;
   }
 }
+
+/* ---------- cinematic hero ---------- */
+.cine {
+  position: relative;
+  min-height: min(88svh, 920px);
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+  background: var(--graphite);
+  color: #f1efe8;
+}
+.cineImg {
+  object-fit: cover;
+  object-position: 50% 60%;
+}
+.cineShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(12, 14, 17, 0.86) 0%, rgba(12, 14, 17, 0.55) 38%, rgba(12, 14, 17, 0.08) 70%, rgba(12, 14, 17, 0.25) 100%);
+}
+.cineCopy {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  max-width: 760px;
+  padding: 0 var(--gutter) clamp(48px, 8vh, 96px);
+}
+.cine .eyebrow {
+  color: #a9c0ee;
+}
+.cine .h1 {
+  color: #fff;
+  font-size: clamp(40px, 6.4vw, 96px);
+}
+.cine .lede {
+  color: #e6e8e3;
+}
+.cine .secondary {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #fff;
+}
+.cineCap {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 16px;
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+.sheetBand {
+  display: grid;
+  gap: 18px;
+  padding: var(--sy-sm) var(--gutter);
+}
+.sheetArt {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+@media (max-width: 860px) {
+  .cine {
+    min-height: 82svh;
+  }
+  .cineCap {
+    top: 16px;
+    bottom: auto;
+  }
+}
