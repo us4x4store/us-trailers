@@ -85,6 +85,13 @@ _Last updated: 2026-11-19 (session 1)_
 - Reduced motion: the film is 300svh instead of 700svh.
 - Tests: scripts/test-journey.js, scripts/verify-review4.js, check-pages, test-offline all pass.
 
+## Round 9 (session 4)
+- Film finale, the handover at dusk:
+  - The trailer's own light does the work: red tail-light wash and warm cabin light spilling down the open ramp. Real point lights on laptops; painted ground pools only on phones.
+  - A Karoo ridge line rises on the horizon.
+  - A "Built." card shows parts, kg and mm. "Share this build" sends the /b/ link. The parts list and chapter heading step aside.
+- Verified by WebGL pixel reads (glow present: about 390 red and 620 warm sampled pixels) and layout boxes at 1440, 390 and 375: no overlap with the trailer.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.

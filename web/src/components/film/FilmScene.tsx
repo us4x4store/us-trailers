@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { buildTrailer, DEFAULT_CONFIG, EXAMPLE_CFG, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
+import { buildTrailer, DEFAULT_CONFIG, DIM, EXAMPLE_CFG, GN, OFF, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
 import { buildPartGeometry, type BuiltPart } from "@/trailer/geometry";
 import { partMassKg } from "@/trailer/mass";
 import { createMaterials, INK, PAPER } from "@/trailer/materials";
@@ -218,6 +218,8 @@ function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableR
     explodeS.current += (film.explode - explodeS.current) * (1 - Math.exp(-dt * 5));
     rampS.current += ((film.ramp || finishK > 0.45 ? 1 : 0) - rampS.current) * (1 - Math.exp(-dt * 2.2));
     lightS.current += ((film.lights || finishK > 0.25 ? 1 : 0) - lightS.current) * (1 - Math.exp(-dt * 3));
+    film.lightK = lightS.current;
+    film.rampK = rampS.current;
 
     let active = -1;
     runtime.forEach((rt, i) => {
@@ -368,6 +370,95 @@ function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableR
 
 const DUSK = new THREE.Color("#1A1F36");
 
+/** soft radial pool of light on the ground, drawn once to a small canvas */
+function poolTexture(rgb: string) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d")!;
+  const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0, `rgba(${rgb},1)`);
+  grad.addColorStop(0.35, `rgba(${rgb},0.45)`);
+  grad.addColorStop(1, `rgba(${rgb},0)`);
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/**
+ * Handover at dusk: the trailer's own light does the work. Red tail lights wash the ground
+ * behind it, and warm cabin light spills down the open ramp. Real point lights on capable
+ * devices; on phones, only the painted ground pools (no extra shader cost).
+ */
+function DuskGlow({ kind, lite }: { kind: Kind; lite: boolean }) {
+  const cfg = EXAMPLE_CFG[kind];
+  const hx = cfg.length / 2;
+  const d = kind === "offroad" ? OFF : kind === "gooseneck" ? GN : DIM;
+  const hz = d.bodyW / 2;
+  const warm = useMemo(() => poolTexture("255,190,120"), []);
+  const red = useMemo(() => poolTexture("255,50,40"), []);
+  const cabin = useRef<THREE.PointLight>(null);
+  const tails = useRef<THREE.PointLight[]>([]);
+  const warmPool = useRef<THREE.Mesh>(null);
+  const redPool = useRef<THREE.Mesh>(null);
+  useFrame(() => {
+    const L = film.lightK;
+    const open = film.rampK;
+    if (cabin.current) cabin.current.intensity = 7 * L * (0.25 + 0.75 * open);
+    tails.current.forEach((t) => t && (t.intensity = 2.2 * L));
+    (warmPool.current!.material as THREE.MeshBasicMaterial).opacity = 0.55 * L * open;
+    (redPool.current!.material as THREE.MeshBasicMaterial).opacity = 0.7 * L;
+  });
+  return (
+    <group>
+      {!lite && (
+        <>
+          <pointLight ref={cabin} position={[-hx + 0.7, d.floorY + 1.1, 0]} color="#ffc58a" intensity={0} distance={7} decay={2} />
+          {[-1, 1].map((s, i) => (
+            <pointLight key={s} ref={(el) => void (el && (tails.current[i] = el))} position={[-hx - 0.25, d.floorY + 0.15, s * (hz - 0.12)]} color="#ff2a1c" intensity={0} distance={3} decay={2} />
+          ))}
+        </>
+      )}
+      <mesh ref={warmPool} rotation-x={-Math.PI / 2} position={[-hx - 1.5, 0.006, 0]} scale={[4.2, 2.6, 1]}>
+        <planeGeometry />
+        <meshBasicMaterial map={warm} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
+      <mesh ref={redPool} rotation-x={-Math.PI / 2} position={[-hx - 0.5, 0.005, 0]} scale={[3.4, d.bodyW + 2.6, 1]}>
+        <planeGeometry />
+        <meshBasicMaterial map={red} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+/** a far Karoo ridge line that rises out of the dusk at handover */
+function Ridge() {
+  const ref = useRef<THREE.Mesh>(null);
+  const geo = useMemo(() => {
+    const sh = new THREE.Shape();
+    sh.moveTo(-90, -2);
+    // layered ridge: a few long flat-topped koppies, the Karoo look
+    const pts = [-90, 1.2, -70, 2.4, -58, 2.6, -50, 1.4, -34, 1.8, -22, 3.6, -14, 3.7, -9, 2.2, 0, 1.6, 10, 2.8, 18, 4.4, 27, 4.5, 33, 2.4, 46, 1.9, 60, 3.1, 72, 3.2, 90, 1.5];
+    for (let i = 0; i < pts.length; i += 2) sh.lineTo(pts[i], pts[i + 1]);
+    sh.lineTo(90, -2);
+    sh.closePath();
+    return new THREE.ShapeGeometry(sh);
+  }, []);
+  useFrame(() => {
+    const k = easeInOut(clamp01((film.ps - RANGES.finish[0]) / (RANGES.finish[1] - RANGES.finish[0])));
+    const m = ref.current!.material as THREE.MeshBasicMaterial;
+    m.opacity = k;
+    ref.current!.visible = k > 0.01;
+    ref.current!.position.y = -1.2 + k * 1.2;
+  });
+  return (
+    <mesh ref={ref} geometry={geo} position={[0, 0, -48]} visible={false}>
+      <meshBasicMaterial color="#10142a" transparent opacity={0} fog={false} depthWrite={false} />
+    </mesh>
+  );
+}
+
 function Floor() {
   const ref = useRef<THREE.Mesh>(null);
   useFrame(() => {
@@ -451,6 +542,8 @@ export default function FilmScene({ active = true, kind = "toyhauler" }: { activ
       <GridLines />
       {!lite && <ContactShadows position={[0, 0.004, 0]} opacity={0.45} scale={14} blur={2.4} far={3} resolution={512} />}
       <Trailer key={kind} lite={lite} sparks={sparks} kind={kind} />
+      <DuskGlow key={"g" + kind} kind={kind} lite={lite} />
+      <Ridge />
       <Sparks api={sparks} />
     </Canvas>
   );

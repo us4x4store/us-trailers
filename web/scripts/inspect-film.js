@@ -5,7 +5,7 @@ const { chromium } = require("playwright");
 const url = process.argv[2] || "http://localhost:3000/";
 const W = +(process.argv[3] || 1440);
 const H = +(process.argv[4] || 900);
-const POINTS = [0.02, 0.08, 0.17, 0.29, 0.39, 0.5, 0.62, 0.73, 0.83, 0.96];
+const POINTS = (process.env.POINTS || "0.02,0.08,0.17,0.29,0.39,0.5,0.62,0.73,0.83,0.96").split(",").map(Number);
 
 (async () => {
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
@@ -66,7 +66,7 @@ const POINTS = [0.02, 0.08, 0.17, 0.29, 0.39, 0.5, 0.62, 0.73, 0.83, 0.96];
       const obj = { x0: Math.round(Math.max(0, x0)), y0: Math.round(Math.max(0, y0)), x1: Math.round(Math.min(innerWidth, x1)), y1: Math.round(Math.min(innerHeight, y1)) };
       const boxes = {};
       document.querySelector("section").querySelectorAll("[class]").forEach((el) => {
-        const names = ["intro", "chapter", "bom", "tb", "controls", "end", "card"];
+        const names = ["intro", "chapter", "bom", "tb", "controls", "endCard", "end", "card"];
         const tokens = String(el.className).split(/\s+/);
         const cls = names.find((nm) => tokens.some((t) => t === nm || t.endsWith("__" + nm) || t.endsWith("_" + nm)));
         if (!cls) return;

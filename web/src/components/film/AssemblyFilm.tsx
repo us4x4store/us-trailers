@@ -8,6 +8,7 @@ import { buildTrailer, CHAPTERS, DEFAULT_CONFIG, EXAMPLE_CFG, KINDS, overallLeng
 import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
 import { sound } from "@/lib/sound";
+import { encodeBuild } from "@/trailer/pricing";
 import { track } from "@/lib/track";
 import styles from "./film.module.css";
 
@@ -29,6 +30,7 @@ export default function AssemblyFilm() {
   const [exploded, setExploded] = useState(false);
   const [lights, setLights] = useState(false);
   const [ramp, setRamp] = useState(false);
+  const [shared, setShared] = useState(false);
   const [kind, setKind] = useState<Kind>("toyhauler");
   const cfg = useMemo<TrailerConfig>(() => EXAMPLE_CFG[kind], [kind]);
   const parts = useMemo(() => buildTrailer(cfg), [cfg]);
@@ -143,7 +145,7 @@ export default function AssemblyFilm() {
         </div>
 
         {/* chapter heading */}
-        <div ref={chapterEl} className={`${styles.chapter} ${!isIntro ? styles.show : ""}`} aria-live="polite">
+        <div ref={chapterEl} className={`${styles.chapter} ${!isIntro && !isEnd ? styles.show : ""}`} aria-live="polite">
           <span className={styles.chn}>{ch.n}</span>
           <h2 className={styles.cht}>{ch.title}</h2>
           <p className={styles.chl}>{ch.line}</p>
@@ -168,7 +170,7 @@ export default function AssemblyFilm() {
         </div>
 
         {/* bill of materials */}
-        <ol ref={bomEl} className={`${styles.bom} ${!isIntro ? styles.show : ""}`} aria-label="Bill of materials">
+        <ol ref={bomEl} className={`${styles.bom} ${!isIntro && !isEnd ? styles.show : ""}`} aria-label="Bill of materials">
           {parts.map((p, i) => (
             <li key={p.id} className={i <= active ? styles.done : ""} data-active={i === active || undefined}>
               <span>{String(i + 1).padStart(2, "0")}</span>
@@ -237,11 +239,40 @@ export default function AssemblyFilm() {
         </div>
 
         {isEnd && (
+          <div className={styles.endCard} role="status">
+              <span className={styles.endK}>Handover · {KINDS.find((k) => k.id === kind)?.name}</span>
+              <b className={styles.endT}>Built.</b>
+              <span className={styles.endS}>
+                {parts.length} parts · {tareKg(cfg).toLocaleString("en-ZA").replace(/,/g, " ")} kg · {(Math.round(overallLength(cfg) * 100) * 10).toLocaleString("en-ZA").replace(/,/g, " ")} mm
+              </span>
+            </div>
+        )}
+        {isEnd && (
           <div className={styles.end}>
+
             <a className={styles.cta} href="#enquire">
               Get a price for yours
             </a>
-            <a className={styles.ctaGhost} href="#drive">
+            <button
+              type="button"
+              className={styles.ctaGhost}
+              onClick={async () => {
+                const url = `${location.origin}/b/${encodeBuild(cfg)}`;
+                track("build_shared", { build: encodeBuild(cfg), from: "film" });
+                try {
+                  if (navigator.share) await navigator.share({ title: "Built by US Trailers", url });
+                  else {
+                    await navigator.clipboard.writeText(url);
+                    setShared(true);
+                  }
+                } catch {
+                  /* share sheet closed */
+                }
+              }}
+            >
+              {shared ? "Link copied" : "Share this build"}
+            </button>
+            <a className={`${styles.ctaGhost} ${styles.endNext}`} href="#drive">
               Now tow it →
             </a>
           </div>

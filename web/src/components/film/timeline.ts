@@ -57,6 +57,9 @@ export const easeSettle = (x: number) => {
 export const film = {
   p: 0, // scroll target
   ps: 0, // smoothed progress used by the scene
+  /** 0..1 how lit the trailer is, and how far the ramp is open (set by the scene, read by the dusk glow) */
+  lightK: 0,
+  rampK: 0,
   explode: 0, // 0..1 target
   pinned: -1 as number, // part index pinned by click
   active: -1 as number,
