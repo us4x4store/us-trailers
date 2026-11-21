@@ -55,3 +55,15 @@
     aspect-ratio: 4 / 3;
   }
 }
+.more {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a9c0ee;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

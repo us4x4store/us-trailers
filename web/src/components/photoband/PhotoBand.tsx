@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Photo from "@/components/Photo";
 import { IMAGES } from "@/content/images";
 import styles from "./photoband.module.css";
@@ -11,6 +12,9 @@ export default function PhotoBand() {
         <h2 id="band-title" className={styles.title}>
           Drawn in Cape Town. Proven on the Tankwa.
         </h2>
+        <Link className={styles.more} href="/builds">
+          Read the build stories →
+        </Link>
       </header>
       <div className={styles.grid}>
         <Photo img={IMAGES.heroToyHauler} sizes="(max-width: 760px) 100vw, 66vw" caption="Toy hauler, R355" className={styles.a} />
