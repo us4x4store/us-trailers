@@ -484,6 +484,8 @@
 .vehLink {
   color: var(--ink);
   white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .checkNote {
   color: var(--red);
