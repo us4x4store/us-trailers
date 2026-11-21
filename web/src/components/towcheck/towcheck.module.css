@@ -283,3 +283,28 @@
 .unit input {
   width: 100%;
 }
+.fillRow {
+  margin: 0;
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--graphite);
+}
+.fillRow label {
+  font: 600 13px/1.2 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.fillRow select {
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1.5px solid var(--graphite);
+  background: var(--paper);
+  font: 600 14px/1 var(--mono);
+  color: var(--graphite);
+}

@@ -425,3 +425,69 @@
   background: color-mix(in srgb, var(--red) 10%, transparent);
   font: 500 13px/1.45 var(--mono);
 }
+.vehSelect {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 6px;
+  padding: 0 10px;
+  border: 1.5px solid var(--graphite);
+  background: var(--paper);
+  color: var(--graphite);
+  font: 600 13px/1 var(--mono);
+}
+.vehWarn {
+  color: var(--red);
+  font-weight: 600;
+}
+.rigCard {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--graphite);
+  border-left-width: 6px;
+  background: var(--paper);
+}
+.rigOk {
+  border-left-color: #2f7d4f;
+}
+.rigBad {
+  border-left-color: var(--red);
+}
+.rigK {
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.rigCard b {
+  font: 800 clamp(18px, 1.8vw, 24px)/1.1 var(--display);
+  font-stretch: 108%;
+  color: var(--graphite);
+}
+.rigCard p {
+  margin: 0;
+  font: 400 13px/1.45 var(--mono);
+}
+.rigSend {
+  justify-self: start;
+  min-height: 48px;
+  padding: 0 18px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.rigSend:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+@media (max-width: 760px) {
+  .rigSend {
+    justify-self: stretch;
+  }
+}

@@ -7,6 +7,7 @@ import { sendEnquiry, type EnquiryState } from "@/app/actions/enquire";
 import { buildStore } from "@/components/config/buildStore";
 import { COLOURS, encodeBuild, priceRange, rand, specs } from "@/trailer/pricing";
 import { track } from "@/lib/track";
+import { rigStore } from "@/content/vehicles";
 import styles from "./enquire.module.css";
 
 const USES = ["Bikes or quads", "Overlanding / camping", "Horses", "Mobile business", "Farm or contracting", "Something else"];
@@ -19,6 +20,18 @@ export default function Enquire() {
   const [attach, setAttach] = useState(false);
   const [t, setT] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [rig, setRig] = useState(rigStore.summary);
+  const [attachRig, setAttachRig] = useState(true);
+  useEffect(() => {
+    const f = () => {
+      setRig(rigStore.summary);
+      setAttachRig(true);
+    };
+    rigStore.listeners.add(f);
+    return () => {
+      rigStore.listeners.delete(f);
+    };
+  }, []);
 
   useEffect(() => {
     setT(Date.now());
@@ -179,6 +192,22 @@ export default function Enquire() {
             </div>
           )}
         </div>
+
+        {rig && (
+          <div className={styles.build}>
+            <label className={styles.check}>
+              <input type="checkbox" checked={attachRig} onChange={(e) => setAttachRig(e.target.checked)} />
+              <span>Attach my rig from the test drive</span>
+            </label>
+            {attachRig && (
+              <div className={styles.sheet}>
+                <input type="hidden" name="rig" value={rig} />
+                <span>{rig}</span>
+                <a href="#drive">Change it</a>
+              </div>
+            )}
+          </div>
+        )}
 
         <label className={styles.check}>
           <input id="consent" type="checkbox" name="consent" defaultChecked={v("consent") === "on"} aria-invalid={!!err("consent")} aria-describedby={err("consent") ? "consent-err" : undefined} />

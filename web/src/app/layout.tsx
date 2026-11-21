@@ -3,7 +3,7 @@ import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import Dock from "@/components/Dock";
 import { Analytics } from "@vercel/analytics/next";
 import ClickTracking from "@/components/ClickTracking";
 import { SITE_URL } from "@/content/site";
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Nav />
         {children}
         <Footer />
-        <WhatsAppButton />
+        <Dock />
         <Analytics />
         <ClickTracking />
       </body>

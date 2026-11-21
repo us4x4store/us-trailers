@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { KINDS, tareKg, type Kind } from "@/trailer/model";
 import { gvmKg } from "@/trailer/pricing";
-import { BAKKIE, drive, KIND_LOADS, LOADS, NOSE_BAND, RIG_CFG, type LoadKind, type Readout } from "./driveState";
+import { VEHICLES, rigStore, vehicleStore, type Vehicle } from "@/content/vehicles";
+import { drive, KIND_LOADS, LOADS, NOSE_BAND, RIG_CFG, type LoadKind, type Readout } from "./driveState";
 import type { Surface } from "./road";
 import { sound } from "@/lib/sound";
 import { towCheck } from "@/content/towrules";
@@ -19,6 +20,8 @@ const SURFACES: { id: Surface; label: string; note: string }[] = [
   { id: "rocks", label: "Rocks", note: "Axle-twisters and boulders" },
 ];
 const WHEEL_NAMES = ["Front left", "Front right", "Rear left", "Rear right"];
+
+const fmtKg = (n: number) => `${n.toLocaleString("en-ZA").replace(/,/g, " ")} kg`;
 
 export default function TestDrive() {
   const root = useRef<HTMLElement>(null);
@@ -37,6 +40,15 @@ export default function TestDrive() {
   const [r, setR] = useState<Readout>(drive.readout);
   const [resetKey, setResetKey] = useState(drive.resetKey);
   const [notice, setNotice] = useState("");
+  const [veh, setVeh] = useState<Vehicle>(vehicleStore.v);
+  const [rigSent, setRigSent] = useState(false);
+  useEffect(() => {
+    const f = () => setVeh(vehicleStore.v);
+    vehicleStore.listeners.add(f);
+    return () => {
+      vehicleStore.listeners.delete(f);
+    };
+  }, []);
 
   useEffect(() => {
     const io = new IntersectionObserver((es) => es[0].isIntersecting && setMounted(true), { rootMargin: "120% 0px" });
@@ -84,9 +96,19 @@ export default function TestDrive() {
   const over = r.gross > GVM;
   const nosePct = r.gross > 0 ? (r.noseKg / r.gross) * 100 : 0;
   const noseOk = !r.ready || (nosePct >= band.lo && nosePct <= band.hi);
-  const combo = BAKKIE.gvm + GVM;
-  // the same rules the tow checker uses, for this example bakkie and trailer
-  const rules = towCheck({ vehicle: "bakkie", tare: BAKKIE.tare, gvm: BAKKIE.gvm, trailerGvm: GVM, towRating: BAKKIE.towRating, gcm: BAKKIE.gcm });
+  // the same rules the tow checker uses, for the visitor's vehicle and this trailer
+  const rules = towCheck({ vehicle: veh.kind, tare: veh.tare, gvm: veh.gvm, trailerGvm: GVM, towRating: veh.towRating, gcm: veh.gcm });
+  // what is actually on the road right now, against the vehicle's own limits
+  const overRating = r.ready && r.gross > veh.towRating;
+  const overGcm = r.ready && veh.gvm + r.gross > veh.gcm;
+  const rigOk = r.ready && noseOk && !over && !overRating && !overGcm;
+  const rigLine = `${veh.name} + ${KINDS.find((k) => k.id === kind)?.name ?? kind}, ${r.gross.toLocaleString("en-ZA").replace(/,/g, " ")} kg loaded, ${nosePct.toFixed(1)}% on the ball, code ${rules.licence.code}, ${rules.speed.limit}${rigOk ? "" : " (needs a look: " + [!noseOk && "hitch load", over && "over GVM", overRating && "over towing rating", overGcm && "over GCM"].filter(Boolean).join(", ") + ")"}`;
+  const sendRig = () => {
+    rigStore.set(rigLine);
+    setRigSent(true);
+    track("rig_attached", { vehicle: veh.id, kind, ok: rigOk });
+    document.getElementById("enquire")?.scrollIntoView({ behavior: "smooth" });
+  };
   const live = r.liveNoseKg;
 
   return (
@@ -219,7 +241,7 @@ export default function TestDrive() {
                 Set off at 40 km/h
               </button>
             )}
-            {kmh > 100 && combo > 3500 && (
+            {kmh > 100 && rules.speed.sign && (
               <p className={styles.warn}>
                 Over the limit for this combination: {rules.speed.limit}. {rules.speed.why}
               </p>
@@ -357,13 +379,42 @@ export default function TestDrive() {
                 </dd>
               </div>
               <div>
-                <dt>Tow vehicle</dt>
+                <dt>
+                  <label htmlFor="drive-vehicle">Tow vehicle</label>
+                </dt>
                 <dd>
-                  {BAKKIE.name}: tare {BAKKIE.tare.toLocaleString("en-ZA").replace(/,/g, " ")} kg, GVM {BAKKIE.gvm.toLocaleString("en-ZA").replace(/,/g, " ")} kg, rated{" "}
-                  {BAKKIE.towRating.toLocaleString("en-ZA").replace(/,/g, " ")} kg braked
+                  <select
+                    id="drive-vehicle"
+                    className={styles.vehSelect}
+                    value={veh.id}
+                    onChange={(e) => {
+                      vehicleStore.set(VEHICLES.find((v) => v.id === e.target.value) ?? VEHICLES[0]);
+                      setRigSent(false);
+                    }}
+                  >
+                    {VEHICLES.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  Tare {fmtKg(veh.tare)}, GVM {fmtKg(veh.gvm)}, GCM {fmtKg(veh.gcm)}, rated {fmtKg(veh.towRating)} braked. Typical figures: your licence disc wins.
+                  {overRating && <b className={styles.vehWarn}> This load is over its {fmtKg(veh.towRating)} towing rating.</b>}
+                  {!overRating && overGcm && <b className={styles.vehWarn}> Vehicle and trailer together are over its {fmtKg(veh.gcm)} GCM.</b>}
                 </dd>
               </div>
             </dl>
+
+            <div className={`${styles.rigCard} ${rigOk ? styles.rigOk : styles.rigBad}`} aria-live="polite">
+              <span className={styles.rigK}>Your rig</span>
+              <b>
+                Code {rules.licence.code} · {rules.speed.limit} · {r.ready ? `${nosePct.toFixed(1)}% nose` : "weighing…"} {r.ready ? (rigOk ? "✓" : "✕") : ""}
+              </b>
+              <p>{rigLine}</p>
+              <button type="button" className={styles.rigSend} onClick={sendRig} disabled={!r.ready}>
+                {rigSent ? "Attached to your brief ✓" : "Send this rig with my brief"}
+              </button>
+            </div>
           </div>
         </aside>
       </div>

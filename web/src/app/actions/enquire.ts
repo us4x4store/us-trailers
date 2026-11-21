@@ -17,6 +17,7 @@ const Schema = z.object({
   timeline: z.enum(["", "As soon as possible", "Within 3 months", "Within 6 months", "Just planning"]).default(""),
   message: z.string().trim().max(2000).optional().default(""),
   build: z.string().trim().max(40).optional().default(""),
+  rig: z.string().trim().max(300).optional().default(""),
   consent: z.literal("on", { message: "Please agree so we can contact you about your trailer." }),
   // spam traps
   company: z.string().max(0).optional().default(""),
@@ -69,6 +70,7 @@ export async function sendEnquiry(_: EnquiryState, form: FormData): Promise<Enqu
     `Timeline: ${d.timeline || "-"}`,
     "",
     buildText,
+    d.rig ? `Rig from the test drive: ${d.rig}` : "",
     "",
     d.message || "(no message)",
   ].join("\n");

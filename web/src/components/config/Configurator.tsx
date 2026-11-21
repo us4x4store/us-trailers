@@ -86,7 +86,8 @@ export default function Configurator() {
   const code = encodeBuild(cfg);
 
   const share = async () => {
-    const url = `${location.origin}${location.pathname}?build=${code}#design`;
+    // the /b/ link unfurls as a drawing of this exact build on WhatsApp and socials
+    const url = `${location.origin}/b/${code}`;
     try {
       if (navigator.share)
         await navigator.share({ title: "My US Trailers build", url });
@@ -341,7 +342,7 @@ export default function Configurator() {
             </div>
           </dl>
 
-          <div className={styles.dock}>
+          <div className={styles.dock} data-own-dock>
             <div className={styles.price}>
               <span>Example price range</span>
               <b>

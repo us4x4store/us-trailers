@@ -345,6 +345,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* same chapters, stepped through in under half the scroll */
+  .film {
+    height: 300svh;
+  }
   .intro,
   .chapter,
   .bom {

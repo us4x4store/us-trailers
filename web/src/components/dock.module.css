@@ -1,0 +1,65 @@
+.dock {
+  position: fixed;
+  z-index: 30;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  gap: 8px;
+  transition: transform 0.4s var(--ease), opacity 0.3s;
+}
+.wa,
+.price {
+  min-height: 52px;
+  padding: 0 18px;
+  display: inline-grid;
+  place-items: center;
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.wa {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.5);
+}
+/* laptops keep the single button, always there */
+.price {
+  display: none;
+}
+@media (max-width: 760px) {
+  .dock {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    gap: 0;
+    padding: 8px max(12px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+    background: var(--paper);
+    border-top: 1.5px solid var(--graphite);
+  }
+  .wa,
+  .price {
+    flex: 1;
+    display: inline-grid;
+    box-shadow: none;
+  }
+  .wa {
+    background: var(--paper);
+    color: var(--graphite);
+    border: 1.5px solid var(--graphite);
+    margin-right: 8px;
+  }
+  .price {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .hide {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock {
+    transition: none;
+  }
+}

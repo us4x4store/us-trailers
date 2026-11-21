@@ -141,7 +141,7 @@ export default function TypePageView({ slug }: { slug: string }) {
 
       <FaqList ids={t.faq} heading={false} id={`faq-${t.slug}`} />
 
-      <div className={styles.stickyCta}>
+      <div className={styles.stickyCta} data-own-dock>
         <span>{t.short}, built for you</span>
         <Link href="/#enquire">Get a price</Link>
       </div>

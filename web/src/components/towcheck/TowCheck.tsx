@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/track";
 import { fmt, towCheck, type TowInput } from "@/content/towrules";
+import { VEHICLES, vehicleStore, type Vehicle } from "@/content/vehicles";
 import styles from "./towcheck.module.css";
 
 type Field = "tare" | "gvm" | "trailerGvm" | "towRating" | "gcm";
@@ -20,6 +21,21 @@ const START: Record<Field, string> = { tare: "2100", gvm: "3210", trailerGvm: "1
 export default function TowCheck({ id = "tow-check" }: { id?: string }) {
   const [vehicle, setVehicle] = useState<TowInput["vehicle"]>("bakkie");
   const [raw, setRaw] = useState(START);
+  const [preset, setPreset] = useState("");
+  const fill = (v: Vehicle) => {
+    setVehicle(v.kind);
+    setPreset(v.id);
+    setRaw((cur) => ({ ...cur, tare: String(v.tare), gvm: String(v.gvm), towRating: String(v.towRating), gcm: String(v.gcm) }));
+  };
+  // the vehicle picked in the test rig fills this sheet too
+  useEffect(() => {
+    const f = () => fill(vehicleStore.v);
+    if (vehicleStore.chosen) f();
+    vehicleStore.listeners.add(f);
+    return () => {
+      vehicleStore.listeners.delete(f);
+    };
+  }, []);
   const n = (k: Field) => (raw[k].trim() === "" ? NaN : Number(raw[k]));
   const missing = FIELDS.filter((f) => !f.optional && !(n(f.k) > 0)).map((f) => f.label.toLowerCase());
   const r =
@@ -61,6 +77,25 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
               ))}
             </div>
           </fieldset>
+          <p className={styles.fillRow}>
+            <label htmlFor={`${id}-preset`}>Fill from a vehicle</label>
+            <select
+              id={`${id}-preset`}
+              value={preset}
+              onChange={(e) => {
+                const v = VEHICLES.find((x) => x.id === e.target.value);
+                if (v) vehicleStore.set(v);
+                else setPreset("");
+              }}
+            >
+              <option value="">My own numbers</option>
+              {VEHICLES.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          </p>
           {FIELDS.map((f) => (
             <div className={styles.field} key={f.k}>
               <label htmlFor={`${id}-${f.k}`}>{f.label}</label>
@@ -73,7 +108,10 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
                   step={10}
                   value={raw[f.k]}
                   placeholder={f.optional ? "optional" : "e.g. 2 100"}
-                  onChange={(e) => setRaw({ ...raw, [f.k]: e.target.value })}
+                  onChange={(e) => {
+                    setRaw({ ...raw, [f.k]: e.target.value });
+                    if (f.k !== "trailerGvm") setPreset("");
+                  }}
                 />
                 <span>kg</span>
               </div>
@@ -141,7 +179,7 @@ export default function TowCheck({ id = "tow-check" }: { id?: string }) {
         </div>
 
         {/* phones: the answer stays in view while you type */}
-        <div className={styles.dock} aria-hidden="true">
+        <div className={styles.dock} aria-hidden="true" data-own-dock>
           {r ? (
             <>
               <span>

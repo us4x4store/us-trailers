@@ -77,6 +77,14 @@ _Last updated: 2026-11-19 (session 1)_
 - Enquiry form always completes. With the inbox not connected it offers "Send on WhatsApp" and "Email it", both with the full brief filled in, plus "Copy my brief". Tested with scripts/test-offline.js.
 - Fourth independent review running.
 
+## Round 8 (session 4)
+- One journey. Pick your tow vehicle in the test rig (six common SA bakkies and SUVs, typical figures in web/src/content/vehicles.ts). Licence, brakes, speed and the rated and GCM checks use it, and the tow checker fills from the same choice.
+- A "Your rig" card shows code, speed, hitch % and ✓/✕. "Send this rig with my brief" attaches it to the enquiry and the email.
+- Share links: /b/<build code>, 312 prerendered. Each unfurls on WhatsApp and socials with its own drawing card (/api/og/<code>), then opens the designer with that build loaded.
+- Phone dock: WhatsApp + Get a price bar after the film. It hides over the film, the form, the footer and any section with its own price bar. Laptops keep the single button.
+- Reduced motion: the film is 300svh instead of 700svh.
+- Tests: scripts/test-journey.js, scripts/verify-review4.js, check-pages, test-offline all pass.
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.
