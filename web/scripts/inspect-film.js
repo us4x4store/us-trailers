@@ -27,7 +27,7 @@ const POINTS = (process.env.POINTS || "0.02,0.08,0.17,0.29,0.39,0.5,0.62,0.73,0.
     await page.waitForTimeout(1500);
     const r = await page.evaluate(() => {
       const { gl, scene, camera, film } = window.__film;
-      gl.render(scene, camera);
+      // read the frame exactly as shown (dev keeps the drawing buffer), finishing pass included
       const ctx = gl.getContext();
       const w = ctx.drawingBufferWidth, h = ctx.drawingBufferHeight;
       const px = new Uint8Array(w * h * 4);

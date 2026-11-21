@@ -79,7 +79,8 @@ export function partMassKg(part: Part): number {
       kg += m.kg;
       continue;
     }
-    const built = buildPartGeometry({ ...part, meshes: [m] }, true);
+    if (m.cosmetic) continue;
+    const built = buildPartGeometry({ ...part, meshes: [m] }, true, { detail: false });
     for (const { mat, geo } of built.byMat) kg += m.shell ? area(geo) * m.shell * (SHEET[mat] ?? 2700) : volume(geo) * DENSITY[mat];
   }
   cache.set(key, kg);

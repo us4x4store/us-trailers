@@ -1,7 +1,8 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { ContactShadows } from "@react-three/drei";
+import { Finish, setupRenderer, StudioEnv } from "@/components/three/Studio";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { buildTrailer, DEFAULT_CONFIG, DIM, EXAMPLE_CFG, GN, OFF, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
@@ -460,17 +461,25 @@ function Ridge() {
 }
 
 function Floor() {
+  // unlit, so the floor is exactly the page colour and there is no horizon line; a separate
+  // shadow catcher lays the real shadows on top
   const ref = useRef<THREE.Mesh>(null);
   useFrame(() => {
     const finishK = clamp01((film.ps - RANGES.finish[0]) / (RANGES.finish[1] - RANGES.finish[0]));
-    const m = ref.current!.material as THREE.MeshStandardMaterial;
+    const m = ref.current!.material as THREE.MeshBasicMaterial;
     m.color.copy(PAPER).lerp(GROUND, easeInOut(finishK));
   });
   return (
-    <mesh ref={ref} rotation-x={-Math.PI / 2} position-y={-0.001} receiveShadow>
-      <circleGeometry args={[40, 64]} />
-      <meshStandardMaterial color={PAPER} roughness={1} />
-    </mesh>
+    <>
+      <mesh ref={ref} rotation-x={-Math.PI / 2} position-y={-0.002}>
+        <circleGeometry args={[40, 64]} />
+        <meshBasicMaterial color={PAPER} fog />
+      </mesh>
+      <mesh rotation-x={-Math.PI / 2} position-y={0.001} receiveShadow>
+        <planeGeometry args={[30, 30]} />
+        <shadowMaterial transparent opacity={0.22} />
+      </mesh>
+    </>
   );
 }
 const GROUND = new THREE.Color("#2A2620");
@@ -523,21 +532,16 @@ export default function FilmScene({ active = true, kind = "toyhauler" }: { activ
       shadows={!lite}
       dpr={lite ? [1, 1.5] : [1, 2]}
       camera={{ fov: 32, near: 0.1, far: 140, position: [0.5, 2.4, 14] }}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      gl={{ antialias: lite, powerPreference: "high-performance", preserveDrawingBuffer: process.env.NODE_ENV !== "production" }}
       onCreated={({ scene, gl, camera }) => {
         scene.background = PAPER.clone();
         scene.fog = new THREE.Fog(PAPER.clone(), 24, 60);
-        gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.05;
+        setupRenderer(gl);
         if (process.env.NODE_ENV !== "production") (window as unknown as { __film: unknown }).__film = { scene, gl, camera, film };
       }}
     >
       <Lights />
-      <Environment resolution={lite ? 64 : 128} frames={1}>
-        <Lightformer form="rect" intensity={3} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} />
-        <Lightformer form="rect" intensity={1.5} position={[-8, 2, 4]} rotation-y={Math.PI / 2.5} scale={[8, 3, 1]} />
-        <Lightformer form="rect" intensity={1.2} color="#ffd9a0" position={[8, 1.5, -4]} rotation-y={-Math.PI / 2.5} scale={[8, 3, 1]} />
-      </Environment>
+      <StudioEnv resolution={lite ? 128 : 256} />
       <Floor />
       <GridLines />
       {!lite && <ContactShadows position={[0, 0.004, 0]} opacity={0.45} scale={14} blur={2.4} far={3} resolution={512} />}
@@ -545,6 +549,7 @@ export default function FilmScene({ active = true, kind = "toyhauler" }: { activ
       <DuskGlow key={"g" + kind} kind={kind} lite={lite} />
       <Ridge />
       <Sparks api={sparks} />
+      {!lite && <Finish />}
     </Canvas>
   );
 }

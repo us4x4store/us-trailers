@@ -1,7 +1,8 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
+import { Finish, setupRenderer, StudioEnv } from "@/components/three/Studio";
 import {
   CuboidCollider,
   HeightfieldCollider,
@@ -597,11 +598,11 @@ export default function DriveScene({ surface, active = true, resetKey = 0, kind 
       shadows={!lite}
       dpr={lite ? [1, 1.5] : [1, 2]}
       camera={{ fov: 34, near: 0.1, far: 300, position: [-8, 3.2, 7] }}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      gl={{ antialias: lite, powerPreference: "high-performance" }}
       onCreated={({ scene, gl }) => {
         scene.background = new THREE.Color("#E9E2D3");
         scene.fog = new THREE.Fog(new THREE.Color("#E9E2D3"), 30, 110);
-        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        setupRenderer(gl);
       }}
     >
       <hemisphereLight args={["#fff8ec", "#a89577", 1.0]} />
@@ -618,16 +619,14 @@ export default function DriveScene({ surface, active = true, resetKey = 0, kind 
       >
         <object3D attach="target" position={[0, 0, 0]} />
       </directionalLight>
-      <Environment resolution={64} frames={1}>
-        <Lightformer form="rect" intensity={2.5} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} />
-        <Lightformer form="rect" intensity={1.4} color="#ffe2b8" position={[8, 2, -4]} rotation-y={-Math.PI / 2.5} scale={[8, 3, 1]} />
-      </Environment>
+<StudioEnv resolution={lite ? 128 : 256} warm="#ffe2b8" />
       <Physics gravity={[0, -9.81, 0]} timeStep={1 / 60} key={`${kind}-${surface}-${resetKey}`} paused={!active}>
         <Road surface={surface} lite={lite} />
         <Rig lite={lite} />
       </Physics>
       <CameraRig />
       <ShadowFollow />
+      {!lite && <Finish ao={0.8} />}
     </Canvas>
   );
 }

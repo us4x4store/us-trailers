@@ -99,21 +99,55 @@ function solarTex() {
   );
 }
 
+/** All-terrain tread: staggered blocks across the crown, smooth sidewalls (bump map).
+ *  On the lathe the texture's x runs round the tyre and y runs across the profile. */
+function treadBump() {
+  return canvasTex(
+    256,
+    (c, s) => {
+      c.fillStyle = "#000";
+      c.fillRect(0, 0, s, s);
+      // [across from, across to, phase round the tyre] for one pitch; repeated 36 times round
+      const blocks: [number, number, number][] = [
+        [0.36, 0.48, 0],
+        [0.52, 0.64, 0.5],
+        [0.3, 0.36, 0.5],
+        [0.64, 0.7, 0],
+      ];
+      for (const [v0, v1, ph] of blocks) {
+        const g = c.createLinearGradient(0, v0 * s, 0, v1 * s);
+        g.addColorStop(0, "#aaa");
+        g.addColorStop(0.5, "#fff");
+        g.addColorStop(1, "#aaa");
+        c.fillStyle = g;
+        const x = ph * s + s * 0.07;
+        c.fillRect(x, v0 * s, s * 0.36, (v1 - v0) * s);
+      }
+    },
+    [36, 1],
+  );
+}
+
 export type MatSet = Record<Mat, THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial>;
 
 export function createMaterials(bodyColour: string): MatSet {
   const spang = spangle();
   const bump = checkerBump();
+  const tread = treadBump();
   const m: MatSet = {
     galv: new THREE.MeshStandardMaterial({ color: "#B9C1C4", metalness: 0.85, roughness: 0.42, roughnessMap: spang }),
-    powder: new THREE.MeshPhysicalMaterial({ color: bodyColour, metalness: 0.1, roughness: 0.48, clearcoat: 0.25, clearcoatRoughness: 0.5 }),
-    alu: new THREE.MeshStandardMaterial({ color: "#C9CED1", metalness: 0.8, roughness: 0.35 }),
+    // satin powder coat: a soft base with a thin glossy skin on top, like the real thing
+    powder: new THREE.MeshPhysicalMaterial({ color: bodyColour, metalness: 0.05, roughness: 0.42, clearcoat: 0.55, clearcoatRoughness: 0.22, sheen: 0.15, sheenRoughness: 0.6 }),
+    // brushed aluminium: trims, rails, plate
+    alu: new THREE.MeshPhysicalMaterial({ color: "#D3D7DA", metalness: 1, roughness: 0.3, anisotropy: 0.5 }),
     checker: new THREE.MeshStandardMaterial({ color: "#C3C8CB", metalness: 0.9, roughness: 0.3, bumpMap: bump, bumpScale: 2.2 }),
-    rubber: new THREE.MeshStandardMaterial({ color: "#151719", metalness: 0, roughness: 0.92 }),
-    rim: new THREE.MeshStandardMaterial({ color: "#3A3F44", metalness: 0.7, roughness: 0.38 }),
+    rubber: new THREE.MeshStandardMaterial({ color: "#1A1C1E", metalness: 0, roughness: 0.86, bumpMap: tread, bumpScale: 6 }),
+    // satin-black steel wheels with a clear coat
+    rim: new THREE.MeshPhysicalMaterial({ color: "#1E2124", metalness: 0.55, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.2 }),
     brake: new THREE.MeshStandardMaterial({ color: "#8E9498", metalness: 0.9, roughness: 0.25 }),
     ply: new THREE.MeshStandardMaterial({ color: "#B08A5A", metalness: 0, roughness: 0.8 }),
-    glass: new THREE.MeshPhysicalMaterial({ color: "#0E1418", metalness: 0, roughness: 0.08, clearcoat: 1 }),
+    // tinted acrylic windows: dark, with sharp reflections
+    glass: new THREE.MeshPhysicalMaterial({ color: "#0B1014", metalness: 0.2, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02, reflectivity: 0.9 }),
     ledRed: new THREE.MeshStandardMaterial({ color: "#5A0E0A", emissive: "#FF2A14", emissiveIntensity: 0.25, roughness: 0.3 }),
     ledAmber: new THREE.MeshStandardMaterial({ color: "#5A3A0A", emissive: "#FFA51A", emissiveIntensity: 0.25, roughness: 0.3 }),
     ledWhite: new THREE.MeshStandardMaterial({ color: "#D8D8D0", emissive: "#FFF3DC", emissiveIntensity: 0.1, roughness: 0.3 }),

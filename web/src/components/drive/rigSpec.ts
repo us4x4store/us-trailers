@@ -43,7 +43,7 @@ export function rigSpec(kind: Kind): RigSpec {
   const parts = buildTrailer(cfg).filter((p) => !p.wheel);
   const massBoxes: MassBox[] = parts.map((p) => {
     const box = new THREE.Box3();
-    buildPartGeometry(p, true).byMat.forEach((b) => {
+    buildPartGeometry(p, true, { detail: false }).byMat.forEach((b) => {
       b.geo.computeBoundingBox();
       box.union(b.geo.boundingBox!);
     });

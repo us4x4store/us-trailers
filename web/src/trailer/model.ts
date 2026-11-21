@@ -35,6 +35,8 @@ export type Shape =
   | { k: "box"; s: V3 }
   | { k: "cyl"; r: number; h: number; axis: "x" | "y" | "z"; seg?: number; r2?: number }
   | { k: "tyre"; r: number; w: number }
+  /** a road wheel: barrel, dished face, six spokes, hub and nuts (mass is taken as a solid disc) */
+  | { k: "wheelRim"; r: number; w: number }
   /** square/rect section member between two points; s = [height, width] of the section */
   | { k: "beam"; a: V3; b: V3; s: [number, number] }
   /** round rod between two points */
@@ -53,6 +55,8 @@ export type MeshSpec = {
   shell?: number;
   /** bought-in component with a catalogue mass, kg (overrides the geometry) */
   kg?: number;
+  /** drawn for looks only (trims, mouldings): left out of masses and the physics boxes */
+  cosmetic?: boolean;
 };
 
 export type ChapterId = "drawing" | "chassis" | "running" | "wheels" | "frame" | "skin" | "doors" | "systems" | "finish";
@@ -136,6 +140,14 @@ export const DIM = {
 };
 
 const lin = (a: number, b: number, n: number) => Array.from({ length: n }, (_, i) => a + ((b - a) * i) / (n - 1));
+
+/* Extruded aluminium corner trims and rub rails: what makes a box body read as a built trailer.
+   Drawn for looks only; their few kilograms are inside the panel allowance. */
+const TRIM = 0.03;
+const trimX = (x0: number, x1: number, y: number, z: number): MeshSpec => ({ shape: { k: "cyl", r: TRIM, h: x1 - x0, axis: "x" }, p: [(x0 + x1) / 2, y, z], m: "alu", cosmetic: true });
+const trimY = (x: number, y0: number, y1: number, z: number): MeshSpec => ({ shape: { k: "cyl", r: TRIM, h: y1 - y0, axis: "y" }, p: [x, (y0 + y1) / 2, z], m: "alu", cosmetic: true });
+const trimZ = (x: number, y: number, z0: number, z1: number): MeshSpec => ({ shape: { k: "cyl", r: TRIM, h: z1 - z0, axis: "z" }, p: [x, y, (z0 + z1) / 2], m: "alu", cosmetic: true });
+const rubRail = (x0: number, x1: number, y: number, z: number): MeshSpec => ({ shape: { k: "box", s: [x1 - x0, 0.07, 0.018] }, p: [(x0 + x1) / 2, y, z], m: "alu", cosmetic: true });
 
 export function axlePositions(cfg: TrailerConfig): number[] {
   // positions tuned in the test rig so the hitch carries ~9% (camper) and ~20% (gooseneck) when parked
@@ -291,7 +303,7 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
         wheel: { x: ax, side: s },
         meshes: [
           { shape: { k: "tyre", r: wheelR, w: tyreW }, p: [ax, wheelR, s * trackZ], m: "rubber" },
-          { shape: { k: "cyl", r: 0.21, h: tyreW * 0.82, axis: "z" }, p: [ax, wheelR, s * trackZ], m: "rim" },
+          { shape: { k: "wheelRim", r: 0.21, w: tyreW * 0.82 }, p: [ax, wheelR, s * trackZ], rot: [0, s > 0 ? 0 : Math.PI, 0], m: "rim" },
           { shape: { k: "cyl", r: 0.05, h: tyreW * 0.9, axis: "z" }, p: [ax, wheelR, s * trackZ], m: "galv" },
         ],
       });
@@ -375,7 +387,10 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     anchor: [0.4, floorY + 1.4, hz + 0.01],
     from: [0, 0, 2.6],
     explode: [0, 0, 1.3],
-    meshes: [1, -1].map((s) => ({ shape: { k: "box", s: [L, bodyH, 0.012] }, p: [0, floorY + bodyH / 2, s * (hz + 0.006)] as V3, m: "powder" as Mat } as MeshSpec)),
+    meshes: [
+      ...[1, -1].map((s) => ({ shape: { k: "box", s: [L, bodyH, 0.012] }, p: [0, floorY + bodyH / 2, s * (hz + 0.006)] as V3, m: "powder" as Mat } as MeshSpec)),
+      ...[1, -1].flatMap((s) => [trimY(-hx, floorY, roofY, s * (hz + 0.006)), rubRail(-hx, hx, floorY + 0.06, s * (hz + 0.016))]),
+    ],
   });
   parts.push({
     id: "nose",
@@ -391,6 +406,7 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
       { shape: { k: "box", s: [0.012, bodyH, bodyW + 0.024] }, p: [hx + 0.006, floorY + bodyH / 2, 0], m: "powder" },
       { shape: { k: "box", s: [0.4, 0.5, bodyW - 0.1] }, p: [hx + 0.2, floorY + 0.25, 0], m: "checker", shell: 0.003 },
       { shape: { k: "box", s: [0.012, 0.58, bodyW - 0.1] }, p: [hx + 0.32, floorY + 0.36, 0], rot: [0, 0, 0.5], m: "checker" },
+      ...[1, -1].map((s) => trimY(hx + 0.006, floorY, roofY, s * (hz + 0.006))),
     ],
   });
   parts.push({
@@ -403,7 +419,12 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     anchor: [-0.8, roofY + 0.01, -0.3],
     from: [0, 2.8, 0],
     explode: [0, 1.6, 0],
-    meshes: [{ shape: { k: "box", s: [L + 0.02, 0.012, bodyW + 0.03] }, p: [0, roofY + 0.006, 0], m: "powder" }],
+    meshes: [
+      { shape: { k: "box", s: [L + 0.02, 0.012, bodyW + 0.03] }, p: [0, roofY + 0.006, 0], m: "powder" },
+      ...[1, -1].map((s) => trimX(-hx, hx + 0.006, roofY, s * (hz + 0.006))),
+      trimZ(hx + 0.006, roofY, -hz, hz),
+      trimZ(-hx, roofY, -hz, hz),
+    ],
   });
 
   /* ---------------- 06 Doors ---------------- */
@@ -632,7 +653,7 @@ function buildOffroad(cfg: TrailerConfig): Part[] {
       chapter: "wheels", anchor: [ax, wheelR * 2, s * trackZ], from: [0, 0.2, s * 2.2], explode: [0, 0, s * 0.8], wheel: { x: ax, side: s },
       meshes: [
         { shape: { k: "tyre", r: wheelR, w: tyreW }, p: [ax, wheelR, s * trackZ], m: "rubber" },
-        { shape: { k: "cyl", r: 0.21, h: tyreW * 0.82, axis: "z" }, p: [ax, wheelR, s * trackZ], m: "rim" },
+        { shape: { k: "wheelRim", r: 0.21, w: tyreW * 0.82 }, p: [ax, wheelR, s * trackZ], rot: [0, s > 0 ? 0 : Math.PI, 0], m: "rim" },
         { shape: { k: "cyl", r: 0.05, h: tyreW * 0.9, axis: "z" }, p: [ax, wheelR, s * trackZ], m: "galv" },
       ],
     }),
@@ -660,6 +681,9 @@ function buildOffroad(cfg: TrailerConfig): Part[] {
       { shape: { k: "box", s: [0.012, bodyH, bodyW] }, p: [hx, floorY + bodyH / 2, 0], m: "powder" },
       { shape: { k: "box", s: [0.012, bodyH, bodyW] }, p: [-hx, floorY + bodyH / 2, 0], m: "powder" },
       { shape: { k: "box", s: [0.36, 0.5, bodyW - 0.1] }, p: [hx + 0.18, floorY + 0.12, 0], m: "checker", shell: 0.003 },
+      ...sides.flatMap((s) => [trimY(hx, floorY, roofY, s * hz), trimY(-hx, floorY, roofY, s * hz), trimX(-hx, hx, roofY, s * hz), rubRail(-hx, hx, floorY + 0.06, s * (hz + 0.01))]),
+      trimZ(hx, roofY, -hz, hz),
+      trimZ(-hx, roofY, -hz, hz),
     ],
   });
   parts.push({
@@ -791,7 +815,7 @@ function buildGooseneck(cfg: TrailerConfig): Part[] {
         chapter: "wheels", anchor: [ax, wheelR * 2, s * trackZ], from: [0, 0.2, s * 2.2], explode: [0, 0, s * 0.8], wheel: { x: ax, side: s },
         meshes: [
           { shape: { k: "tyre", r: wheelR, w: tyreW }, p: [ax, wheelR, s * trackZ], m: "rubber" },
-          { shape: { k: "cyl", r: 0.21, h: tyreW * 0.82, axis: "z" }, p: [ax, wheelR, s * trackZ], m: "rim" },
+          { shape: { k: "wheelRim", r: 0.21, w: tyreW * 0.82 }, p: [ax, wheelR, s * trackZ], rot: [0, s > 0 ? 0 : Math.PI, 0], m: "rim" },
         ],
       }),
     );
@@ -826,6 +850,10 @@ function buildGooseneck(cfg: TrailerConfig): Part[] {
     meshes: sides.flatMap((s) => [
       { shape: { k: "box", s: [L, bodyH, 0.012] }, p: [0, floorY + bodyH / 2, s * (hz + 0.006)], m: "powder" } as MeshSpec,
       { shape: { k: "box", s: [neck, roofY - neckFloor, 0.012] }, p: [hx + neck / 2, (roofY + neckFloor) / 2, s * (hz + 0.006)], m: "powder" } as MeshSpec,
+      trimY(-hx, floorY, roofY, s * (hz + 0.006)),
+      trimY(hx, floorY, neckFloor, s * (hz + 0.006)),
+      trimX(hx, nx1, neckFloor, s * (hz + 0.006)),
+      rubRail(-hx, hx, floorY + 0.06, s * (hz + 0.016)),
     ]),
   });
   parts.push({
@@ -835,6 +863,9 @@ function buildGooseneck(cfg: TrailerConfig): Part[] {
       { shape: { k: "box", s: [0.012, roofY - neckFloor, bodyW + 0.024] }, p: [nx1, (roofY + neckFloor) / 2, 0], m: "powder" },
       { shape: { k: "box", s: [L + neck + 0.02, 0.012, bodyW + 0.03] }, p: [neck / 2, roofY + 0.006, 0], m: "powder" },
       { shape: { k: "box", s: [neck - 0.05, 0.012, bodyW] }, p: [hx + neck / 2, neckFloor - 0.012, 0], m: "powder" },
+      ...sides.flatMap((s) => [trimX(-hx, nx1, roofY, s * (hz + 0.006)), trimY(nx1, neckFloor, roofY, s * (hz + 0.006))]),
+      trimZ(nx1, roofY, -hz, hz),
+      trimZ(-hx, roofY, -hz, hz),
     ],
   });
   const rampH = bodyH - 0.06;

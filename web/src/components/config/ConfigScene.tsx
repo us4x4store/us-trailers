@@ -1,10 +1,9 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
+import { Finish, setupRenderer, StudioEnv } from "@/components/three/Studio";
 import {
   ContactShadows,
-  Environment,
-  Lightformer,
   OrbitControls,
 } from "@react-three/drei";
 import { lazy, Suspense, useEffect, useMemo, useRef } from "react";
@@ -328,7 +327,7 @@ export default function ConfigScene({
       shadows={!lite}
       dpr={lite ? [1, 1.5] : [1, 2]}
       camera={{ fov: 30, near: 0.1, far: 100, position: [9.5, 4.2, 11] }}
-      gl={{ antialias: true }}
+      gl={{ antialias: lite, preserveDrawingBuffer: process.env.NODE_ENV !== "production" }}
       onCreated={({ scene, gl, camera }) => {
         scene.background = PAPER.clone();
         if (process.env.NODE_ENV !== "production")
@@ -338,34 +337,11 @@ export default function ConfigScene({
             camera,
             THREE,
           };
-        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        setupRenderer(gl);
       }}
     >
       <LightRig />
-      <Environment resolution={64} frames={1}>
-        <Lightformer
-          form="rect"
-          intensity={3}
-          position={[0, 6, 0]}
-          rotation-x={Math.PI / 2}
-          scale={[12, 6, 1]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={1.4}
-          position={[-8, 2, 4]}
-          rotation-y={Math.PI / 2.5}
-          scale={[8, 3, 1]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={1.1}
-          color="#ffd9a0"
-          position={[8, 1.5, -4]}
-          rotation-y={-Math.PI / 2.5}
-          scale={[8, 3, 1]}
-        />
-      </Environment>
+      <StudioEnv resolution={lite ? 128 : 256} />
 
       {!lite && (
         <ContactShadows
@@ -396,6 +372,7 @@ export default function ConfigScene({
         }
         autoRotateSpeed={0.35}
       />
+      {!lite && <Finish />}
     </Canvas>
   );
 }
