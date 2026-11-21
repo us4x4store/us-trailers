@@ -75,3 +75,14 @@ export const film = {
     this.listeners.forEach((f) => f());
   },
 };
+
+/**
+ * How dark the stage is, 0..1: the garage lights go out as the systems chapter starts, so the RGB
+ * strips are the only light, and it stays dark into the dusk handover.
+ */
+export function darkK(p: number) {
+  const [s0, s1] = RANGES.systems;
+  const garage = clamp01((p - s0) / ((s1 - s0) * 0.25));
+  const finish = clamp01((p - RANGES.finish[0]) / (RANGES.finish[1] - RANGES.finish[0]));
+  return Math.max(garage, finish);
+}

@@ -92,9 +92,6 @@ export default function Nav() {
               {l.label}
             </a>
           ))}
-          <a href="/#drive" onClick={() => setOpen(false)}>
-            Tow it
-          </a>
           <p className={styles.mh}>Trailers</p>
           {TYPES.map((t) => (
             <a key={t.slug} href={`/${t.slug}`} onClick={() => setOpen(false)}>

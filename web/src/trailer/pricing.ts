@@ -32,6 +32,7 @@ export const COLOURS = [
   { name: "Karoo sand", hex: "#BFA67E" },
   { name: "Salt white", hex: "#E6E4DD" },
   { name: "Oxide", hex: "#6E3426" },
+  { name: "Gloss black", hex: "#0B0C0E" },
 ];
 
 export function priceRange(cfg: TrailerConfig): [number, number] {

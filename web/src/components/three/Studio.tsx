@@ -1,10 +1,10 @@
 "use client";
 
 import { Environment, Lightformer } from "@react-three/drei";
-import { EffectComposer, N8AO, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, N8AO, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
-import { useThree } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /**
@@ -48,6 +48,8 @@ export function Finish({ ao = 1, vignette = false }: { ao?: number; vignette?: b
   return (
     <EffectComposer multisampling={0} enableNormalPass={false}>
       <N8AO aoRadius={0.55} distanceFalloff={0.6} intensity={2.4 * ao} quality="medium" halfRes />
+      {/* only true light sources (LEDs, the sun on chrome) are bright enough to glow */}
+      <Bloom mipmapBlur luminanceThreshold={1} luminanceSmoothing={0.2} intensity={1.1} radius={0.72} />
       {/* Khronos PBR Neutral: made for product shots, and it leaves the page's paper colour as it is */}
       <ToneMapping mode={ToneMappingMode.NEUTRAL} />
       {vignette ? <Vignette eskil={false} offset={0.28} darkness={0.42} /> : <></>}
@@ -60,4 +62,35 @@ export function Finish({ ao = 1, vignette = false }: { ao?: number; vignette?: b
 export function setupRenderer(gl: THREE.WebGLRenderer) {
   gl.toneMapping = THREE.NeutralToneMapping;
   gl.toneMappingExposure = 1;
+}
+
+/** shared state for the RGB strips: a hue that slowly travels round the wheel, or a fixed colour */
+export const rgbState = { mode: "cycle" as "cycle" | "fixed", hue: 0.86, speed: 0.06, power: 1 };
+
+/**
+ * Drives every RGB strip in the scene (materials tagged userData.rgb): a slow colour chase along the
+ * trailer, the way the real controller runs. Respects reduced motion by holding one colour.
+ */
+export function RgbDriver() {
+  const scene = useThree((st) => st.scene);
+  const mats = useRef<THREE.MeshStandardMaterial[]>([]);
+  const frame = useRef(0);
+  const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  useFrame((state) => {
+    if (frame.current++ % 30 === 0) {
+      const found = new Set<THREE.MeshStandardMaterial>();
+      scene.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | THREE.MeshStandardMaterial[] | undefined;
+        (Array.isArray(m) ? m : m ? [m] : []).forEach((x) => x.userData?.rgb && found.add(x));
+      });
+      mats.current = [...found];
+    }
+    const t = state.clock.elapsedTime;
+    const base = rgbState.mode === "cycle" && !reduced ? (rgbState.hue + t * rgbState.speed) % 1 : rgbState.hue;
+    mats.current.forEach((m, i) => {
+      m.emissive.setHSL((base + i * 0.04) % 1, 1, 0.55);
+      m.emissiveIntensity = 3.2 * rgbState.power;
+    });
+  });
+  return null;
 }

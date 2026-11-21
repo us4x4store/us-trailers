@@ -23,22 +23,24 @@ export const TYPES: TypePage[] = [
   {
     slug: "toy-haulers",
     short: "Toy haulers",
-    title: "Toy haulers built in South Africa | US Trailers, Cape Town",
+    title: "Texan-style toy haulers for ATVs, built in South Africa | US Trailers",
     description:
-      "Custom enclosed toy haulers for bikes, quads and side-by-sides, built to order in Cape Town. Rear ramp door, tie-down floor, galvanised chassis. Not one for sale off a floor: one drawn for you.",
-    h1: "Toy haulers, built here.",
+      "Bespoke Texan-style enclosed toy haulers for ATVs, side-by-sides and bikes, built to order in Cape Town. V-nose, gloss paint, polished aluminium wheels, RGB lighting, E-track and a 400 kg ramp.",
+    h1: "Texan-style toy haulers.",
     intro:
-      "A garage on wheels for your bikes, quad or side-by-side, with somewhere to sleep, cook or work at the far end of the road. Few South African builders make them, so most people import one. We draw yours around what you ride and what you tow with.",
-    forWho: ["Motocross and enduro riders", "Quad and side-by-side owners", "Jet-ski families", "Race teams that need a mobile pit"],
+      "The big enclosed haulers you see at American race tracks, drawn for South African roads and built one at a time in Cape Town: a V-nose, gloss paint, polished aluminium and RGB from the underglow to the garage. Built around your ATVs, your bikes and your bakkie.",
+    forWho: ["ATV and quad owners", "Side-by-side and UTV crews", "Motocross and enduro riders", "Race teams that need a mobile pit"],
     points: [
-      { h: "A ramp that's also the back wall", p: "The rear door drops to a gentle loading angle, rated for a 300 kg quad, and seals shut as a wall when you close it." },
-      { h: "A floor that holds the load", p: "Marine ply under checker plate, with recessed tie-down points placed for your machines, so the straps pull straight down." },
+      { h: "The V-nose", p: "Two raked panels meet at a prow ahead of the box. It splits the air behind the bakkie and gives you a locker for fuel, tools and spares." },
+      { h: "A ramp for real machines", p: "Spring-assisted, rated for a 400 kg ATV, with a low loading angle. Closed, it seals as the back wall." },
+      { h: "Every machine strapped three ways", p: "Two rows of E-track round the walls and recessed rings in the floor, placed for your machines so the straps pull straight." },
+      { h: "Lights that sell it", p: "Addressable RGB under the floor, along the belt line, round the roof and through the garage. One controller, any colour, from your phone." },
       { h: "Balanced on the tow ball", p: "We position the axles so the coupling carries 7–10% of the loaded weight. That stops sway without squashing your bakkie's rear springs." },
       { h: "Living space if you want it", p: "Fold-down bunks, a galley, water and solar, all fitted to the frame rather than screwed into the skin." },
     ],
     rules: ["Most enclosed toy haulers are over 750 kg GVM, so you'll need a code EB licence.", "Over 750 kg GVM, the trailer must have brakes. We size them to your vehicle."],
     faq: ["licence", "brakes", "speed", "register"],
-    spec: [["Body length", "3.6–6.0 m"], ["Axles", "Single up to 4.2 m, tandem above"], ["GVM", "1 600–3 000 kg"], ["Licence", "Code EB"], ["Rear ramp", "Rated for a 300 kg quad"], ["Build time", "About 12 weeks"]],
+    spec: [["Body length", "3.6–6.0 m"], ["Axles", "Single up to 4.2 m, tandem above"], ["GVM", "1 600–3 000 kg"], ["Licence", "Code EB"], ["Rear ramp", "Spring-assisted, 400 kg"], ["Finish", "Gloss paint, polished wheels and fenders, RGB"], ["Build time", "About 12 weeks"]],
     drawing: "toyhauler",
   },
   {

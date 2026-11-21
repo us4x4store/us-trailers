@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const OG_SIZE = { width: 1200, height: 630 };
 
 /** Social share card in the Drawing Office style. */
-export function ogCard(title: [string, string], kicker = "Custom trailers · Cape Town", sheet = "UST-001") {
+export function ogCard(title: [string, string], kicker = "Bespoke Texan-style toy haulers · Cape Town", sheet = "UST-001") {
   const grid = "linear-gradient(#cdd5d0 1px, transparent 1px), linear-gradient(90deg, #cdd5d0 1px, transparent 1px)";
   return new ImageResponse(
     (
@@ -18,7 +18,7 @@ export function ogCard(title: [string, string], kicker = "Custom trailers · Cap
           <div style={{ fontSize: 92, fontWeight: 800, lineHeight: 0.95, letterSpacing: -2, color: "#1F3B73" }}>{title[1]}</div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 22, color: "#1F3B73", letterSpacing: 2, textTransform: "uppercase", borderTop: "2px solid #22262A", paddingTop: 16 }}>
-          <span>Toy haulers · Goosenecks · Off-road · Upgrades</span>
+          <span>V-nose · Polished aluminium · RGB lighting</span>
           <span>Dwg {sheet}</span>
         </div>
       </div>

@@ -5,5 +5,5 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export default function OgImage() {
-  return ogCard(["Drawn for you.", "Built once."]);
+  return ogCard(["Built for", "your toys."]);
 }

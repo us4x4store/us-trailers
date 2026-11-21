@@ -296,7 +296,8 @@
 }
 
 /* stage turns to dusk at handover: flip overlay ink */
-.stage:has(.end) {
+.stage:has(.end),
+.stage[data-dark] {
   --fg-on-stage: #f1efe8;
   --muted-on-stage: #b4bacb;
   --stage-bg: #1a1f36;

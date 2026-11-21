@@ -119,6 +119,19 @@ _Last updated: 2026-11-19 (session 1)_
   - section intros in the display face
   - full-screen photo heroes on the trailer-type pages
 
+## Round 12 (session 4): Texan-style rebuild, after Justin: "bespoke Texan-style trailers for toys like ATVs with RGB lighting", "take out the driving thing"
+- Removed the physics test drive (web/src/components/drive deleted) and the tow checker from home. The FAQ page keeps the checker.
+- Toy hauler:
+  - Texan V-nose (prism panels, polished checker wrap, prow trim)
+  - gloss-black default (colour C6), mirror-polished six-spoke wheels, polished stainless radius fenders
+  - E-track and floor rings
+  - RGB lighting: underglow, belt line, roof eyebrow and garage strips, colour-cycling (RgbDriver), with bloom on laptops
+  - a parked ATV in the garage at handover
+- Film: chapters rewritten. "Light it up" goes dark so the RGB shows, with a low side camera and RGB underglow on the ground.
+- Copy: hero "Built for your toys.", Texan positioning in the metadata, share cards, toy-hauler page and first build story.
+- Images: two new Texan concept renders (V-nose at an MX track at dusk; ATV on the ramp with the garage in RGB).
+- Toy hauler tare is now 1 534 kg (V-nose, fenders, RGB, E-track).
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.

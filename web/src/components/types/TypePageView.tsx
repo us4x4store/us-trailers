@@ -10,7 +10,7 @@ import styles from "./type.module.css";
 
 /** each type opens the designer already set to that kind of trailer */
 const DESIGN_LINK: Record<string, string> = {
-  "toy-haulers": "/?build=L48-A2-C0-R1-S1#design",
+  "toy-haulers": "/?build=L48-A2-C6-R1-S1#design",
   "off-road-trailers": "/?build=O30-A1-C2-R0-S1#design",
   "gooseneck-fifth-wheel-trailers": "/?build=G60-A2-C0-R0-S1#design",
 };

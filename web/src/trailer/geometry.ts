@@ -144,6 +144,23 @@ export function shapeGeometry(shape: Shape, lite = false, detail = true): THREE.
       const g = new THREE.TubeGeometry(new HelixCurve(shape.r, shape.turns), shape.turns * (lite ? 10 : 18), shape.wire, 6, false);
       return between(g, shape.a, shape.b);
     }
+    case "arch": {
+      const sh = new THREE.Shape();
+      sh.absarc(0, 0, shape.r, shape.a0, shape.a1, false);
+      sh.absarc(0, 0, shape.r - shape.t, shape.a1, shape.a0, true);
+      sh.closePath();
+      const g = new THREE.ExtrudeGeometry(sh, { depth: shape.w, bevelEnabled: !lite && detail, bevelThickness: 0.004, bevelSize: 0.003, bevelSegments: 2, curveSegments: lite ? 16 : 40 });
+      g.translate(0, 0, -shape.w / 2);
+      return g;
+    }
+    case "prism": {
+      const sh = new THREE.Shape(shape.pts.map(([x, z]) => new THREE.Vector2(x, -z)));
+      const g = new THREE.ExtrudeGeometry(sh, { depth: shape.y1 - shape.y0, bevelEnabled: false, curveSegments: 1 });
+      // the outline is drawn in x/-z and extruded along +z: turn it so the extrusion runs up y
+      g.rotateX(-Math.PI / 2);
+      g.translate(0, shape.y0, 0);
+      return g;
+    }
     case "tube": {
       const curve = new THREE.CatmullRomCurve3(shape.pts.map((p) => new THREE.Vector3(...p)), false, "catmullrom", 0.1);
       return new THREE.TubeGeometry(curve, lite ? 40 : 80, shape.r, 8, false);

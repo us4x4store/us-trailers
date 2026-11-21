@@ -9,7 +9,6 @@ import { RANGES, chapterAt, film } from "./timeline";
 import { DrawingPoster } from "./DrawingPoster";
 import { sound } from "@/lib/sound";
 import { encodeBuild } from "@/trailer/pricing";
-import { drive } from "@/components/drive/driveState";
 import { buildStore } from "@/components/config/buildStore";
 import { track } from "@/lib/track";
 import styles from "./film.module.css";
@@ -103,7 +102,7 @@ export default function AssemblyFilm() {
 
   return (
     <section ref={section} className={styles.film} aria-label="Watch a US Trailer being built, part by part">
-      <div className={styles.stage}>
+      <div className={styles.stage} data-dark={CHAPTERS[chapter].id === "systems" || isEnd || undefined}>
         <div className={styles.canvas} aria-hidden="true">
           <DrawingPoster faded={(ready && past) || kind !== "toyhauler"} />
           {ready && <FilmScene active={inView} kind={kind} />}
@@ -112,13 +111,13 @@ export default function AssemblyFilm() {
         {/* headline over the drawing */}
         <div className={`${styles.intro} ${isIntro ? styles.show : ""}`} inert={!isIntro}>
           <h1 className={styles.h1}>
-            <span className={styles.h1k}>Custom trailers, built in Cape Town</span>
-            Drawn for you.
+            <span className={styles.h1k}>Bespoke Texan-style toy haulers · Cape Town</span>
+            Built for
             <br />
-            <em>Built once.</em>
+            <em>your toys.</em>
           </h1>
           <p className={styles.lede}>
-            Toy haulers, goosenecks, off-road trailers and upgrades, designed around your vehicle, your licence code and your load. Scroll, and watch one being built from the first line to the last weld.
+            V-nose haulers for ATVs, side-by-sides and bikes: gloss paint, polished aluminium, RGB from the underglow to the garage. Scroll, and watch one built part by part, from the first line to the lights coming on.
           </p>
           <div className={styles.kinds} role="group" aria-label="Which trailer to build">
             <span>Build a</span>
@@ -131,7 +130,6 @@ export default function AssemblyFilm() {
                   film.kind = k.id;
                   setKind(k.id);
                   // the rest of the page follows the trailer the visitor chose here
-                  drive.setKind(k.id);
                   buildStore.suggest(EXAMPLE_CFG[k.id]);
                 }}
               >
@@ -143,8 +141,8 @@ export default function AssemblyFilm() {
             <a className={styles.ctaInk} href="#enquire">
               Get a price
             </a>
-            <a className={styles.skip} href="#drive">
-              Skip the build ↓
+            <a className={styles.skip} href="#design">
+              Design yours ↓
             </a>
           </div>
         </div>
@@ -277,8 +275,8 @@ export default function AssemblyFilm() {
             >
               {shared ? "Link copied" : "Share this build"}
             </button>
-            <a className={`${styles.ctaGhost} ${styles.endNext}`} href="#drive">
-              Now tow it →
+            <a className={`${styles.ctaGhost} ${styles.endNext}`} href="#design">
+              Design yours →
             </a>
           </div>
         )}

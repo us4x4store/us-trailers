@@ -364,10 +364,7 @@ export default function Configurator() {
             <div>
               <dt>Brakes</dt>
               <dd>
-                {rules.fitted}, sized for a {veh.name}.{" "}
-                <a href="#drive" className={styles.vehLink}>
-                  Change vehicle
-                </a>
+                {rules.fitted}, sized to your tow vehicle.
               </dd>
             </div>
             {(rules.warnings.length > 0 || kind === "offroad") && (

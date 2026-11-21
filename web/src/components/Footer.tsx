@@ -22,7 +22,6 @@ export default function Footer() {
       <nav aria-label="Site" className={styles.col}>
         <h2>Site</h2>
         <Link href="/#film">Watch the build</Link>
-        <Link href="/#drive">Tow it</Link>
         <Link href="/#design">Design yours</Link>
         <Link href="/builds">Builds</Link>
         <Link href="/how-it-works">How it works</Link>

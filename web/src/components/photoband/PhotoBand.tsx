@@ -8,19 +8,19 @@ export default function PhotoBand() {
   return (
     <section className={styles.band} aria-labelledby="band-title">
       <header className={styles.head}>
-        <p className={styles.eyebrow}>Out there · In here</p>
+        <p className={styles.eyebrow}>At the track · In the workshop</p>
         <h2 id="band-title" className={styles.title}>
-          Drawn in Cape Town. Proven on the Tankwa.
+          Gloss, chrome and light. Built in Cape Town.
         </h2>
         <Link className={styles.more} href="/builds">
           Read the build stories →
         </Link>
       </header>
       <div className={styles.grid}>
-        <Photo img={IMAGES.heroToyHauler} sizes="(max-width: 760px) 100vw, 66vw" caption="Toy hauler, R355" className={styles.a} />
+        <Photo img={IMAGES.heroToyHauler} sizes="(max-width: 760px) 100vw, 66vw" caption="V-nose toy hauler, track night" className={styles.a} />
         <Photo img={IMAGES.weld} sizes="(max-width: 760px) 100vw, 33vw" caption="Every joint welded" className={styles.b} />
         <Photo img={IMAGES.workshop} sizes="(max-width: 760px) 100vw, 33vw" caption="Chassis on the jig" className={styles.c} />
-        <Photo img={IMAGES.offroadDusk} sizes="(max-width: 760px) 100vw, 66vw" caption="Off-road camper, Cederberg" className={styles.d} />
+        <Photo img={IMAGES.ramp} sizes="(max-width: 760px) 100vw, 66vw" caption="Ramp down, garage lit" className={styles.d} />
       </div>
     </section>
   );

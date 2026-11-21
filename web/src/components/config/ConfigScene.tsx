@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Finish, setupRenderer, StudioEnv } from "@/components/three/Studio";
+import { Finish, RgbDriver, setupRenderer, StudioEnv } from "@/components/three/Studio";
 import {
   ContactShadows,
   OrbitControls,
@@ -372,6 +372,7 @@ export default function ConfigScene({
         }
         autoRotateSpeed={0.35}
       />
+      <RgbDriver />
       {!lite && <Finish />}
     </Canvas>
   );

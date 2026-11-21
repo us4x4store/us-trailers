@@ -10,7 +10,7 @@ const PLAIN: Record<Mat, { color: string; metalness: number; roughness: number; 
   alu: { color: "#C9CED1", metalness: 0.8, roughness: 0.35 },
   checker: { color: "#C3C8CB", metalness: 0.9, roughness: 0.3 },
   rubber: { color: "#151719", metalness: 0, roughness: 0.92 },
-  rim: { color: "#3A3F44", metalness: 0.7, roughness: 0.38 },
+  rim: { color: "#E4E7EA", metalness: 1, roughness: 0.12 },
   brake: { color: "#8E9498", metalness: 0.9, roughness: 0.25 },
   ply: { color: "#B08A5A", metalness: 0, roughness: 0.8 },
   glass: { color: "#0E1418", metalness: 0, roughness: 0.08 },
@@ -21,6 +21,8 @@ const PLAIN: Record<Mat, { color: string; metalness: number; roughness: number; 
   solar: { color: "#13233D", metalness: 0.2, roughness: 0.15 },
   poly: { color: "#1E2124", metalness: 0, roughness: 0.75 },
   accent: { color: "#1F3B73", metalness: 0.3, roughness: 0.4 },
+  rgb: { color: "#3a0b35", metalness: 0, roughness: 0.4, emissive: "#ff2bd6" },
+  chrome: { color: "#E8ECEF", metalness: 1, roughness: 0.06 },
 };
 
 /**

@@ -14,9 +14,9 @@ const plex = IBM_Plex_Mono({ variable: "--font-plex", subsets: ["latin"], weight
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "US Trailers | Custom trailers built in Cape Town",
+  title: "US Trailers | Bespoke Texan-style toy haulers, Cape Town",
   description:
-    "Bespoke toy haulers, off-road campers and gooseneck trailers, designed around your vehicle, licence code and load, and built one at a time in Cape Town.",
+    "Bespoke Texan-style toy haulers for ATVs, side-by-sides and bikes: V-nose, gloss paint, polished aluminium and RGB lighting. Drawn for you and built one at a time in Cape Town.",
   openGraph: { locale: "en_ZA", type: "website", siteName: "US Trailers" },
 };
 

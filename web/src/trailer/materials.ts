@@ -137,13 +137,15 @@ export function createMaterials(bodyColour: string): MatSet {
   const m: MatSet = {
     galv: new THREE.MeshStandardMaterial({ color: "#B9C1C4", metalness: 0.85, roughness: 0.42, roughnessMap: spang }),
     // satin powder coat: a soft base with a thin glossy skin on top, like the real thing
-    powder: new THREE.MeshPhysicalMaterial({ color: bodyColour, metalness: 0.05, roughness: 0.42, clearcoat: 0.55, clearcoatRoughness: 0.22, sheen: 0.15, sheenRoughness: 0.6 }),
+    // deep gloss paint over the panels: mirror clear coat on a soft base
+    powder: new THREE.MeshPhysicalMaterial({ color: bodyColour, metalness: 0.15, roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.04 }),
     // brushed aluminium: trims, rails, plate
     alu: new THREE.MeshPhysicalMaterial({ color: "#D3D7DA", metalness: 1, roughness: 0.3, anisotropy: 0.5 }),
     checker: new THREE.MeshStandardMaterial({ color: "#C3C8CB", metalness: 0.9, roughness: 0.3, bumpMap: bump, bumpScale: 2.2 }),
     rubber: new THREE.MeshStandardMaterial({ color: "#1A1C1E", metalness: 0, roughness: 0.86, bumpMap: tread, bumpScale: 6 }),
     // satin-black steel wheels with a clear coat
-    rim: new THREE.MeshPhysicalMaterial({ color: "#1E2124", metalness: 0.55, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.2 }),
+    // mirror-polished aluminium wheels
+    rim: new THREE.MeshPhysicalMaterial({ color: "#E4E7EA", metalness: 1, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.03 }),
     brake: new THREE.MeshStandardMaterial({ color: "#8E9498", metalness: 0.9, roughness: 0.25 }),
     ply: new THREE.MeshStandardMaterial({ color: "#B08A5A", metalness: 0, roughness: 0.8 }),
     // tinted acrylic windows: dark, with sharp reflections
@@ -155,7 +157,11 @@ export function createMaterials(bodyColour: string): MatSet {
     solar: new THREE.MeshPhysicalMaterial({ color: "#ffffff", map: solarTex(), metalness: 0.2, roughness: 0.15, clearcoat: 1 }),
     poly: new THREE.MeshStandardMaterial({ color: "#1E2124", roughness: 0.75 }),
     accent: new THREE.MeshStandardMaterial({ color: "#1F3B73", metalness: 0.3, roughness: 0.4 }),
+    // addressable RGB strip: the scene cycles its colour; bright enough to bloom
+    rgb: new THREE.MeshStandardMaterial({ color: "#111", emissive: "#ff2bd6", emissiveIntensity: 3.2, roughness: 0.4, toneMapped: true }),
+    chrome: new THREE.MeshPhysicalMaterial({ color: "#E8ECEF", metalness: 1, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.02 }),
   };
+  m.rgb.userData.rgb = true;
   return m;
 }
 

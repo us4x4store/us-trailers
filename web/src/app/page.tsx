@@ -1,11 +1,9 @@
 import AssemblyFilm from "@/components/film/AssemblyFilm";
-import TestDrive from "@/components/drive/TestDrive";
 import PhotoBand from "@/components/photoband/PhotoBand";
 import TypeIndex from "@/components/types/TypeIndex";
 import Process from "@/components/process/Process";
 import Configurator from "@/components/config/Configurator";
 import FaqList from "@/components/faq/FaqList";
-import TowCheck from "@/components/towcheck/TowCheck";
 import Enquire from "@/components/enquire/Enquire";
 import { SITE_URL } from "@/content/site";
 
@@ -31,11 +29,9 @@ export default function Home() {
         <AssemblyFilm />
       </div>
       <PhotoBand />
-      <TestDrive />
       <TypeIndex />
       <Process />
       <Configurator />
-      <TowCheck />
       <FaqList ids={["cost", "licence", "brakes", "roadworthy", "speed", "time"]} more />
       <Enquire />
     </main>

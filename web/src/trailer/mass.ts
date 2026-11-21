@@ -24,10 +24,12 @@ export const DENSITY: Record<Mat, number> = {
   solar: 214, // ≈ 12 kg per 200 W panel
   poly: 60, // empty tanks and shells are thin-walled
   accent: 7850 * 0.35, // springs, calipers, jerry holders
+  rgb: 900, // LED strip in its silicone sleeve
+  chrome: 7900 * 0.3, // polished stainless trims, hollow
 };
 
 /** true material density (kg/m³) for sheet-metal boxes given a real wall thickness */
-const SHEET: Partial<Record<Mat, number>> = { checker: 2700, alu: 2700, accent: 7850, galv: 7850, powder: 1500, poly: 950 };
+const SHEET: Partial<Record<Mat, number>> = { checker: 2700, alu: 2700, accent: 7850, galv: 7850, powder: 1500, poly: 950, chrome: 7900 };
 
 function area(g: THREE.BufferGeometry): number {
   const p = g.attributes.position as THREE.BufferAttribute;

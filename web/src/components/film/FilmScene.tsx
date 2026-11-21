@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
-import { Finish, setupRenderer, StudioEnv } from "@/components/three/Studio";
+import { Finish, RgbDriver, rgbState, setupRenderer, StudioEnv } from "@/components/three/Studio";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { buildTrailer, DEFAULT_CONFIG, DIM, EXAMPLE_CFG, GN, OFF, overallLength, type ChapterId, type Kind, type TrailerConfig } from "@/trailer/model";
@@ -10,7 +10,8 @@ import { buildPartGeometry, type BuiltPart } from "@/trailer/geometry";
 import { partMassKg } from "@/trailer/mass";
 import { createMaterials, INK, PAPER } from "@/trailer/materials";
 import { sound } from "@/lib/sound";
-import { RANGES, chapterAt, clamp01, easeInOut, easeOutCubic, easeSettle, film, partWindows } from "./timeline";
+import Atv from "./Atv";
+import { RANGES, chapterAt, clamp01, darkK, easeInOut, easeOutCubic, easeSettle, film, partWindows } from "./timeline";
 
 const REDUCED = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -25,7 +26,7 @@ const KEYS: Record<ChapterId, Key> = {
   frame: { dir: [1, 0.75, 0.8], dist: 12, tgt: [0, 1.4, 0] },
   skin: { dir: [1, 0.3, 0.95], dist: 12.5, tgt: [0.2, 1.4, 0] },
   doors: { dir: [-1, 0.18, 0.55], dist: 10, tgt: [-1.2, 1.2, 0] },
-  systems: { dir: [-0.9, 0.65, -0.75], dist: 12, tgt: [0, 1.6, 0] },
+  systems: { dir: [0.4, 0.07, 1], dist: 12.5, tgt: [0.2, 1.0, 0] }, // low and side-on: underglow, belt line and roof strips in one shot
   finish: { dir: [0.95, 0.14, 1], dist: 12.5, tgt: [0.5, 1.2, 0] },
 };
 const ORDER = Object.keys(KEYS) as ChapterId[];
@@ -218,7 +219,8 @@ function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableR
 
     explodeS.current += (film.explode - explodeS.current) * (1 - Math.exp(-dt * 5));
     rampS.current += ((film.ramp || finishK > 0.45 ? 1 : 0) - rampS.current) * (1 - Math.exp(-dt * 2.2));
-    lightS.current += ((film.lights || finishK > 0.25 ? 1 : 0) - lightS.current) * (1 - Math.exp(-dt * 3));
+    const dark = darkK(p);
+    lightS.current += ((film.lights || dark > 0.25 ? 1 : 0) - lightS.current) * (1 - Math.exp(-dt * 3));
     film.lightK = lightS.current;
     film.rampK = rampS.current;
 
@@ -232,7 +234,7 @@ function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableR
       rt.lines.geometry.setDrawRange(0, Math.floor(count * drawK));
       const k = clamp01((p - w.start) / (w.end - w.start));
       const lm = rt.lines.material as THREE.LineBasicMaterial;
-      lm.opacity = 0.85 * (1 - easeOutCubic(clamp01((k - 0.55) / 0.45))) * (1 - finishK);
+      lm.opacity = 0.85 * (1 - easeOutCubic(clamp01((k - 0.55) / 0.45))) * (1 - dark);
       rt.lines.visible = lm.opacity > 0.01 && drawK > 0;
 
       // solid part flies in and settles
@@ -306,7 +308,9 @@ function Trailer({ lite, sparks, kind }: { lite: boolean; sparks: React.MutableR
 
     // background: drafting paper -> Karoo dusk at handover
     const bg = state.scene.background as THREE.Color;
-    bg.copy(PAPER).lerp(DUSK, easeInOut(finishK));
+    bg.copy(PAPER).lerp(DUSK, easeInOut(dark));
+    // in the dark the studio reflections fade, so the trailer's own lights do the work
+    state.scene.environmentIntensity = 1 - 0.75 * easeInOut(dark);
     const fog = state.scene.fog as THREE.Fog;
     fog.color.copy(bg);
 
@@ -398,6 +402,8 @@ function DuskGlow({ kind, lite }: { kind: Kind; lite: boolean }) {
   const d = kind === "offroad" ? OFF : kind === "gooseneck" ? GN : DIM;
   const hz = d.bodyW / 2;
   const warm = useMemo(() => poolTexture("255,190,120"), []);
+  const glowTex = useMemo(() => poolTexture("255,255,255"), []);
+  const under = useRef<THREE.Mesh>(null);
   const red = useMemo(() => poolTexture("255,50,40"), []);
   const cabin = useRef<THREE.PointLight>(null);
   const tails = useRef<THREE.PointLight[]>([]);
@@ -410,6 +416,11 @@ function DuskGlow({ kind, lite }: { kind: Kind; lite: boolean }) {
     tails.current.forEach((t) => t && (t.intensity = 2.2 * L));
     (warmPool.current!.material as THREE.MeshBasicMaterial).opacity = 0.55 * L * open;
     (redPool.current!.material as THREE.MeshBasicMaterial).opacity = 0.7 * L;
+    // underglow on the ground, in the strips' current colour; strongest at dusk
+    const um = under.current!.material as THREE.MeshBasicMaterial;
+    const t = performance.now() / 1000;
+    um.color.setHSL((rgbState.hue + t * rgbState.speed) % 1, 1, 0.55);
+    um.opacity = film.ps > RANGES.systems[0] ? 0.3 + 0.6 * L : 0;
   });
   return (
     <group>
@@ -425,10 +436,31 @@ function DuskGlow({ kind, lite }: { kind: Kind; lite: boolean }) {
         <planeGeometry />
         <meshBasicMaterial map={warm} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
+      <mesh ref={under} rotation-x={-Math.PI / 2} position={[0, 0.004, 0]} scale={[cfg.length + 1.6, d.bodyW + 1.4, 1]}>
+        <planeGeometry />
+        <meshBasicMaterial map={glowTex} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
       <mesh ref={redPool} rotation-x={-Math.PI / 2} position={[-hx - 0.5, 0.005, 0]} scale={[3.4, d.bodyW + 2.6, 1]}>
         <planeGeometry />
         <meshBasicMaterial map={red} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
+    </group>
+  );
+}
+
+/** The reason it exists: an ATV parked in the garage, seen down the open ramp at handover. */
+function Cargo({ kind }: { kind: Kind }) {
+  const ref = useRef<THREE.Group>(null);
+  const mats = useMemo(() => createMaterials("#0B0C0E"), []);
+  const cfg = EXAMPLE_CFG[kind];
+  const d = kind === "gooseneck" ? GN : DIM;
+  useFrame(() => {
+    if (ref.current) ref.current.visible = film.ps > RANGES.doors[1];
+  });
+  if (kind === "offroad") return null;
+  return (
+    <group ref={ref} position={[-cfg.length / 2 + 1.25, d.floorY, 0]} rotation-y={Math.PI} visible={false}>
+      <Atv mats={mats} />
     </group>
   );
 }
@@ -465,9 +497,8 @@ function Floor() {
   // shadow catcher lays the real shadows on top
   const ref = useRef<THREE.Mesh>(null);
   useFrame(() => {
-    const finishK = clamp01((film.ps - RANGES.finish[0]) / (RANGES.finish[1] - RANGES.finish[0]));
     const m = ref.current!.material as THREE.MeshBasicMaterial;
-    m.color.copy(PAPER).lerp(GROUND, easeInOut(finishK));
+    m.color.copy(PAPER).lerp(GROUND, easeInOut(darkK(film.ps)));
   });
   return (
     <>
@@ -488,9 +519,8 @@ function GridLines() {
   // drafting grid on the floor: 500 mm squares
   const ref = useRef<THREE.GridHelper>(null);
   useFrame(() => {
-    const finishK = clamp01((film.ps - RANGES.finish[0]) / (RANGES.finish[1] - RANGES.finish[0]));
     const m = ref.current!.material as THREE.Material;
-    m.opacity = 0.35 * (1 - finishK);
+    m.opacity = 0.35 * (1 - darkK(film.ps));
   });
   return <gridHelper ref={ref} args={[30, 60, INK, INK]} position-y={0.002} material-transparent material-opacity={0.35} />;
 }
@@ -499,7 +529,7 @@ function Lights() {
   const key = useRef<THREE.DirectionalLight>(null);
   const hemi = useRef<THREE.HemisphereLight>(null);
   useFrame(() => {
-    const finishK = easeInOut(clamp01((film.ps - RANGES.finish[0]) / (RANGES.finish[1] - RANGES.finish[0])));
+    const finishK = easeInOut(darkK(film.ps));
     key.current!.intensity = 2.6 - finishK * 1.9;
     key.current!.color.setRGB(1, 1 - finishK * 0.35, 1 - finishK * 0.6);
     hemi.current!.intensity = 1.1 - finishK * 0.75;
@@ -547,8 +577,10 @@ export default function FilmScene({ active = true, kind = "toyhauler" }: { activ
       {!lite && <ContactShadows position={[0, 0.004, 0]} opacity={0.45} scale={14} blur={2.4} far={3} resolution={512} />}
       <Trailer key={kind} lite={lite} sparks={sparks} kind={kind} />
       <DuskGlow key={"g" + kind} kind={kind} lite={lite} />
+      <Cargo key={"c" + kind} kind={kind} />
       <Ridge />
       <Sparks api={sparks} />
+      <RgbDriver />
       {!lite && <Finish />}
     </Canvas>
   );

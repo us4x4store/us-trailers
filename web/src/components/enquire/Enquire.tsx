@@ -203,7 +203,6 @@ export default function Enquire() {
               <div className={styles.sheet}>
                 <input type="hidden" name="rig" value={rig} />
                 <span>{rig}</span>
-                <a href="/#drive">Change it</a>
               </div>
             )}
           </div>

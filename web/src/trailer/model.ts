@@ -29,7 +29,9 @@ export type Mat =
   | "wire"
   | "solar"
   | "poly" // black polyethylene (tanks, blocks)
-  | "accent"; // Prussian-blue powder coat (springs, calipers)
+  | "accent" // Prussian-blue powder coat (springs, calipers)
+  | "rgb" // addressable RGB LED strip (colour animated by the scene)
+  | "chrome"; // polished stainless / chrome trim
 
 export type Shape =
   | { k: "box"; s: V3 }
@@ -44,7 +46,11 @@ export type Shape =
   /** coil spring between two points */
   | { k: "coil"; a: V3; b: V3; r: number; wire: number; turns: number }
   /** tube along a polyline */
-  | { k: "tube"; pts: V3[]; r: number };
+  | { k: "tube"; pts: V3[]; r: number }
+  /** a flat plan outline [x, z][] stood up between two heights (V-nose panels, wedge caps) */
+  | { k: "prism"; pts: [number, number][]; y0: number; y1: number }
+  /** curved band, like a radius fender: arc of radius r, thickness t, width w along z, from angle a0 to a1 */
+  | { k: "arch"; r: number; t: number; w: number; a0: number; a1: number };
 
 export type MeshSpec = {
   shape: Shape;
@@ -87,15 +93,15 @@ export type Part = {
 export type Chapter = { id: ChapterId; n: string; title: string; line: string };
 
 export const CHAPTERS: Chapter[] = [
-  { id: "drawing", n: "00", title: "The drawing", line: "Every US Trailer starts on paper, drawn around one owner's vehicle, licence and load." },
+  { id: "drawing", n: "00", title: "The drawing", line: "Every US Trailer starts on paper, drawn around one owner's toys, tow vehicle and taste." },
   { id: "chassis", n: "01", title: "Chassis", line: "The backbone. Cut, jigged and welded square, then hot-dip galvanised inside and out." },
-  { id: "running", n: "02", title: "Running gear", line: "Independent trailing arms with coil-overs. Each wheel answers the road on its own." },
-  { id: "wheels", n: "03", title: "Wheels", line: "Matched to your tow vehicle: same stud pattern, same spare." },
-  { id: "frame", n: "04", title: "Frame & floor", line: "A welded SHS cage carries the body. The floor is marine ply under checker plate." },
-  { id: "skin", n: "05", title: "Skin", line: "Bonded aluminium composite. Quiet on corrugations, light on the scale." },
-  { id: "doors", n: "06", title: "Doors & ramp", line: "A rear ramp rated for a 300 kg quad, and a side door where you actually need it." },
-  { id: "systems", n: "07", title: "Systems", line: "Sealed LED lighting, one wiring harness, water, solar. Labelled at both ends." },
-  { id: "finish", n: "08", title: "Handover", line: "Weighed, registered, roadworthy. Then it's yours." },
+  { id: "running", n: "02", title: "Running gear", line: "Independent arms with coil-overs and disc brakes. Each wheel answers the road on its own." },
+  { id: "wheels", n: "03", title: "Wheels", line: "Mirror-polished aluminium on load-rated tyres, under polished radius fenders." },
+  { id: "frame", n: "04", title: "Frame & floor", line: "A welded steel cage, a marine-ply floor, E-track on the walls and rings for every ATV." },
+  { id: "skin", n: "05", title: "Skin & V-nose", line: "Gloss-black bonded panels and a Texan V-nose that splits the wind ahead of the box." },
+  { id: "doors", n: "06", title: "Ramp & doors", line: "A spring-assisted ramp rated for a 400 kg ATV, and a side door where you need it." },
+  { id: "systems", n: "07", title: "Light it up", line: "RGB underglow, belt-line, roof and garage strips on one controller. Any colour, from your phone." },
+  { id: "finish", n: "08", title: "Handover", line: "Weighed, registered, roadworthy. Lights on. It's yours." },
 ];
 
 export type Kind = "toyhauler" | "offroad" | "gooseneck";
@@ -118,7 +124,7 @@ export type TrailerConfig = {
   rack: boolean;
 };
 
-export const DEFAULT_CONFIG: TrailerConfig = { length: 4.8, axles: 2, colour: "#2C3136", solar: true, rack: true };
+export const DEFAULT_CONFIG: TrailerConfig = { length: 4.8, axles: 2, colour: "#0B0C0E", solar: true, rack: true };
 /** The one example build per kind, shared by the film, the test rig, the designer links and the type pages. */
 export const EXAMPLE_CFG: Record<Kind, TrailerConfig> = {
   toyhauler: DEFAULT_CONFIG,
@@ -296,10 +302,10 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     ([1, -1] as const).forEach((s) => {
       parts.push({
         id: `wheel${i}${s > 0 ? "L" : "R"}`,
-        name: "Wheel & tyre",
-        job: "Same size and stud pattern as your bakkie, so one spare fits both.",
-        material: "Alloy rim, all-terrain tyre",
-        spec: "265/75 R16, 6 × 139.7",
+        name: "Polished wheel & tyre",
+        job: "Load-rated for a full garage of toys, polished so it looks the part at the track.",
+        material: "Mirror-polished forged aluminium, all-terrain tyre",
+        spec: "16 × 7 six-spoke, 265/75 R16 load range E",
         chapter: "wheels",
         anchor: [ax, wheelR * 2, s * trackZ],
         from: [0, 0.2, s * 2.2],
@@ -317,18 +323,17 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
   const ax1 = Math.min(...axles) - wheelR - 0.08;
   parts.push({
     id: "guards",
-    name: "Mudguards",
-    job: "Stop stones sand-blasting the body. Strong enough to stand on.",
-    material: "3 mm aluminium checker plate",
-    spec: "Flat-top tandem guards, 340 mm wide",
+    name: "Radius fenders",
+    job: "Polished half-round fenders over each wheel: they keep stones off the body and frame the wheels.",
+    material: "Mirror-polished stainless, 2 mm",
+    spec: "Tandem radius fenders, 340 mm wide",
     chapter: "wheels",
-    anchor: [(ax0 + ax1) / 2, wheelR * 2 + 0.1, trackZ + 0.17],
+    anchor: [axles[0], wheelR + 0.45, trackZ + 0.17],
     from: [0, 1.5, 0],
     explode: [0, 0.5, 0.4],
     meshes: [1, -1].flatMap((s) => [
-      { shape: { k: "box", s: [ax0 - ax1, 0.006, 0.34] }, p: [(ax0 + ax1) / 2, wheelR * 2 + 0.07, s * trackZ], m: "checker" } as MeshSpec,
-      { shape: { k: "box", s: [0.006, 0.26, 0.34] }, p: [ax0, wheelR * 2 - 0.06, s * trackZ], rot: [0, 0, -0.5], m: "checker" } as MeshSpec,
-      { shape: { k: "box", s: [0.006, 0.26, 0.34] }, p: [ax1, wheelR * 2 - 0.06, s * trackZ], rot: [0, 0, 0.5], m: "checker" } as MeshSpec,
+      ...axles.map((ax) => ({ shape: { k: "arch", r: wheelR + 0.07, t: 0.006, w: 0.34, a0: 0.12, a1: Math.PI - 0.12 }, p: [ax, wheelR, s * trackZ] as V3, m: "chrome" as Mat, kg: 6 }) as MeshSpec),
+      ...(axles.length === 2 ? [{ shape: { k: "box", s: [Math.abs(axles[0] - axles[1]) - 0.2, 0.006, 0.34] }, p: [(axles[0] + axles[1]) / 2, wheelR * 2 + 0.07 - 0.04, s * trackZ] as V3, m: "chrome" as Mat, kg: 3 } as MeshSpec] : []),
       { shape: { k: "box", s: [0.008, 0.36, 0.3] }, p: [ax1 - 0.12, wheelR * 2 - 0.3, s * trackZ], m: "rubber", cosmetic: true } as MeshSpec,
     ]),
   });
@@ -405,19 +410,45 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
   });
   parts.push({
     id: "nose",
-    name: "Front wall & stone guard",
-    job: "Takes the gravel the bakkie throws back. A sloped guard stops chips at the front.",
-    material: "Aluminium composite + 3 mm checker plate",
-    spec: "Sloped 30° stone guard, lockable nose locker",
+    name: "Front bulkhead",
+    job: "Closes the garage behind the V-nose and carries the hatch into the nose locker.",
+    material: "Aluminium composite on SHS frame",
+    spec: "Lockable hatch to the nose locker",
     chapter: "skin",
     anchor: [hx + 0.2, floorY + 0.4, 0.4],
     from: [2.4, 0, 0],
     explode: [1.4, 0, 0],
     meshes: [
       { shape: { k: "box", s: [0.012, bodyH, bodyW + 0.024] }, p: [hx + 0.006, floorY + bodyH / 2, 0], m: "powder" },
-      { shape: { k: "box", s: [0.4, 0.5, bodyW - 0.1] }, p: [hx + 0.2, floorY + 0.25, 0], m: "checker", shell: 0.003 },
-      { shape: { k: "box", s: [0.012, 0.58, bodyW - 0.1] }, p: [hx + 0.32, floorY + 0.36, 0], rot: [0, 0, 0.5], m: "checker" },
       ...[1, -1].map((s) => trimY(hx + 0.006, floorY, roofY, s * (hz + 0.006))),
+    ],
+  });
+  // the Texan V-nose: two raked panels meeting at a vertical prow, polished checker wrap below
+  const NV = 0.72;
+  const tip = hx + NV;
+  const vSide = (s: 1 | -1, o: number, y0: number, y1: number, m: Mat, kg: number): MeshSpec => ({
+    shape: { k: "prism", pts: [[hx, s * (hz + o)], [tip + o * 0.8, s * o * 0.6], [tip + o * 0.8 - 0.012, s * (o * 0.6 - 0.012)], [hx, s * (hz + o - 0.012)]], y0, y1 },
+    m,
+    kg,
+  });
+  parts.push({
+    id: "vnose",
+    name: "V-nose",
+    job: "Splits the air ahead of the box: less drag behind the bakkie, more room up front for tools and fuel, and the Texan look.",
+    material: "Aluminium composite on a welded steel V-frame",
+    spec: `${Math.round(NV * 1000)} mm V, polished checker wrap`,
+    chapter: "skin",
+    anchor: [tip - 0.1, floorY + 1.4, 0.1],
+    from: [2.4, 0, 0],
+    explode: [1.3, 0, 0],
+    meshes: [
+      // catalogue masses: panels and plate on their welded V-frame
+      ...([1, -1] as const).map((s) => vSide(s, 0.006, floorY, roofY, "powder", 14)),
+      ...([1, -1] as const).map((s) => vSide(s, 0.016, floorY - 0.02, floorY + 0.6, "checker", 5)),
+      { shape: { k: "prism", pts: [[hx, hz + 0.006], [tip, 0], [hx, -hz - 0.006]], y0: roofY, y1: roofY + 0.012 }, m: "powder", kg: 6 },
+      { shape: { k: "prism", pts: [[hx, hz], [tip, 0], [hx, -hz]], y0: floorY - 0.02, y1: floorY }, m: "checker", kg: 12 },
+      trimY(tip + 0.006, floorY, roofY, 0),
+      ...[1, -1].map((s) => ({ shape: { k: "tube", pts: [[hx, roofY, s * (hz + 0.006)], [(hx + tip) / 2, roofY, s * (hz / 2 + 0.003)], [tip + 0.006, roofY, 0]], r: TRIM }, m: "alu", cosmetic: true }) as MeshSpec),
     ],
   });
   parts.push({
@@ -433,7 +464,6 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
     meshes: [
       { shape: { k: "box", s: [L + 0.02, 0.012, bodyW + 0.03] }, p: [0, roofY + 0.006, 0], m: "powder" },
       ...[1, -1].map((s) => trimX(-hx, hx + 0.006, roofY, s * (hz + 0.006))),
-      trimZ(hx + 0.006, roofY, -hz, hz),
       trimZ(-hx, roofY, -hz, hz),
     ],
   });
@@ -530,6 +560,48 @@ export function buildTrailer(cfg: TrailerConfig = DEFAULT_CONFIG): Part[] {
       { shape: { k: "box", s: [0.012, 0.13, 0.48] }, p: [-hx - 0.062, floorY - 0.12, 0], m: "ledWhite", cosmetic: true },
       // amber side markers along the bottom edge
       ...[1, -1].flatMap((s) => lin(-hx + 0.4, hx - 0.4, 3).map((x) => ({ shape: { k: "box", s: [0.08, 0.035, 0.012] }, p: [x, floorY + 0.13, s * (hz + 0.026)] as V3, m: "ledAmber" as Mat, cosmetic: true }) as MeshSpec)),
+    ],
+  });
+  // RGB: addressable strips under the floor, along the belt line, round the roof and inside the garage
+  parts.push({
+    id: "rgb",
+    name: "RGB lighting",
+    job: "Underglow, belt-line and roof strips plus garage lights, all on one controller: pick any colour, chase or pulse from your phone.",
+    material: "Addressable RGB LED in silicone sleeves",
+    spec: "16 million colours, app + remote, 12 V",
+    chapter: "systems",
+    anchor: [0.6, floorY - 0.02, hz + 0.02],
+    from: [0, -0.8, 0],
+    explode: [0, -0.4, 0.5],
+    meshes: [
+      ...[1, -1].flatMap((s) => [
+        // underglow: just inside the floor edge, facing the ground
+        { shape: { k: "box", s: [L - 0.1, 0.012, 0.05] }, p: [0, floorY - 0.03, s * (hz - 0.06)], m: "rgb" } as MeshSpec,
+        // belt line, under the rub rail
+        { shape: { k: "box", s: [L - 0.06, 0.026, 0.012] }, p: [0, floorY + 0.015, s * (hz + 0.022)], m: "rgb" } as MeshSpec,
+        // roof eyebrow
+        { shape: { k: "box", s: [L - 0.1, 0.022, 0.012] }, p: [0, roofY - 0.05, s * (hz + 0.02)], m: "rgb" } as MeshSpec,
+        // garage ceiling strips
+        { shape: { k: "box", s: [L - 0.4, 0.012, 0.03] }, p: [0, roofY - 0.04, s * (hz - 0.2)], m: "rgb" } as MeshSpec,
+      ]),
+      // controller box behind the bulkhead
+      { shape: { k: "box", s: [0.18, 0.12, 0.05] }, p: [hx - 0.15, roofY - 0.3, -hz + 0.08], m: "poly", kg: 0.6 },
+    ],
+  });
+  // E-track and floor rings: tie ATVs, bikes and side-by-sides down at any point
+  parts.push({
+    id: "etrack",
+    name: "E-track & tie-downs",
+    job: "Slotted rails round the walls and recessed rings in the floor, so every ATV and bike is strapped three ways.",
+    material: "Galvanised E-track, forged D-rings",
+    spec: "2 rows E-track, 8 × 2 300 kg recessed rings",
+    chapter: "frame",
+    anchor: [-0.6, floorY + 0.5, hz - 0.03],
+    from: [0, 0, 1.4],
+    explode: [0, 0.3, 0],
+    meshes: [
+      ...[1, -1].flatMap((s) => [0.45, 1.05].map((h) => ({ shape: { k: "box", s: [L - 0.4, 0.12, 0.012] }, p: [0, floorY + h, s * (hz - 0.025)] as V3, m: "galv" as Mat, kg: (L - 0.4) * 2.2 }) as MeshSpec)),
+      ...[1, -1].flatMap((s) => lin(-hx + 0.5, hx - 0.5, 4).map((x) => ({ shape: { k: "cyl", r: 0.05, h: 0.012, axis: "y" }, p: [x, floorY + 0.008, s * (hz - 0.2)] as V3, m: "chrome" as Mat, kg: 0.9 }) as MeshSpec)),
     ],
   });
   parts.push({

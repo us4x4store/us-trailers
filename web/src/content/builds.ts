@@ -21,15 +21,15 @@ export type Build = {
 export const BUILDS: Build[] = [
   {
     slug: "tankwa-toy-hauler",
-    title: "A garage for two bikes and a quad",
+    title: "A gloss-black V-nose for two ATVs",
     where: "Durbanville to the Tankwa Karoo",
-    code: "L54-A2-C0-R1-S1",
+    code: "L54-A2-C6-R1-S1",
     image: IMAGES.ramp,
-    need: "A family that rides the Tankwa and northern Cape every school holiday. Two dirt bikes, a quad, fuel and spares, and somewhere dry to sleep when the wind comes up. Their old open trailer shook the bikes loose on corrugations, twice.",
-    design: "A 5.4 m tandem toy hauler, so the quad sits ahead of the axles and the bikes behind it. Ten rated D-rings let each bike strap in three ways. The ramp is drawn for the quad's 290 kg and doubles as a porch at camp. Two fold-down bunks sit above the bikes, and the fuel lives outside the cabin in a vented locker.",
-    build: "A galvanised 100 × 50 mm chassis, jigged square to within 3 mm on the diagonals. Leaf springs with shackles greased from outside, and a roof rack carrying the spare and a solar panel feeding a 100 Ah lithium battery.",
-    result: "Hitch load set at 8.6% with the quad aboard, so it tracks straight on the R355. It was weighed at the weighbridge, and the tare is on the information plate.",
-    extras: ["Two fold-down bunks", "Vented fuel locker", "10 rated D-rings", "Ramp porch with legs"],
+    need: "Two ATVs, a dirt bike, fuel and spares, and a trailer that looks as good at the track as the machines inside it. Their old open trailer shook the bikes loose on corrugations, twice.",
+    design: "A 5.4 m tandem with a Texan V-nose for fuel and tools. The ATVs sit nose to tail ahead of the axles; the bike rides behind on its own wheel chock. Two rows of E-track and eight floor rings strap every machine three ways. The ramp is drawn for 400 kg and doubles as a porch at camp.",
+    build: "Gloss-black bonded panels, polished checker wrap on the V, mirror-polished aluminium wheels under stainless radius fenders. RGB underglow, belt-line and garage strips on one controller.",
+    result: "Weighed at the weighbridge, hitch load set with both ATVs aboard, so it tracks straight on the R355. At night the underglow lights the pits.",
+    extras: ["Texan V-nose locker", "RGB underglow and garage", "2 × E-track, 8 floor rings", "Polished wheels and fenders"],
   },
   {
     slug: "cederberg-camper",
