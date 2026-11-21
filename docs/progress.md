@@ -101,6 +101,24 @@ _Last updated: 2026-11-19 (session 1)_
   - /terms: draft terms of use
 - Nav, footer and sitemap updated. Placeholder terms are listed in questions-for-justin.md, batch 3.
 
+## Round 11 (session 4): realism and layout overhaul, after Justin's "looks 1% done"
+- 3D:
+  - rounded panels and steel sections
+  - corner trims and rub rails
+  - six-spoke rims and tyre tread
+  - coupling head and chains, ramp hinges and cam locks, door hardware
+  - window surrounds, panel seams, under-ramp light clusters, number plate, side markers, mud flaps
+  - studio lighting (strip lights), N8AO ambient occlusion and Neutral tone mapping on laptops (web/src/components/three/Studio.tsx)
+  - cosmetic meshes are excluded from masses: tare.json and physics are unchanged
+- The test-drive bakkie is rebuilt from a side profile (web/src/components/drive/Bakkie.tsx): open bed, glass, flares, real wheels. The tow ball is unchanged.
+- Images: the hero (toy hauler, Tankwa) and gooseneck (neck now in the load bed, badge blurred) were regenerated. The other four were reviewed and kept.
+- Layout:
+  - hairline borders instead of frames; strong borders on controls only
+  - grid paper removed
+  - --sy section rhythm
+  - section intros in the display face
+  - full-screen photo heroes on the trailer-type pages
+
 ## Live
 - https://us-trailers.vercel.app (Vercel project `us-trailers`, account cbuitendach2005-6763). Deploy: `cd web && vercel deploy --prod`.
 - Session moved to cloud environment `us-trailers` (allow-listed: vercel.com, api.vercel.com, mcp.vercel.com, Google Fonts, us-trailers.vercel.app). The broken Vercel key stays on the old Default environment.

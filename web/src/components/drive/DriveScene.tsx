@@ -21,6 +21,7 @@ import { buildTrailer, overallLength, type Kind } from "@/trailer/model";
 import { rigSpec } from "./rigSpec";
 import { buildPartGeometry } from "@/trailer/geometry";
 import { createMaterials, PAPER } from "@/trailer/materials";
+import Bakkie from "./Bakkie";
 import { heightAt, heightfield, ROAD, TILE, type Surface } from "./road";
 import { drive, LOADS, type LoadKind } from "./driveState";
 
@@ -377,7 +378,7 @@ function Rig({ lite }: { lite: boolean }) {
         <Load key={l.id} kind={l.kind} index={k} trailer={trailer} />
       ))}
       <group ref={bakkie}>
-        <Bakkie />
+        <Bakkie mats={mats} />
       </group>
     </>
   );
@@ -503,56 +504,6 @@ function LoadMesh({ kind, size }: { kind: LoadKind; size: [number, number, numbe
 }
 
 /** Rear half of a double-cab bakkie with its tow bar. Origin at ground under the tow ball. */
-function Bakkie() {
-  const body = "#D9DCD8";
-  return (
-    <group position={[0.25, 0, 0]}>
-      <mesh position={[1.3, 0.95, 0]} castShadow>
-        <boxGeometry args={[2.2, 0.62, 1.86]} />
-        <meshStandardMaterial color={body} roughness={0.35} metalness={0.3} />
-      </mesh>
-      <mesh position={[2.9, 1.45, 0]} castShadow>
-        <boxGeometry args={[1.6, 0.62, 1.7]} />
-        <meshStandardMaterial color={body} roughness={0.35} metalness={0.3} />
-      </mesh>
-      <mesh position={[2.9, 1.48, 0]}>
-        <boxGeometry args={[1.62, 0.4, 1.72]} />
-        <meshStandardMaterial color="#1A2026" roughness={0.1} />
-      </mesh>
-      <mesh position={[3.9, 0.95, 0]} castShadow>
-        <boxGeometry args={[1.4, 0.62, 1.86]} />
-        <meshStandardMaterial color={body} roughness={0.35} metalness={0.3} />
-      </mesh>
-      <mesh position={[0.15, 0.55, 0]}>
-        <boxGeometry args={[0.16, 0.16, 1.9]} />
-        <meshStandardMaterial color="#2A2D30" roughness={0.6} />
-      </mesh>
-      <mesh position={[0.05, 0.45, 0]}>
-        <boxGeometry args={[0.35, 0.06, 0.06]} />
-        <meshStandardMaterial color="#2A2D30" metalness={0.6} roughness={0.4} />
-      </mesh>
-      <mesh position={[-0.2, 0.55, 0]}>
-        <sphereGeometry args={[0.025, 12, 12]} />
-        <meshStandardMaterial color="#B9C1C4" metalness={0.9} roughness={0.2} />
-      </mesh>
-      {[0.95, 3.85].flatMap((x) =>
-        [0.82, -0.82].map((z) => (
-          <mesh key={`${x}${z}`} position={[x, 0.39, z]} rotation-x={Math.PI / 2} castShadow>
-            <cylinderGeometry args={[0.39, 0.39, 0.27, 24]} />
-            <meshStandardMaterial color="#151719" roughness={0.9} />
-          </mesh>
-        )),
-      )}
-      {[0.86, -0.86].map((z) => (
-        <mesh key={z} position={[0.22, 1.05, z]}>
-          <boxGeometry args={[0.05, 0.28, 0.1]} />
-          <meshStandardMaterial color="#5A0E0A" emissive="#FF2A14" emissiveIntensity={0.6} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
 /* ------------------------------------------------------------------ camera */
 const VIEWS = {
   chase: { off: new THREE.Vector3(-8.5, 3.2, 6.5), look: new THREE.Vector3(0.5, 0.9, 0) },
