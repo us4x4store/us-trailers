@@ -79,19 +79,22 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
         main.querySelectorAll("[class*='_pre ']").forEach((e) => e.remove());
         main.querySelectorAll(".rv").forEach((e) => e.classList.remove("rv", "rv-in"));
         if (route === "/contact") main.querySelector("#enquire")?.remove();
-        // the 3D designer needs the server: show the hero and a link instead
+        // the 3D designer needs the server: in the saved copy it is a showcase card with a link, no dead controls
         const design = main.querySelector("#design");
         if (design) {
-          const view = design.querySelector("[class*='_view']");
-          if (view) view.innerHTML = '<img data-offline-hero src="/film/hero.webp" alt="A gloss-black Texan-style V-nose toy hauler in a dark studio" style="width:100%;height:100%;object-fit:cover;display:block">';
-          design.querySelectorAll("button, input, select").forEach((e) => e.setAttribute("disabled", ""));
-          const note = document.createElement("p");
-          note.style.cssText = "margin:16px 0 0;font:500 14px/1.5 var(--mono);color:var(--ink)";
-          note.innerHTML = 'The live 3D designer runs on the website: <a href="https://us-trailers.vercel.app/#design">open it there →</a>';
-          (design.querySelector("header") || design).appendChild(note);
+          design.innerHTML = `<div class="offline-design">
+            <div class="offline-design-copy">
+              <p class="offline-eyebrow">Design yours</p>
+              <h2>Pick the length, the axles, the colour and the RGB.</h2>
+              <p>The live designer builds your trailer in 3D as you choose: body length, single or tandem, seven paint colours, roof rack, solar, and day, dusk or night lighting. Then it sends the build with your enquiry.</p>
+              <div class="offline-chips"><span>3.6 to 6.0 m</span><span>Single or tandem</span><span>Gloss black</span><span>Polished wheels</span><span>RGB lighting</span><span>Roof rack</span><span>Solar</span></div>
+              <a class="offline-btn" href="https://us-trailers.vercel.app/#design" target="_blank" rel="noopener">Open the 3D designer</a>
+            </div>
+            <img data-offline-hero src="/film/hero.webp" alt="A gloss-black Texan-style V-nose toy hauler in a dark studio, polished wheels, RGB underglow">
+          </div>`;
         }
-        // the tow checker needs the app to recalculate: show its worked example, read-only
-        main.querySelectorAll("#tow-check input, #tow-check select").forEach((e) => e.setAttribute("readonly", ""));
+        // the tow checker needs the app to recalculate: leave it out of the saved copy
+        main.querySelectorAll("#tow-check").forEach((e) => e.remove());
         // ids: every page but home gets its own prefix so nothing collides in one document
         if (slug !== "home") {
           const ids = new Set([...main.querySelectorAll("[id]")].map((e) => e.id));
@@ -195,6 +198,8 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
   const jobs = Object.fromEntries([...filmTs.matchAll(/^\s+"?([A-Za-z&,\- ]+?)"?: "([^"]+)",$/gm)].map((m) => [m[1], m[2]]));
   const parts = manifest.parts.filter((p) => jobs[p.name]).map((p) => ({ name: p.name.replace(", kerb side", ""), job: jobs[p.name], start: p.start, end: p.end }));
 
+  const stagesTs = fs.readFileSync(path.join(__dirname, "../src/content/process.ts"), "utf8");
+  const stages = [...stagesTs.matchAll(/\{ week: (\d+), title: "([^"]+)", what: "([^"]+)", you: "([^"]+)" \}/g)].map((m) => ({ week: +m[1], title: m[2], what: m[3], you: m[4] }));
   const nav = `<header class="offline-nav"><a class="offline-wm" href="#page-home">US·TRAILERS</a>
 <details class="offline-menu"><summary>Menu</summary><nav>${PAGES.map(([, s, label]) => `<a href="#page-${s}">${label}</a>`).join("")}</nav></details>
 <a class="offline-cta" href="#enquire">Get a price</a></header>`;
@@ -211,6 +216,16 @@ html { scroll-behavior: smooth; }
 .offline-menu nav a { padding: 12px 14px; color: var(--graphite); text-decoration: none; font: 600 15px/1.2 var(--display); }
 .offline-menu nav a:hover { background: rgba(182,166,255,.12); }
 .offline-page { scroll-margin-top: 64px; }
+.offline-design { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 40px; align-items: center; }
+.offline-design-copy { display: grid; gap: 18px; min-width: 0; }
+.offline-design h2 { margin: 0; font: 800 clamp(36px, 4.6vw, 72px)/.95 var(--display); font-stretch: 112%; letter-spacing: -.02em; color: var(--graphite); }
+.offline-design p { margin: 0; max-width: 52ch; font: 400 18px/1.55 var(--display); color: var(--muted); }
+.offline-eyebrow { font: 600 12px/1 var(--mono) !important; letter-spacing: .16em; text-transform: uppercase; color: var(--ink) !important; }
+.offline-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.offline-chips span { padding: 9px 12px; border: 1px solid var(--line-strong); font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--graphite); }
+.offline-btn { justify-self: start; min-height: 52px; display: inline-grid; place-items: center; padding: 0 24px; background: var(--ink); color: var(--paper); font: 600 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-decoration: none; }
+.offline-design img { width: 100%; height: auto; display: block; }
+@media (max-width: 860px) { .offline-design { grid-template-columns: minmax(0, 1fr); } }
 /* no scripts (file previews, some in-app viewers): the film is just its hero screen */
 html:not(.js) #film { height: auto !important; }
 html:not(.js) #film > div { position: relative !important; }
@@ -283,6 +298,32 @@ html:not(.js) #film canvas, html:not(.js) #film [class*='_meter'] { display: non
   fit(); update();
 })();
 
+// the build timeline: drag the slider or tap a step
+(() => {
+  const S = ${JSON.stringify(stages)};
+  const LAST = S[S.length - 1].week;
+  const sec = document.getElementById("process");
+  if (!sec) return;
+  const range = sec.querySelector('input[type="range"]');
+  const now = sec.querySelector("[aria-live]");
+  const wk = now && now.querySelector("span"), h3 = now && now.querySelector("h3"), dds = now ? now.querySelectorAll("dd") : [];
+  const label = sec.querySelector("p[aria-hidden] span"), labelB = sec.querySelector("p[aria-hidden] b");
+  const ticks = [...sec.querySelectorAll("ol li")];
+  function set(week) {
+    let idx = 0; S.forEach((st, i) => { if (week >= st.week) idx = i; });
+    const st = S[idx];
+    if (range) { range.value = week; range.setAttribute("aria-valuetext", "Week " + week + ": " + st.title); }
+    if (wk) wk.textContent = "Week " + week;
+    if (h3) h3.textContent = st.title;
+    if (dds[0]) dds[0].textContent = st.what;
+    if (dds[1]) dds[1].textContent = st.you;
+    if (label) label.textContent = "Week " + week + " of " + LAST;
+    if (labelB) labelB.textContent = st.title;
+    ticks.forEach((li, i) => li.toggleAttribute("data-on", i <= idx));
+  }
+  range && range.addEventListener("input", () => set(+range.value));
+  ticks.forEach((li, i) => li.querySelector("button")?.addEventListener("click", () => set(S[i].week)));
+})();
 // the enquiry form: offline, it becomes a WhatsApp or email message with everything filled in
 document.querySelectorAll("#enquire form").forEach((form) => {
   form.addEventListener("submit", (e) => {
