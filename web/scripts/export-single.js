@@ -86,9 +86,9 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
             <div class="offline-design-copy">
               <p class="offline-eyebrow">Design yours</p>
               <h2>Pick the length, the axles, the colour and the RGB.</h2>
-              <p>The live designer builds your trailer in 3D as you choose: body length, single or tandem, seven paint colours, roof rack, solar, and day, dusk or night lighting. Then it sends the build with your enquiry.</p>
+              <p>Every trailer is drawn for one owner: body length, single or tandem, seven paint colours, polished wheels, RGB colours, roof rack and solar. Tell us what you want and we draw it around you.</p>
               <div class="offline-chips"><span>3.6 to 6.0 m</span><span>Single or tandem</span><span>Gloss black</span><span>Polished wheels</span><span>RGB lighting</span><span>Roof rack</span><span>Solar</span></div>
-              <a class="offline-btn" href="https://us-trailers.vercel.app/#design" target="_blank" rel="noopener">Open the 3D designer</a>
+              <a class="offline-btn" href="#enquire">Get a price for yours</a>
             </div>
             <img data-offline-hero src="/film/hero.webp" alt="A gloss-black Texan-style V-nose toy hauler in a dark studio, polished wheels, RGB underglow">
           </div>`;
@@ -121,15 +121,17 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
   const live = "https://us-trailers.vercel.app";
   const fixLinks = (h) =>
     h.replace(/href="([^"]*)"/g, (m, href) => {
+      // WhatsApp (placeholder number) stays inside the saved copy: it goes to the enquiry form
+      if (/^https:\/\/wa\.me\//.test(href)) return 'href="#enquire"';
       if (/^(https?:|mailto:|tel:|#)/.test(href)) return m;
       const [p, hash] = href.split("#");
       const pathOnly = p.split("?")[0] || "/";
-      if (pathOnly.startsWith("/b/")) return `href="${live}${href}"`;
+      if (pathOnly.startsWith("/b/")) return 'href="#design"';
       if (slugOf[pathOnly] !== undefined) {
         if (hash) return `href="#${pathOnly === "/" ? hash : slugOf[pathOnly] + "-" + hash}"`;
         return `href="#page-${slugOf[pathOnly]}"`;
       }
-      return `href="${live}${href}"`;
+      return 'href="#enquire"';
     });
 
   // ---- images: every src and srcset becomes data
@@ -251,25 +253,38 @@ html:not(.js) #film canvas, html:not(.js) #film [class*='_meter'] { display: non
   const intro = q("[class*='_intro']"), chapter = q("[class*='_chapter']"), part = q("[class*='_part']"), end = q("[class*='_end']");
   const meter = q("[class*='_meter']"), bar = q("[class*='_track'] i");
   const ctx = cv.getContext("2d");
-  // only frames near the playhead are kept as images, so phones never hold the whole film in memory
+  // every frame is loaded once, every 8th first, then the gaps; the canvas always shows the
+  // nearest frame that is ready, so scrolling fast never shows a blank or a wrong-order frame
   const imgs = new Array(N).fill(null);
-  const get = (k) => { if (!imgs[k]) { const i = new Image(); i.decoding = "async"; i.src = F[k]; imgs[k] = i; } return imgs[k]; };
-  function window_(k) {
-    for (let j = Math.max(0, k - 12); j <= Math.min(N - 1, k + 12); j++) get(j);
-    for (let j = 0; j < N; j++) if (imgs[j] && Math.abs(j - k) > 40) imgs[j] = null;
+  const ready = (k) => imgs[k] && imgs[k].complete && imgs[k].naturalWidth;
+  const order = [];
+  const seen = new Set();
+  for (const step of [8, 4, 2, 1]) for (let k = 0; k < N; k += step) if (!seen.has(k)) { seen.add(k); order.push(k); }
+  let next = 0, inflight = 0;
+  function pump() {
+    while (inflight < 6 && next < order.length) {
+      const k = order[next++];
+      const i = new Image();
+      inflight++;
+      i.onload = i.onerror = () => { inflight--; if (Math.abs(k - (want - 1)) < 10) { drawn = -1; draw(); } pump(); };
+      i.src = F[k];
+      imgs[k] = i;
+    }
   }
+  pump();
   let want = 1, drawn = -1;
   function draw() {
-    window_(want - 1);
-    const img = get(want - 1);
-    if (!img.complete || !img.naturalWidth) { img.onload = draw; return; }
-    if (drawn === want) return;
+    const t = want - 1;
+    let k = -1;
+    for (let d = 0; d < N; d++) { if (t - d >= 0 && ready(t - d)) { k = t - d; break; } if (t + d < N && ready(t + d)) { k = t + d; break; } }
+    if (k < 0 || drawn === k) return;
+    const img = imgs[k];
     const cw = cv.width, ch = cv.height, portrait = ch > cw * 1.1;
     const s = portrait ? (cw / img.naturalWidth) * 1.32 : Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
     const w = img.naturalWidth * s, h = img.naturalHeight * s, y = portrait ? ch * 0.46 - h / 2 : (ch - h) / 2;
     ctx.fillStyle = "#050506"; ctx.fillRect(0, 0, cw, ch); ctx.drawImage(img, (cw - w) / 2, y, w, h);
     if (portrait) { const fade = h * 0.22; for (const [y0, y1] of [[y, y + fade], [y + h, y + h - fade]]) { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, "rgba(5,5,6,1)"); g.addColorStop(1, "rgba(5,5,6,0)"); ctx.fillStyle = g; ctx.fillRect(0, Math.min(y0, y1), cw, fade); } }
-    drawn = want;
+    drawn = k;
   }
   function fit() { const dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(cv.clientHeight * dpr); drawn = -1; draw(); }
   const tog = (el, cls, on) => el && cls && el.classList.toggle(cls, on);
