@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import styles from "./fx.module.css";
 
 /**
- * First visit only: the mark and a count while the opening frames of the film arrive, then a
- * curtain lifts. Never longer than 2.2 s, and skipped entirely with reduced motion.
+ * First visit only: the mark and a count while the hero still arrives, then a curtain lifts.
+ * Never longer than about a second, and skipped entirely with reduced motion.
  */
 export default function Preloader() {
   const [pct, setPct] = useState(0);
@@ -23,24 +23,22 @@ export default function Preloader() {
       setHidden(true);
       return;
     }
-    const set = innerWidth * Math.min(2, devicePixelRatio || 1) < 1100 ? "m" : "d";
-    const first = [1, 9, 17, 25, 33, 41, 49, 57];
-    let done = 0;
-    first.forEach((f) => {
-      const img = new Image();
-      img.onload = img.onerror = () => {
-        done++;
-        setPct(Math.round((done / first.length) * 100));
-      };
-      img.src = `/film/${set}/f${String(f).padStart(4, "0")}.webp`;
-    });
-    const cap = setTimeout(() => setPct(100), 2200);
-    return () => clearTimeout(cap);
+    // lift as soon as the hero still is in (it is the first thing you see), never later than 1 s
+    const hero = document.querySelector<HTMLImageElement>("#film picture img");
+    const tick = setInterval(() => setPct((v) => (v >= 90 ? v : v + 15)), 90);
+    const finish = () => setPct(100);
+    if (hero?.complete) finish();
+    else hero?.addEventListener("load", finish, { once: true });
+    const cap = setTimeout(finish, 1000);
+    return () => {
+      clearTimeout(cap);
+      clearInterval(tick);
+    };
   }, []);
   useEffect(() => {
     if (pct < 100) return;
-    const t1 = setTimeout(() => setGone(true), 250);
-    const t2 = setTimeout(() => setHidden(true), 1250);
+    const t1 = setTimeout(() => setGone(true), 120);
+    const t2 = setTimeout(() => setHidden(true), 1100);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
