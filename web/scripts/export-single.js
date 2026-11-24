@@ -83,7 +83,7 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
         const design = main.querySelector("#design");
         if (design) {
           const view = design.querySelector("[class*='_view']");
-          if (view) view.innerHTML = '<img data-offline-hero alt="A gloss-black Texan-style V-nose toy hauler in a dark studio" style="width:100%;height:100%;object-fit:cover;display:block">';
+          if (view) view.innerHTML = '<img data-offline-hero src="/film/hero.webp" alt="A gloss-black Texan-style V-nose toy hauler in a dark studio" style="width:100%;height:100%;object-fit:cover;display:block">';
           design.querySelectorAll("button, input, select").forEach((e) => e.setAttribute("disabled", ""));
           const note = document.createElement("p");
           note.style.cssText = "margin:16px 0 0;font:500 14px/1.5 var(--mono);color:var(--ink)";
@@ -182,7 +182,11 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
   // ---- the film: all frames inline, driven by a plain script using the site's own classes
   const N = 220;
   const frames = [];
-  for (let i = 1; i <= N; i++) frames.push(await dataUri(`/film/d/f${String(i).padStart(4, "0")}.webp`));
+  const framesM = [];
+  for (let i = 1; i <= N; i++) {
+    frames.push(await dataUri(`/film/d/f${String(i).padStart(4, "0")}.webp`));
+    framesM.push(await dataUri(`/film/m/f${String(i).padStart(4, "0")}.webp`));
+  }
   const hero = await dataUri("/film/hero.webp");
   const heroM = await dataUri("/film/hero-m.webp");
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "../render/manifest.json"), "utf8"));
@@ -207,6 +211,10 @@ html { scroll-behavior: smooth; }
 .offline-menu nav a { padding: 12px 14px; color: var(--graphite); text-decoration: none; font: 600 15px/1.2 var(--display); }
 .offline-menu nav a:hover { background: rgba(182,166,255,.12); }
 .offline-page { scroll-margin-top: 64px; }
+/* no scripts (file previews, some in-app viewers): the film is just its hero screen */
+html:not(.js) #film { height: auto !important; }
+html:not(.js) #film > div { position: relative !important; }
+html:not(.js) #film canvas, html:not(.js) #film [class*='_meter'] { display: none !important; }
 .offline-page + .offline-page { border-top: 1px solid var(--line); }
 .offline-page main, .offline-page > * { scroll-margin-top: 64px; }
 [id] { scroll-margin-top: 72px; }
@@ -215,7 +223,10 @@ html { scroll-behavior: smooth; }
   const filmScript = `
 (() => {
   const C = ${JSON.stringify(filmClasses)};
-  const F = ${JSON.stringify(frames)};
+  const FD = ${JSON.stringify(frames)};
+  const FM = ${JSON.stringify(framesM)};
+  // phones get the 720-wide frames: a quarter of the memory
+  const F = innerWidth * Math.min(2, devicePixelRatio || 1) < 1100 ? FM : FD;
   const CH = ${JSON.stringify(chapters)};
   const P = ${JSON.stringify(parts)};
   const FIN = ${JSON.stringify(manifest.finale)};
@@ -227,10 +238,17 @@ html { scroll-behavior: smooth; }
   const intro = q("[class*='_intro']"), chapter = q("[class*='_chapter']"), part = q("[class*='_part']"), end = q("[class*='_end']");
   const meter = q("[class*='_meter']"), bar = q("[class*='_track'] i");
   const ctx = cv.getContext("2d");
-  const imgs = F.map((s) => { const i = new Image(); i.decoding = "async"; i.src = s; return i; });
+  // only frames near the playhead are kept as images, so phones never hold the whole film in memory
+  const imgs = new Array(N).fill(null);
+  const get = (k) => { if (!imgs[k]) { const i = new Image(); i.decoding = "async"; i.src = F[k]; imgs[k] = i; } return imgs[k]; };
+  function window_(k) {
+    for (let j = Math.max(0, k - 12); j <= Math.min(N - 1, k + 12); j++) get(j);
+    for (let j = 0; j < N; j++) if (imgs[j] && Math.abs(j - k) > 40) imgs[j] = null;
+  }
   let want = 1, drawn = -1;
   function draw() {
-    const img = imgs[want - 1];
+    window_(want - 1);
+    const img = get(want - 1);
     if (!img.complete || !img.naturalWidth) { img.onload = draw; return; }
     if (drawn === want) return;
     const cw = cv.width, ch = cv.height, portrait = ch > cw * 1.1;
@@ -264,8 +282,7 @@ html { scroll-behavior: smooth; }
   addEventListener("resize", fit);
   fit(); update();
 })();
-// the designer's still
-document.querySelectorAll("[data-offline-hero]").forEach((i) => (i.src = ${JSON.stringify(hero)}));
+
 // the enquiry form: offline, it becomes a WhatsApp or email message with everything filled in
 document.querySelectorAll("#enquire form").forEach((form) => {
   form.addEventListener("submit", (e) => {
@@ -290,6 +307,7 @@ document.querySelectorAll("#enquire form").forEach((form) => {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A0B0D">
+<script>document.documentElement.classList.add("js")</script>
 <title>US Trailers · Bespoke Texan-style toy haulers, Cape Town</title>
 <meta name="description" content="Bespoke Texan-style toy haulers for ATVs, side-by-sides and bikes, built in Cape Town. Saved copy of the US Trailers website.">
 <style>${styles}${offlineCss}</style>
