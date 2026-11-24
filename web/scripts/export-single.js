@@ -47,6 +47,7 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
   let footer = "";
   let filmClasses = null;
   let htmlClass = "";
+  let siteHeader = "";
 
   for (const [route, slug] of PAGES) {
     await page.goto(base + route, { waitUntil: "networkidle" });
@@ -67,6 +68,7 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
         return { show: find("show"), posterOff: find("posterOff"), canvasOff: find("canvasOff"), scrimOn: find("scrimOn") };
       });
       footer = await page.evaluate(() => document.querySelector("footer")?.outerHTML || "");
+      siteHeader = await page.evaluate(() => document.querySelector("body > header")?.outerHTML || "");
       // next/font switches the typefaces on with classes on <html>
       // only the font classes: "has-cursor" would hide the pointer, and there is no custom cursor offline
       htmlClass = await page.evaluate(() => [...document.documentElement.classList].filter((c) => c.endsWith("_variable")).join(" "));
@@ -205,7 +207,8 @@ html { scroll-behavior: smooth; }
 .offline-menu nav { position: absolute; right: 0; top: calc(100% + 8px); display: grid; min-width: 240px; padding: 8px; background: var(--surface); border: 1px solid var(--line); }
 .offline-menu nav a { padding: 12px 14px; color: var(--graphite); text-decoration: none; font: 600 15px/1.2 var(--display); }
 .offline-menu nav a:hover { background: rgba(182,166,255,.12); }
-.offline-page { scroll-margin-top: 64px; }
+.offline-page { display: none; }
+.offline-page.on { display: block; }
 .offline-design { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 40px; align-items: center; }
 .offline-design-copy { display: grid; gap: 18px; min-width: 0; }
 .offline-design h2 { margin: 0; font: 800 clamp(36px, 4.6vw, 72px)/.95 var(--display); font-stretch: 112%; letter-spacing: -.02em; color: var(--graphite); }
@@ -278,6 +281,7 @@ html:not(.js) #film canvas, html:not(.js) #film [class*='_meter'] { display: non
   function fit() { const dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(cv.clientHeight * dpr); drawn = -1; draw(); }
   const tog = (el, cls, on) => el && cls && el.classList.toggle(cls, on);
   function update() {
+    if (!film.offsetParent) return; // home page not showing
     const r = film.getBoundingClientRect(), total = film.offsetHeight - innerHeight;
     const p = Math.min(1, Math.max(0, -r.top / total)), f = 1 + Math.round(p * (N - 1));
     want = f; draw();
@@ -331,12 +335,34 @@ document.querySelectorAll("#enquire form").forEach((form) => {
 <style>${styles}${offlineCss}${fs.readFileSync(path.join(__dirname, "offline/dist/islands.css"), "utf8")}</style>
 </head>
 <body>
-${nav}
+${await inlineImages(fixLinks(siteHeader))}
 ${sectionsHtml.join("\n")}
 ${foot}
 <script>${filmScript}</script>
 <script>${fs.readFileSync(path.join(__dirname, "offline/dist/islands.js"), "utf8").replace(/<\/script/gi, "<\\/script")}</script>
 <script>
+// one page at a time, like the website: the hash names the page (or a section inside one)
+function showPage() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  let page = h.startsWith("page-") ? document.getElementById(h) : null;
+  const target = !page && h ? document.getElementById(h) : null;
+  if (!page) page = (target && target.closest(".offline-page")) || document.getElementById("page-home");
+  document.querySelectorAll(".offline-page").forEach((p) => p.classList.toggle("on", p === page));
+  const menu = document.getElementById("menu");
+  if (menu) { menu.hidden = true; document.querySelector("[aria-controls=menu]")?.setAttribute("aria-expanded", "false"); }
+  if (target) requestAnimationFrame(() => target.scrollIntoView());
+  else scrollTo(0, 0);
+  dispatchEvent(new Event("resize"));
+}
+addEventListener("hashchange", showPage);
+showPage();
+// the site's menu button
+document.querySelector("[aria-controls=menu]")?.addEventListener("click", (e) => {
+  const menu = document.getElementById("menu");
+  if (!menu) return;
+  menu.hidden = !menu.hidden;
+  e.currentTarget.setAttribute("aria-expanded", String(!menu.hidden));
+});
 // links written for the website ("/#enquire", "/builds") jump to the same place inside this file
 const PAGE_OF = ${JSON.stringify(slugOf)};
 document.addEventListener("click", (e) => {
@@ -349,7 +375,7 @@ document.addEventListener("click", (e) => {
   const path = p.split("?")[0] || "/";
   const slug = PAGE_OF[path];
   const id = hash ? (path === "/" || slug === undefined ? hash : slug + "-" + hash) : slug !== undefined ? "page-" + slug : "enquire";
-  (document.getElementById(id) || document.getElementById("enquire"))?.scrollIntoView({ behavior: "smooth" });
+  location.hash = document.getElementById(id) ? id : "enquire";
 });
 // AR and share links need the website's server: hide those two buttons in the saved copy
 new MutationObserver(() => {
