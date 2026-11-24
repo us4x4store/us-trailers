@@ -188,7 +188,6 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
   const framesM = [];
   for (let i = 1; i <= N; i++) {
     frames.push(await dataUri(`/film/d/f${String(i).padStart(4, "0")}.webp`));
-    framesM.push(await dataUri(`/film/m/f${String(i).padStart(4, "0")}.webp`));
   }
   const hero = await dataUri("/film/hero.webp");
   const heroM = await dataUri("/film/hero-m.webp");
@@ -239,9 +238,8 @@ html:not(.js) #film canvas, html:not(.js) #film [class*='_meter'] { display: non
 (() => {
   const C = ${JSON.stringify(filmClasses)};
   const FD = ${JSON.stringify(frames)};
-  const FM = ${JSON.stringify(framesM)};
-  // phones get the 720-wide frames: a quarter of the memory
-  const F = innerWidth * Math.min(2, devicePixelRatio || 1) < 1100 ? FM : FD;
+  // always the full-quality frames: only the frames near the playhead are kept in memory anyway
+  const F = FD;
   const CH = ${JSON.stringify(chapters)};
   const P = ${JSON.stringify(parts)};
   const FIN = ${JSON.stringify(manifest.finale)};
@@ -339,7 +337,8 @@ document.querySelectorAll("#enquire form").forEach((form) => {
 
   let homeHtml = sectionsHtml[0];
   // the picture's phone source: inline it too
-  homeHtml = homeHtml.replace(/<source media="\(max-width: 760px\)"[^>]*>/, `<source media="(max-width: 760px)" srcset="${heroM}">`);
+  // the full-resolution hero on every screen
+  homeHtml = homeHtml.replace(/<source media="\(max-width: 760px\)"[^>]*>/, "");
   sectionsHtml[0] = homeHtml;
 
   const doc = `<!doctype html>
