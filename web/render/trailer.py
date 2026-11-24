@@ -741,9 +741,16 @@ if args.cam:
     cam.animation_data_clear()
     tgt = bpy.data.objects["target"]
     tgt.animation_data_clear()
-    views = {"top": ((0.4, 0, 14), (0.4, 0, 0)), "front34": ((9, -6, 2.2), (1, 0, 1.2)), "rear34": ((-8.5, -5.5, 2.0), (-1, 0, 1.2)), "side": ((0.5, -12, 1.4), (0.5, 0, 1.3))}
+    views = {
+        "top": ((0.4, 0, 14), (0.4, 0, 0)),
+        "front34": ((9, -6, 2.2), (1, 0, 1.2)),
+        "rear34": ((-8.5, -5.5, 2.0), (-1, 0, 1.2)),
+        "side": ((0.5, -12, 1.4), (0.5, 0, 1.3)),
+        # the hero: low front three-quarter, V-nose leading, wheels and underglow in the floor
+        "hero": ((8.6, -6.4, 0.75), (0.9, 0, 1.15)),
+    }
     cam.location, tgt.location = views[args.cam]
-    cam.data.lens = 35
+    cam.data.lens = 35 if args.cam != "hero" else 32
 if args.blend:
     bpy.ops.wm.save_as_mainfile(filepath=args.blend)
 

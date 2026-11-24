@@ -21,6 +21,18 @@
 }
 .canvas {
   display: block;
+  transition: opacity 0.9s var(--ease);
+}
+.poster {
+  transition: opacity 0.9s var(--ease), transform 1.4s var(--ease);
+}
+/* hand-over from the hero still to the film */
+.posterOff {
+  opacity: 0;
+  transform: scale(1.04);
+}
+.canvasOff {
+  opacity: 0;
 }
 
 /* overlays fade in and out with the film */
@@ -246,4 +258,17 @@
   .end {
     transition: none;
   }
+}
+
+/* shade under the headline so it reads over any frame */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(5, 5, 6, 0.9) 0%, rgba(5, 5, 6, 0.45) 38%, rgba(5, 5, 6, 0) 62%), linear-gradient(to right, rgba(5, 5, 6, 0.55), rgba(5, 5, 6, 0) 55%);
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+  pointer-events: none;
+}
+.scrimOn {
+  opacity: 1;
 }

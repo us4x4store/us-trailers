@@ -1,0 +1,138 @@
+/* ---------- cursor ---------- */
+.dot,
+.ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  border-radius: 50%;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: #fff;
+  mix-blend-mode: difference;
+}
+.ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), border-color 0.35s, background 0.35s;
+}
+.ring[data-hot] {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  border-color: transparent;
+  background: rgba(182, 166, 255, 0.16);
+}
+
+/* ---------- marquee ---------- */
+.marquee {
+  overflow: hidden;
+  padding: clamp(28px, 5vh, 56px) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.track {
+  display: flex;
+  width: max-content;
+  animation: slide 48s linear infinite;
+}
+.track span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding-right: 0.5em;
+  font: 800 clamp(44px, 7vw, 120px)/1 var(--display);
+  font-stretch: 112%;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(242, 241, 236, 0.38);
+  white-space: nowrap;
+}
+.track span:nth-child(3n + 1) {
+  color: var(--graphite);
+  -webkit-text-stroke: 0;
+}
+.track i {
+  font-style: normal;
+  font-size: 0.4em;
+  color: #8b6bff;
+  -webkit-text-stroke: 0;
+}
+@keyframes slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
+
+/* ---------- preloader ---------- */
+.pre {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #050506;
+  display: grid;
+  place-items: center;
+  transition: transform 0.95s cubic-bezier(0.76, 0, 0.24, 1);
+  /* if scripts never run, the curtain still lifts */
+  animation: preOut 0.9s cubic-bezier(0.76, 0, 0.24, 1) 3s forwards;
+}
+@keyframes preOut {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+.preGone {
+  transform: translateY(-100%);
+}
+.preMark {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  font: 800 clamp(28px, 4vw, 48px)/1 var(--display);
+  font-stretch: 112%;
+  letter-spacing: 0.06em;
+  color: #f2f1ec;
+}
+.preMark i {
+  width: 70%;
+  height: 10px;
+  border: 2px solid #8b6bff;
+  border-top: 0;
+}
+.preCount {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 28px;
+  font: 500 clamp(48px, 9vw, 140px)/1 var(--display);
+  font-variant-numeric: tabular-nums;
+  color: rgba(242, 241, 236, 0.14);
+}
+.preBar {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 18px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.preBar i {
+  position: absolute;
+  inset: 0;
+  background: var(--rgb);
+  transform-origin: 0 50%;
+  transition: transform 0.3s;
+}

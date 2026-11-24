@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import Dock from "@/components/Dock";
 import { Analytics } from "@vercel/analytics/next";
 import ClickTracking from "@/components/ClickTracking";
+import Cursor from "@/components/fx/Cursor";
+import Reveal from "@/components/fx/Reveal";
 import { SITE_URL } from "@/content/site";
 import "./globals.css";
 
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: { locale: "en_ZA", type: "website", siteName: "US Trailers" },
 };
 
-export const viewport: Viewport = { themeColor: "#E6EAE5", width: "device-width", initialScale: 1, viewportFit: "cover" };
+export const viewport: Viewport = { themeColor: "#0A0B0D", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -33,6 +35,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Dock />
         <Analytics />
         <ClickTracking />
+        <Reveal />
+        <Cursor />
       </body>
     </html>
   );

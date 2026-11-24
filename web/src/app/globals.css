@@ -165,3 +165,20 @@ label a {
   white-space: nowrap;
   border: 0;
 }
+
+/* custom cursor replaces the arrow on fine pointers */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button {
+  cursor: none;
+}
+/* headings rise in, line by line, as they reach the viewport */
+.rv {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(0.35em);
+  transition: clip-path 1.1s cubic-bezier(0.22, 1, 0.36, 1), transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rv.rv-in {
+  clip-path: inset(0 0 -0.2em 0);
+  transform: none;
+}

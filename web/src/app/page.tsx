@@ -1,4 +1,6 @@
 import BuildFilm from "@/components/buildfilm/BuildFilm";
+import Marquee from "@/components/fx/Marquee";
+import Preloader from "@/components/fx/Preloader";
 import PhotoBand from "@/components/photoband/PhotoBand";
 import TypeIndex from "@/components/types/TypeIndex";
 import Process from "@/components/process/Process";
@@ -25,7 +27,9 @@ export default function Home() {
     <main id="main">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG) }} />
       <div id="top" />
+      <Preloader />
       <BuildFilm />
+      <Marquee />
       <PhotoBand />
       <TypeIndex />
       <Process />

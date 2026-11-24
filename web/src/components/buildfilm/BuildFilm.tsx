@@ -153,11 +153,15 @@ export default function BuildFilm() {
   return (
     <section ref={section} id="film" className={styles.film} aria-label="Watch a US Trailers toy hauler being built, part by part">
       <div className={styles.stage}>
-        {/* first frame as a real image: the page is never blank and it is the LCP element */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={styles.poster} src={src("m", 1)} alt="" aria-hidden="true" fetchPriority="high" />
-        <canvas ref={canvas} className={styles.canvas} aria-hidden="true" />
+        {/* the finished trailer behind the headline; the build film takes over as you scroll */}
+        <picture>
+          <source media="(max-width: 760px)" srcSet="/film/hero-m.webp" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className={`${styles.poster} ${isIntro ? "" : styles.posterOff}`} src="/film/hero.webp" alt="A gloss-black Texan-style V-nose toy hauler in a dark studio, polished wheels, RGB underglow reflected in the floor" fetchPriority="high" />
+        </picture>
+        <canvas ref={canvas} className={`${styles.canvas} ${isIntro ? styles.canvasOff : ""}`} aria-hidden="true" />
 
+        <div className={`${styles.scrim} ${isIntro || isEnd ? styles.scrimOn : ""}`} aria-hidden="true" />
         <div className={`${styles.intro} ${isIntro ? styles.show : ""}`} inert={!isIntro}>
           <p className={styles.kicker}>Bespoke Texan-style toy haulers · Cape Town</p>
           <h1 className={styles.h1}>
