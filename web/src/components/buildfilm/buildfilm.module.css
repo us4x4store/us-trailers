@@ -272,3 +272,10 @@
 .scrimOn {
   opacity: 1;
 }
+@media (max-width: 760px) {
+  /* phones: the whole trailer above the headline, not a cropped slice */
+  .poster {
+    object-fit: contain;
+    object-position: 50% 34%;
+  }
+}

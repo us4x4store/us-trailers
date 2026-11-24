@@ -47,12 +47,26 @@ export default function BuildFilm() {
     const ctx = c.getContext("2d")!;
     const cw = c.width;
     const ch = c.height;
-    const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    const portrait = ch > cw * 1.1;
+    // landscape: cover the screen. Portrait (phones): keep the whole trailer, a little enlarged,
+    // and melt the frame's top and bottom edges into the black studio
+    const s = portrait ? (cw / img.naturalWidth) * 1.32 : Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
     const w = img.naturalWidth * s;
     const h = img.naturalHeight * s;
+    const y = portrait ? ch * 0.46 - h / 2 : (ch - h) / 2;
     ctx.fillStyle = "#050506";
     ctx.fillRect(0, 0, cw, ch);
-    ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+    ctx.drawImage(img, (cw - w) / 2, y, w, h);
+    if (portrait) {
+      const fade = h * 0.22;
+      for (const [y0, y1] of [[y, y + fade], [y + h, y + h - fade]]) {
+        const g = ctx.createLinearGradient(0, y0, 0, y1);
+        g.addColorStop(0, "rgba(5,5,6,1)");
+        g.addColorStop(1, "rgba(5,5,6,0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, Math.min(y0, y1), cw, fade);
+      }
+    }
     drawn.current = best;
   };
 
