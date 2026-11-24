@@ -260,14 +260,14 @@
     padding: 10px 12px;
   }
   .dock span + span {
-    border-left: 1px solid rgba(230, 234, 229, 0.3);
+    border-left: 1px solid rgba(10, 11, 13, 0.25);
   }
   .dock i {
     font: 500 13px/1 var(--mono);
     font-style: normal;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #a9c0ee;
+    color: rgba(10, 11, 13, 0.78);
   }
   .dock b {
     font: 800 20px/1 var(--display);

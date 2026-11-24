@@ -27,15 +27,16 @@ export type Light = "day" | "dusk" | "night";
 /** 0 = day, 1 = dusk, 2 = night; eased so the light changes like a real evening, not a cut */
 const env = { target: 0, k: 0 };
 const LOOK = {
+  // studio, dusk, night: all dark, so the trailer and its lights carry the page
   bg: [
-    new THREE.Color("#E6EAE5"),
-    new THREE.Color("#C9A88E"),
-    new THREE.Color("#10142A"),
+    new THREE.Color("#0A0B0D"),
+    new THREE.Color("#1A1420"),
+    new THREE.Color("#06070A"),
   ],
   ground: [
-    new THREE.Color("#E6EAE5"),
-    new THREE.Color("#A88E77"),
-    new THREE.Color("#1A1D2A"),
+    new THREE.Color("#16171B"),
+    new THREE.Color("#221A26"),
+    new THREE.Color("#0B0C10"),
   ],
   sun: [
     new THREE.Color("#ffffff"),

@@ -1,0 +1,196 @@
+{
+ "frames": 220,
+ "fps": 30,
+ "chapters": {
+  "1": [
+   1,
+   34
+  ],
+  "2": [
+   34,
+   52
+  ],
+  "3": [
+   52,
+   78
+  ],
+  "4": [
+   78,
+   104
+  ],
+  "5": [
+   104,
+   136
+  ],
+  "6": [
+   136,
+   152
+  ],
+  "7": [
+   152,
+   168
+  ]
+ },
+ "finale": [
+  168,
+  220
+ ],
+ "parts": [
+  {
+   "name": "Main rails",
+   "chapter": 1,
+   "start": 1,
+   "end": 11
+  },
+  {
+   "name": "Cross members",
+   "chapter": 1,
+   "start": 6,
+   "end": 16
+  },
+  {
+   "name": "Welds",
+   "chapter": 1,
+   "start": 12,
+   "end": 22
+  },
+  {
+   "name": "A-frame tongue",
+   "chapter": 1,
+   "start": 17,
+   "end": 27
+  },
+  {
+   "name": "Coupler & chains",
+   "chapter": 1,
+   "start": 23,
+   "end": 33
+  },
+  {
+   "name": "Jockey wheel",
+   "chapter": 1,
+   "start": 28,
+   "end": 38
+  },
+  {
+   "name": "Axle & springs",
+   "chapter": 2,
+   "start": 34,
+   "end": 48
+  },
+  {
+   "name": "Second axle",
+   "chapter": 2,
+   "start": 43,
+   "end": 57
+  },
+  {
+   "name": "Polished wheel",
+   "chapter": 3,
+   "start": 52,
+   "end": 62
+  },
+  {
+   "name": "Wheel 0-1",
+   "chapter": 3,
+   "start": 57,
+   "end": 67
+  },
+  {
+   "name": "Wheel 11",
+   "chapter": 3,
+   "start": 62,
+   "end": 72
+  },
+  {
+   "name": "Wheel 1-1",
+   "chapter": 3,
+   "start": 67,
+   "end": 77
+  },
+  {
+   "name": "Radius fenders",
+   "chapter": 3,
+   "start": 72,
+   "end": 82
+  },
+  {
+   "name": "Marine-ply floor",
+   "chapter": 4,
+   "start": 78,
+   "end": 88
+  },
+  {
+   "name": "Steel cage",
+   "chapter": 4,
+   "start": 84,
+   "end": 94
+  },
+  {
+   "name": "White interior lining",
+   "chapter": 4,
+   "start": 91,
+   "end": 101
+  },
+  {
+   "name": "E-track & D-rings",
+   "chapter": 4,
+   "start": 97,
+   "end": 107
+  },
+  {
+   "name": "Gloss side panel, kerb side",
+   "chapter": 5,
+   "start": 104,
+   "end": 114
+  },
+  {
+   "name": "Gloss side panel",
+   "chapter": 5,
+   "start": 110,
+   "end": 120
+  },
+  {
+   "name": "V-nose",
+   "chapter": 5,
+   "start": 116,
+   "end": 127
+  },
+  {
+   "name": "Crowned roof",
+   "chapter": 5,
+   "start": 123,
+   "end": 133
+  },
+  {
+   "name": "Aluminium trims",
+   "chapter": 5,
+   "start": 129,
+   "end": 139
+  },
+  {
+   "name": "Spring-assist ramp",
+   "chapter": 6,
+   "start": 136,
+   "end": 148
+  },
+  {
+   "name": "Side door",
+   "chapter": 6,
+   "start": 144,
+   "end": 156
+  },
+  {
+   "name": "RGB lighting",
+   "chapter": 7,
+   "start": 152,
+   "end": 164
+  },
+  {
+   "name": "LED lights & vent",
+   "chapter": 7,
+   "start": 160,
+   "end": 172
+  }
+ ]
+}

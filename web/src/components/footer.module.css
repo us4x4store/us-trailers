@@ -1,5 +1,5 @@
 .foot {
-  background: var(--graphite);
+  background: var(--surface);
   color: #e6eae5;
   padding: 64px var(--gutter) 40px;
   display: grid;

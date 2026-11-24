@@ -1,4 +1,4 @@
-import AssemblyFilm from "@/components/film/AssemblyFilm";
+import BuildFilm from "@/components/buildfilm/BuildFilm";
 import PhotoBand from "@/components/photoband/PhotoBand";
 import TypeIndex from "@/components/types/TypeIndex";
 import Process from "@/components/process/Process";
@@ -25,9 +25,7 @@ export default function Home() {
     <main id="main">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG) }} />
       <div id="top" />
-      <div id="film">
-        <AssemblyFilm />
-      </div>
+      <BuildFilm />
       <PhotoBand />
       <TypeIndex />
       <Process />

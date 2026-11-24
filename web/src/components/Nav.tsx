@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { TYPES } from "@/content/types";
-import { sound } from "@/lib/sound";
 import styles from "./nav.module.css";
 
 const LINKS = [
@@ -16,12 +15,6 @@ const LINKS = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const [audioOn, setAudioOn] = useState(false);
-  useEffect(() => {
-    const off = sound.subscribe(setAudioOn);
-    sound.init();
-    return off;
-  }, []);
   const path = usePathname();
   useEffect(() => setOpen(false), [path]);
   useEffect(() => {
@@ -65,14 +58,6 @@ export default function Nav() {
         ))}
       </nav>
       <div className={styles.right}>
-        <button type="button" className={styles.sound} aria-pressed={audioOn} onClick={() => sound.set(!audioOn)}>
-          <span aria-hidden="true" className={styles.wave} data-on={audioOn || undefined}>
-            <i />
-            <i />
-            <i />
-          </span>
-          <span className={styles.soundLabel}>{audioOn ? "Sound on" : "Sound off"}</span>
-        </button>
         <a href="/#enquire" className={styles.wa}>
           Get a price
         </a>

@@ -1,27 +1,36 @@
 @import "tailwindcss";
 
-/* Drawing Office tokens (docs/brand.md once Justin confirms the direction) */
+/* Night garage: near-black, warm white, an RGB accent. The names are kept from the first direction
+   (paper = page background, graphite = text, ink = accent) so every component follows. */
 :root {
-  --paper: #e6eae5;
-  --grid: #cdd5d0;
+  --paper: #0a0b0d;
+  --surface: #121317;
+  --grid: #1a1c20;
   /* hairlines: structure without frames */
-  --line: rgba(34, 38, 42, 0.14);
+  --line: rgba(255, 255, 255, 0.1);
   /* vertical rhythm: generous, so each section reads as its own scene */
   --sy: clamp(96px, 13vh, 176px);
   --sy-end: clamp(80px, 10vh, 136px);
   --sy-sm: clamp(64px, 9vh, 120px);
-  --line-strong: rgba(34, 38, 42, 0.28);
-  --ink: #1f3b73;
-  --graphite: #22262a;
+  --line-strong: rgba(255, 255, 255, 0.24);
+  --ink: #b6a6ff;
+  --graphite: #f2f1ec;
+  --rgb: linear-gradient(90deg, #ff4fd8, #8b6bff 45%, #3fd7ff);
   --galv: #a7afb2;
-  --red: #b8352a;
-  --muted: #4f5552;
+  --red: #ff7a6b;
+  --muted: #9a9ca3;
   --dusk: #1a1f36;
+  /* technical drawings, redrawn for the dark page */
+  --drw-ink: #b6a6ff;
+  --drw-phantom: #6b6f76;
+  --drw-line: #f2f1ec;
+  --drw-red: #ff7a6b;
+  --drw-paper: #0a0b0d;
   --display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
   --mono: var(--font-plex), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --gutter: max(16px, env(safe-area-inset-left, 0px), clamp(16px, 3.4vw, 48px));
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 @theme inline {

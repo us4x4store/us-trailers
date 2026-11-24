@@ -1,9 +1,9 @@
-/* The one blueprint on the page: white lines on Prussian blue, like a cyanotype workshop print. */
+/* The process sheet: fine light lines on the night surface, violet for dimensions. */
 .proc {
-  --bp: #1f3b73;
-  --bp-deep: #183062;
-  --bp-line: #e8eef9;
-  --bp-soft: #a9c0ee;
+  --bp: #121317;
+  --bp-deep: #0d0e11;
+  --bp-line: #ecebe6;
+  --bp-soft: #b6a6ff;
   --drw-line: var(--bp-line);
   --drw-ink: var(--bp-soft);
   --drw-paper: var(--bp);
@@ -38,7 +38,7 @@
   max-width: 52ch;
 }
 .sheet {
-  border: 1.5px solid var(--bp-line);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   grid-template-areas: "art now" "scrub scrub";
@@ -53,7 +53,7 @@
 }
 .now {
   grid-area: now;
-  border-left: 1.5px solid var(--bp-line);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
   background: var(--bp-deep);
   padding: 22px 20px;
   display: grid;
@@ -94,7 +94,7 @@
 }
 .scrub {
   grid-area: scrub;
-  border-top: 1.5px solid var(--bp-line);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   background: var(--bp-deep);
   padding: 20px 28px 64px;
   position: relative;
@@ -159,7 +159,7 @@
   }
   .now {
     border-left: 0;
-    border-top: 1.5px solid var(--bp-line);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
   }
   .art {
     padding: 28px 16px 12px;

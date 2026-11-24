@@ -165,5 +165,5 @@ export function createMaterials(bodyColour: string): MatSet {
   return m;
 }
 
-export const INK = new THREE.Color("#1F3B73");
-export const PAPER = new THREE.Color("#E6EAE5");
+export const INK = new THREE.Color("#8B6BFF");
+export const PAPER = new THREE.Color("#0A0B0D");
