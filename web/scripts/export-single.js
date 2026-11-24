@@ -79,22 +79,6 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
         main.querySelectorAll("[class*='_pre ']").forEach((e) => e.remove());
         main.querySelectorAll(".rv").forEach((e) => e.classList.remove("rv", "rv-in"));
         if (route === "/contact") main.querySelector("#enquire")?.remove();
-        // the 3D designer needs the server: in the saved copy it is a showcase card with a link, no dead controls
-        const design = main.querySelector("#design");
-        if (design) {
-          design.innerHTML = `<div class="offline-design">
-            <div class="offline-design-copy">
-              <p class="offline-eyebrow">Design yours</p>
-              <h2>Pick the length, the axles, the colour and the RGB.</h2>
-              <p>Every trailer is drawn for one owner: body length, single or tandem, seven paint colours, polished wheels, RGB colours, roof rack and solar. Tell us what you want and we draw it around you.</p>
-              <div class="offline-chips"><span>3.6 to 6.0 m</span><span>Single or tandem</span><span>Gloss black</span><span>Polished wheels</span><span>RGB lighting</span><span>Roof rack</span><span>Solar</span></div>
-              <a class="offline-btn" href="#enquire">Get a price for yours</a>
-            </div>
-            <img data-offline-hero src="/film/hero.webp" alt="A gloss-black Texan-style V-nose toy hauler in a dark studio, polished wheels, RGB underglow">
-          </div>`;
-        }
-        // the tow checker needs the app to recalculate: leave it out of the saved copy
-        main.querySelectorAll("#tow-check").forEach((e) => e.remove());
         // ids: every page but home gets its own prefix so nothing collides in one document
         if (slug !== "home") {
           const ids = new Set([...main.querySelectorAll("[id]")].map((e) => e.id));
@@ -110,6 +94,11 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
             if (ids.has(t)) a.setAttribute("href", "#" + slug + "-" + t);
           });
         }
+        // the site's own interactive components run in these slots (bundled into the saved copy)
+        const slot = (sel, id) => { const el = main.querySelector(sel); if (el) el.outerHTML = `<div id="${id}"></div>`; };
+        slot("#design", "island-design");
+        slot("#process", "island-process");
+        slot("#faq-tow-check", "island-towcheck");
         return main.innerHTML;
       },
       { slug, route },
@@ -311,32 +300,6 @@ html:not(.js) #film canvas, html:not(.js) #film [class*='_meter'] { display: non
   fit(); update();
 })();
 
-// the build timeline: drag the slider or tap a step
-(() => {
-  const S = ${JSON.stringify(stages)};
-  const LAST = S[S.length - 1].week;
-  const sec = document.getElementById("process");
-  if (!sec) return;
-  const range = sec.querySelector('input[type="range"]');
-  const now = sec.querySelector("[aria-live]");
-  const wk = now && now.querySelector("span"), h3 = now && now.querySelector("h3"), dds = now ? now.querySelectorAll("dd") : [];
-  const label = sec.querySelector("p[aria-hidden] span"), labelB = sec.querySelector("p[aria-hidden] b");
-  const ticks = [...sec.querySelectorAll("ol li")];
-  function set(week) {
-    let idx = 0; S.forEach((st, i) => { if (week >= st.week) idx = i; });
-    const st = S[idx];
-    if (range) { range.value = week; range.setAttribute("aria-valuetext", "Week " + week + ": " + st.title); }
-    if (wk) wk.textContent = "Week " + week;
-    if (h3) h3.textContent = st.title;
-    if (dds[0]) dds[0].textContent = st.what;
-    if (dds[1]) dds[1].textContent = st.you;
-    if (label) label.textContent = "Week " + week + " of " + LAST;
-    if (labelB) labelB.textContent = st.title;
-    ticks.forEach((li, i) => li.toggleAttribute("data-on", i <= idx));
-  }
-  range && range.addEventListener("input", () => set(+range.value));
-  ticks.forEach((li, i) => li.querySelector("button")?.addEventListener("click", () => set(S[i].week)));
-})();
 // the enquiry form: offline, it becomes a WhatsApp or email message with everything filled in
 document.querySelectorAll("#enquire form").forEach((form) => {
   form.addEventListener("submit", (e) => {
@@ -365,13 +328,37 @@ document.querySelectorAll("#enquire form").forEach((form) => {
 <script>document.documentElement.classList.add("js")</script>
 <title>US Trailers · Bespoke Texan-style toy haulers, Cape Town</title>
 <meta name="description" content="Bespoke Texan-style toy haulers for ATVs, side-by-sides and bikes, built in Cape Town. Saved copy of the US Trailers website.">
-<style>${styles}${offlineCss}</style>
+<style>${styles}${offlineCss}${fs.readFileSync(path.join(__dirname, "offline/dist/islands.css"), "utf8")}</style>
 </head>
 <body>
 ${nav}
 ${sectionsHtml.join("\n")}
 ${foot}
 <script>${filmScript}</script>
+<script>${fs.readFileSync(path.join(__dirname, "offline/dist/islands.js"), "utf8").replace(/<\/script/gi, "<\\/script")}</script>
+<script>
+// links written for the website ("/#enquire", "/builds") jump to the same place inside this file
+const PAGE_OF = ${JSON.stringify(slugOf)};
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest("a[href]");
+  if (!a) return;
+  const href = a.getAttribute("href");
+  if (!href || !href.startsWith("/")) return;
+  e.preventDefault();
+  const [p, hash] = href.split("#");
+  const path = p.split("?")[0] || "/";
+  const slug = PAGE_OF[path];
+  const id = hash ? (path === "/" || slug === undefined ? hash : slug + "-" + hash) : slug !== undefined ? "page-" + slug : "enquire";
+  (document.getElementById(id) || document.getElementById("enquire"))?.scrollIntoView({ behavior: "smooth" });
+});
+// AR and share links need the website's server: hide those two buttons in the saved copy
+new MutationObserver(() => {
+  document.querySelectorAll("#design button, #design a").forEach((b) => {
+    const t = (b.textContent || "").trim().toLowerCase();
+    if (t.startsWith("see it in your driveway") || t === "share" || t === "link copied" || t === "copied") b.style.display = "none";
+  });
+}).observe(document.body, { childList: true, subtree: true });
+</script>
 </body>
 </html>`;
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
